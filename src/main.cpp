@@ -29,6 +29,13 @@ void redraw() {
     al_flip_display();
 }
 
+void setArmTargetState() {
+    arm0->setJointTargetRotation(0, RelativeRotation(rand() / double(RAND_MAX) * M_PI * 2));
+    arm0->setJointTargetRotation(1, RelativeRotation(rand() / double(RAND_MAX) * M_PI * 2));
+    arm0->setSegmentTargetLength(0, rand() % 150 + 50);
+    arm0->setSegmentTargetLength(1, rand() % 150 + 50);
+}
+
 void update() {
     ALLEGRO_KEYBOARD_STATE keyboardState;
     al_get_keyboard_state(&keyboardState);
@@ -37,6 +44,10 @@ void update() {
     if (al_key_down(&keyboardState, ALLEGRO_KEY_A))  arm0->rotateJoint(1, RelativeRotation(-0.01));
     if (al_key_down(&keyboardState, ALLEGRO_KEY_D))  arm0->rotateJoint(1, RelativeRotation(0.01));
 
+    if (tick % 600 == 0) {
+        setArmTargetState();
+    }
+    arm0->moveToTarget();
     arm0->recalculate();
 }
 
@@ -65,8 +76,9 @@ void onKeyDown(int keycode) {
 
 void init() {
     arm0->setRootJointPosition(Point2d(200, 200));
-    arm0->setBoneLength(0, 100);
-    arm0->setBoneLength(1, 100);
+    arm0->setSegmentLength(0, 100);
+    arm0->setSegmentLength(1, 100);
+    setArmTargetState();
     arm0->recalculate();
 }
 

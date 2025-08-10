@@ -15,6 +15,12 @@ struct RelativeRotation {
         result.radians = (radians + other.radians);
         return result;
     }
+
+    RelativeRotation operator- (RelativeRotation other) {
+        RelativeRotation result;
+        result.radians = (radians - other.radians);
+        return result;
+    }
 };
 
 struct GlobalRotation {
