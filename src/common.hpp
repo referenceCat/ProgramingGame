@@ -33,15 +33,7 @@ struct GlobalRotation {
     }
 };
 
-struct Vector2d {
-    double x;
-    double y;
-
-    Vector2d(GlobalRotation rotation, double length) {
-        x = cos(rotation.radians) * length;
-        y = sin(rotation.radians) * length;
-    }
-};
+struct Vector2d;
 
 struct Point2d {
     double x;
@@ -50,8 +42,45 @@ struct Point2d {
     Point2d(double x, double y): x(x), y(y) {}
     Point2d(): x(0), y(0) {}
 
-    Point2d operator+ (Vector2d vector) {
-        return Point2d(x + vector.x, y + vector.y);
+    Point2d operator+ (Vector2d vector);
+};
+
+struct Vector2d {
+    double x;
+    double y;
+
+    Vector2d(Point2d p1, Point2d p2) {
+        x = p1.x - p2.x;
+        y = p1.y - p2.y;
+    }
+
+    Vector2d(GlobalRotation rotation, double length) {
+        x = cos(rotation.radians) * length;
+        y = sin(rotation.radians) * length;
+    }
+};
+
+Point2d Point2d::operator+ (Vector2d vector) {
+    return Point2d(x + vector.x, y + vector.y);
+}
+
+struct Rect2d {
+    Point2d p1;
+    Point2d p2;
+
+    Rect2d(Point2d center, double height, double width) {
+        p1.x = center.x - width / 2;
+        p1.y = center.y - height / 2;
+        p2.x = center.x + width / 2;
+        p2.y = center.y + height / 2;
+    }
+
+    bool isInside(Point2d point) {
+        return p1.x <= point.x <= p2.x && p1.y <= point.y <= p2.y;
+    }
+
+    Point2d center() {
+        return Point2d(p1.x / 2 + p2.x / 2, p1.y/ 2 + p2.y / 2);
     }
 };
 

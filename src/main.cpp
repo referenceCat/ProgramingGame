@@ -1,9 +1,11 @@
 #include <string>
+#include "common.hpp"
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_primitives.h>
 #include "ManipulatorArm.hpp"
+#include "Box.hpp"
 
 long long tick = 0;
 
@@ -11,6 +13,7 @@ long long tick = 0;
 ALLEGRO_FONT *debug_font = nullptr;
 
 ManipulatorArm* arm0 = new ManipulatorArm(3);
+Box* box0 = new Box(Rect2d(Point2d(300, 300), 30, 30));
 
 void redraw() {
     al_set_target_bitmap(al_get_backbuffer(al_get_current_display()));
@@ -22,6 +25,7 @@ void redraw() {
     al_draw_text(debug_font, al_map_rgb(255, 255, 255), 110, 20, 0, std::to_string(tick).c_str());
 
     arm0->draw();
+    box0->draw();
 
     al_hold_bitmap_drawing(false);
     al_flip_display();
