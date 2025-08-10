@@ -9,9 +9,7 @@
 
 long long tick = 0;
 
-// drawing hello world
 ALLEGRO_FONT *debug_font = nullptr;
-
 ManipulatorArm* arm0 = new ManipulatorArm(3);
 Box* box0 = new Box(Rect2d(Point2d(300, 300), 30, 30));
 
@@ -32,16 +30,20 @@ void redraw() {
 }
 
 void update() {
-    arm0->setJointRotation(0, RelativeRotation(static_cast<double>(tick) / 100));
-    arm0->setJointRotation(1, RelativeRotation(static_cast<double>(tick) / 200));
-    arm0->setBoneLength(0, static_cast<double>(tick) / 10 + 50);
+    ALLEGRO_KEYBOARD_STATE keyboardState;
+    al_get_keyboard_state(&keyboardState);
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_Q))  arm0->rotateJoint(0, RelativeRotation(-0.01));
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_E))  arm0->rotateJoint(0, RelativeRotation(0.01));
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_A))  arm0->rotateJoint(1, RelativeRotation(-0.01));
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_D))  arm0->rotateJoint(1, RelativeRotation(0.01));
+
     arm0->recalculate();
 }
 
 void init() {
     arm0->setRootJointPosition(Point2d(200, 200));
     arm0->setBoneLength(0, 100);
-    arm0->setBoneLength(0, 50);
+    arm0->setBoneLength(1, 100);
     arm0->recalculate();
 }
 
@@ -116,6 +118,7 @@ int main(int argc, char **argv) {
                     tick++;
                     update();
                     redraw();
+                    break;
                 default:
                     fprintf(stderr, "Unsupported event received: %d\n", event.type);
                     break;

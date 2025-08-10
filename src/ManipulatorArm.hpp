@@ -39,6 +39,11 @@ public:
         jointsRotation[aJoint] = aRotation;
     }
 
+    void rotateJoint(int aJoint, RelativeRotation aRotation) {
+        assert(("incorrect bone number", aJoint <= jointsNumber));
+        jointsRotation[aJoint] = jointsRotation[aJoint] + aRotation;
+    }
+
     void setRootJointPosition(Point2d position) {
         jointsPosition[0] = position;
     }
