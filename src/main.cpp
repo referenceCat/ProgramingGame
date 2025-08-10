@@ -40,6 +40,29 @@ void update() {
     arm0->recalculate();
 }
 
+void onGrabKey() {
+    if (arm0->isActive()) {
+        arm0->release();
+    } else {
+        arm0->grab();
+        if (box0->getRect().isInside(arm0->getLastJointPos())) {
+            arm0->takeBox(box0);
+        }
+    }
+}
+
+
+void onKeyDown(int keycode) {
+    switch (keycode) {
+        case ALLEGRO_KEY_SPACE:
+            onGrabKey();
+            break;
+                    
+        default:
+            break;
+        }
+}
+
 void init() {
     arm0->setRootJointPosition(Point2d(200, 200));
     arm0->setBoneLength(0, 100);
@@ -104,25 +127,26 @@ int main(int argc, char **argv) {
 
     while (running) {
         ALLEGRO_EVENT event;
-        ALLEGRO_TIMEOUT timeout;
-        al_init_timeout(&timeout, 0.06);
-        bool get_event = al_wait_for_event_until(event_queue, &event, &timeout);
+        // ALLEGRO_TIMEOUT timeout;
+        // al_init_timeout(&timeout, 0.06);
+        // bool get_event = al_wait_for_event_until(event_queue, &event, &timeout);
+        al_wait_for_event(event_queue, &event);
 
-        // Handle the event
-        if (get_event) {
-            switch (event.type) {
-                case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                    running = false;
-                    break;
-                case ALLEGRO_EVENT_TIMER:
-                    tick++;
-                    update();
-                    redraw();
-                    break;
-                default:
-                    fprintf(stderr, "Unsupported event received: %d\n", event.type);
-                    break;
-            }
+        switch (event.type) {
+            case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                running = false;
+                break;
+            case ALLEGRO_EVENT_TIMER:
+                tick++;
+                update();
+                redraw();
+                break;
+            case ALLEGRO_EVENT_KEY_DOWN:
+                onKeyDown(event.keyboard.keycode);
+                break;
+            default:
+                // fprintf(stderr, "Unsupported event received: %d\n", event.type);
+                break;
         }
     }
 

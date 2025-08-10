@@ -49,6 +49,8 @@ struct Vector2d {
     double x;
     double y;
 
+    Vector2d(): x(0), y(0) {}
+
     Vector2d(Point2d p1, Point2d p2) {
         x = p1.x - p2.x;
         y = p1.y - p2.y;
@@ -76,7 +78,7 @@ struct Rect2d {
     }
 
     bool isInside(Point2d point) {
-        return p1.x <= point.x <= p2.x && p1.y <= point.y <= p2.y;
+        return p1.x <= point.x && point.x <= p2.x && p1.y <= point.y && point.y <= p2.y;
     }
 
     Point2d center() {

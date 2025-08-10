@@ -23,6 +23,10 @@ public:
     void draw() {
         al_draw_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, al_map_rgb(255, 255, 255), 1);
     }
+
+    Rect2d getRect() {
+        return rect;
+    }
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_BOX_HPP_
