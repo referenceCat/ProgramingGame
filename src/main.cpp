@@ -1,10 +1,49 @@
-#include <cstdio>
+#include <string>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_primitives.h>
+#include "ManipulatorArm.hpp"
+
+long long tick = 0;
+
+// drawing hello world
+ALLEGRO_FONT *debug_font = nullptr;
+
+ManipulatorArm* arm0 = new ManipulatorArm(3);
+
+void redraw() {
+    al_set_target_bitmap(al_get_backbuffer(al_get_current_display()));
+    al_clear_to_color(al_map_rgb(0, 0, 0));
+    al_hold_bitmap_drawing(true);
+
+    al_draw_text(debug_font, al_map_rgb(255, 255, 255), 10, 10, 0, "Hello, World!");
+    al_draw_text(debug_font, al_map_rgb(255, 255, 255), 10, 20, 0, "Current tick:");
+    al_draw_text(debug_font, al_map_rgb(255, 255, 255), 110, 20, 0, std::to_string(tick).c_str());
+
+    arm0->draw();
+
+    al_hold_bitmap_drawing(false);
+    al_flip_display();
+}
+
+void update() {
+    arm0->setJointRotation(0, RelativeRotation(static_cast<double>(tick) / 100));
+    arm0->setJointRotation(1, RelativeRotation(static_cast<double>(tick) / 200));
+    arm0->setBoneLength(0, static_cast<double>(tick) / 10 + 50);
+    arm0->recalculate();
+}
+
+void init() {
+    arm0->setRootJointPosition(Point2d(200, 200));
+    arm0->setBoneLength(0, 100);
+    arm0->setBoneLength(0, 50);
+    arm0->recalculate();
+}
 
 int main(int argc, char **argv) {
     bool running = true;
+    const int UPS = 60;
 
     // Initialize allegro
     if (!al_init()) {
@@ -24,6 +63,12 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    // Initialize allegro primitives addon
+    if (!al_init_primitives_addon()) {
+        fprintf(stderr, "Failed to primitives allegro ttf addon.\n");
+        return 1;
+    }
+
     // Create the event queue
     ALLEGRO_EVENT_QUEUE *event_queue = nullptr;
     event_queue = al_create_event_queue();
@@ -32,20 +77,24 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    //Initialize user inputs
     al_install_keyboard();
     al_install_mouse();
     al_register_event_source(event_queue, al_get_keyboard_event_source());
     al_register_event_source(event_queue, al_get_mouse_event_source());
 
+    // Initialize the timers
+    ALLEGRO_TIMER *update_timer = al_create_timer(1.0 / UPS);
+    al_register_event_source(event_queue, al_get_timer_event_source(update_timer));
+    al_start_timer(update_timer);
 
+    // Initialize the display
     ALLEGRO_DISPLAY *display = nullptr;
-    display = al_create_display(1000, 1000);
+    display = al_create_display(500, 500);
     al_register_event_source(event_queue, al_get_display_event_source(display));
+    debug_font = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
 
-    // drawing hello world
-    ALLEGRO_FONT *debug_font = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
-    al_draw_text(debug_font, al_map_rgb(255, 255, 255), 10, 10, 0, "Hello, World!");
-    al_flip_display();
+    init();
 
     while (running) {
         ALLEGRO_EVENT event;
@@ -59,6 +108,10 @@ int main(int argc, char **argv) {
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
                     running = false;
                     break;
+                case ALLEGRO_EVENT_TIMER:
+                    tick++;
+                    update();
+                    redraw();
                 default:
                     fprintf(stderr, "Unsupported event received: %d\n", event.type);
                     break;
