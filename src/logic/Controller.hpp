@@ -8,7 +8,7 @@
 #include <allegro5/allegro_ttf.h>
 #include <string>
 #include <vector>
-#include "common.hpp"
+#include "../common/math.hpp"
 #include "ManipulatorArm.hpp"
 #include "Box.hpp"
 

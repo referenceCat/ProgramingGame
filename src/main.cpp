@@ -1,12 +1,12 @@
 #include <string>
-#include "common.hpp"
+#include "common/math.hpp"
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_primitives.h>
-#include "ManipulatorArm.hpp"
-#include "Box.hpp"
-#include "Controller.hpp"
+#include "logic/ManipulatorArm.hpp"
+#include "logic/Box.hpp"
+#include "logic/Controller.hpp"
 
 long long tick = 0;
 

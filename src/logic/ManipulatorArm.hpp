@@ -1,13 +1,14 @@
 #ifndef __PROJECTS_PROGRAMINGGAME_SRC_MANIPULATORARM_HPP_
 #define __PROJECTS_PROGRAMINGGAME_SRC_MANIPULATORARM_HPP_
 
-#include "common.hpp"
+#include "../common/math.hpp"
 #include <assert.h>
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include "Box.hpp"
+#include <string>
 #include <algorithm>
 
 class ManipulatorArm {
