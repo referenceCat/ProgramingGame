@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.28)
 
-add_executable(DevProject main.cpp)
+add_executable(DevProject main.cpp logic/GameWorld.cpp common/common.cpp logic/ManipulatorArm.cpp)
 
 target_include_directories(DevProject PUBLIC logic})
 target_include_directories(DevProject PUBLIC common})

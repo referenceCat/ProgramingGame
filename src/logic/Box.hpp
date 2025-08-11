@@ -6,7 +6,7 @@
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
-#include "../common/math.hpp"
+#include "../common/common.hpp"
 
 class Box {
     Rect2d rect;

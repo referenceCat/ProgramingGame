@@ -1,17 +1,20 @@
 #ifndef __PROJECTS_PROGRAMINGGAME_SRC_MANIPULATORARM_HPP_
 #define __PROJECTS_PROGRAMINGGAME_SRC_MANIPULATORARM_HPP_
 
-#include "../common/math.hpp"
+#include "../common/common.hpp"
 #include <assert.h>
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
-#include "Box.hpp"
 #include <string>
 #include <algorithm>
+#include "Box.hpp"
+
+class GameWorld;
 
 class ManipulatorArm {
+    GameWorld* world;
     static constexpr int maxJointsNumber = 256;
     static constexpr double jointRotationSpeed = 0.01;
     static constexpr double segmentResizeSpeed = 1;
@@ -42,7 +45,7 @@ class ManipulatorArm {
     }
 
 public:
-    ManipulatorArm(int aJointsNumber):  jointsNumber(aJointsNumber) {
+    ManipulatorArm(int aJointsNumber, GameWorld* aWorld):  jointsNumber(aJointsNumber), world(aWorld) {
         assert(("incorrect number of joints", 1 <= aJointsNumber <= maxJointsNumber));
         defaultInit();
     }
@@ -161,19 +164,12 @@ public:
         }
     }
 
-    void grab() {
-        active = true;
-    }
+    void grab();
 
     void release() {
         active = false;
         takenBox = nullptr;
         relativeBoxPosition = Vector2d();
-    }
-
-    void takeBox(Box* aBox)  {
-        takenBox = aBox;
-        relativeBoxPosition = Vector2d(takenBox->getRect().center(), jointsPosition[jointsNumber - 1]);
     }
 
     bool isActive() {
@@ -182,6 +178,12 @@ public:
 
     Point2d getLastJointPos() {
         return jointsPosition[jointsNumber - 1];
+    }
+
+private:
+    void takeBox(Box* aBox)  {
+        takenBox = aBox;
+        relativeBoxPosition = Vector2d(takenBox->getRect().center(), jointsPosition[jointsNumber - 1]);
     }
     
 };

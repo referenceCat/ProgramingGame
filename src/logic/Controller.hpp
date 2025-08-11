@@ -8,7 +8,7 @@
 #include <allegro5/allegro_ttf.h>
 #include <string>
 #include <vector>
-#include "../common/math.hpp"
+#include "../common/common.hpp"
 #include "ManipulatorArm.hpp"
 #include "Box.hpp"
 
@@ -102,9 +102,6 @@ public:
         if (command == "grab") {
             if (!arm) return 1;
             arm->grab();
-            if (box->getRect().isInside(arm->getLastJointPos())) {
-            arm->takeBox(box);
-        }
             instrPointer++;
             return 0;
         }

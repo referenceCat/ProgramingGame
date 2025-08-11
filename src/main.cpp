@@ -1,5 +1,5 @@
 #include <string>
-#include "common/math.hpp"
+#include "common/common.hpp"
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
@@ -91,9 +91,6 @@ void onGrabKey() {
         arm0->release();
     } else {
         arm0->grab();
-        if (box0->getRect().isInside(arm0->getLastJointPos())) {
-            arm0->takeBox(box0);
-        }
     }
 }
 

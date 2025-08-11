@@ -68,10 +68,6 @@ struct Vector2d {
     }
 };
 
-Point2d Point2d::operator+ (Vector2d vector) {
-    return Point2d(x + vector.x, y + vector.y);
-}
-
 struct Rect2d {
     Point2d p1;
     Point2d p2;
@@ -92,9 +88,7 @@ struct Rect2d {
     }
 };
 
-double degreesToRadians(int degrees) {
-    return degrees * (M_PI / 180);
-}
+double degreesToRadians(int degrees);
 
 
 
