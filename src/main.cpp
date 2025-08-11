@@ -25,31 +25,27 @@ void init() {
     controller->addInstruction("angle 1 0 0");
     controller->addInstruction("angle 1 1 90");
     controller->addInstruction("angle 2 0 0");
-    controller->addInstruction("angle 2 1 90");
+    controller->addInstruction("angle 2 1 0");
     controller->addInstruction("delay 300");
     controller->addInstruction("grab 1");
-    controller->addInstruction("delay 100");
-    controller->addInstruction("angle 1 0 270");
-    controller->addInstruction("angle 1 1 30");
-    controller->addInstruction("delay 400");
-    controller->addInstruction("release 1");
-    controller->addInstruction("delay 100");
-    controller->addInstruction("angle 1 0 270");
-    controller->addInstruction("angle 1 1 60");
-    controller->addInstruction("delay 300");
-    controller->addInstruction("angle 1 0 270");
-    controller->addInstruction("angle 1 1 30");
-    controller->addInstruction("delay 300");
-    controller->addInstruction("grab 1");
-    controller->addInstruction("delay 100");
-    controller->addInstruction("angle 1 0 0");
-    controller->addInstruction("angle 1 1 90");
-    controller->addInstruction("delay 300");
-    controller->addInstruction("release 1");
-    controller->addInstruction("delay 100");
+    controller->addInstruction("delay 50");
     controller->addInstruction("angle 1 0 0");
     controller->addInstruction("angle 1 1 0");
-    controller->addInstruction("delay 100");
+    controller->addInstruction("delay 400");
+    controller->addInstruction("release 1");
+    controller->addInstruction("delay 50");
+    controller->addInstruction("angle 1 0 300");
+    controller->addInstruction("angle 1 1 0");
+    controller->addInstruction("angle 2 0 270");
+    controller->addInstruction("angle 2 1 0");
+    controller->addInstruction("delay 300");
+    controller->addInstruction("grab 2");
+    controller->addInstruction("delay 50");
+    controller->addInstruction("angle 2 0 270");
+    controller->addInstruction("angle 2 1 270");
+    controller->addInstruction("delay 300");
+    controller->addInstruction("release 2");
+    controller->addInstruction("delay 50");
     controller->addInstruction("goto 0");
 }
 
@@ -106,8 +102,36 @@ void onKeyDown(int keycode) {
         }
 }
 
-int main(int argc, char **argv) {
+void mainLoop(ALLEGRO_EVENT_QUEUE* event_queue) {
     bool running = true;
+    while (running) {
+        ALLEGRO_EVENT event;
+        // ALLEGRO_TIMEOUT timeout;
+        // al_init_timeout(&timeout, 0.06);
+        // bool get_event = al_wait_for_event_until(event_queue, &event, &timeout);
+        al_wait_for_event(event_queue, &event);
+
+        switch (event.type) {
+            case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                running = false;
+                break;
+            case ALLEGRO_EVENT_TIMER:
+                tick++;
+                update();
+                redraw();
+                break;
+            case ALLEGRO_EVENT_KEY_DOWN:
+                onKeyDown(event.keyboard.keycode);
+                break;
+            default:
+                // fprintf(stderr, "Unsupported event received: %d\n", event.type);
+                break;
+        }
+    }
+    
+}
+
+int main(int argc, char **argv) {
     const int UPS = 60;
 
     // Initialize allegro
@@ -161,30 +185,7 @@ int main(int argc, char **argv) {
     init();
     gameWorld.run();
 
-    while (running) {
-        ALLEGRO_EVENT event;
-        // ALLEGRO_TIMEOUT timeout;
-        // al_init_timeout(&timeout, 0.06);
-        // bool get_event = al_wait_for_event_until(event_queue, &event, &timeout);
-        al_wait_for_event(event_queue, &event);
-
-        switch (event.type) {
-            case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                running = false;
-                break;
-            case ALLEGRO_EVENT_TIMER:
-                tick++;
-                update();
-                redraw();
-                break;
-            case ALLEGRO_EVENT_KEY_DOWN:
-                onKeyDown(event.keyboard.keycode);
-                break;
-            default:
-                // fprintf(stderr, "Unsupported event received: %d\n", event.type);
-                break;
-        }
-    }
+    mainLoop(event_queue);
 
     al_destroy_display(display);
     al_destroy_event_queue(event_queue);
