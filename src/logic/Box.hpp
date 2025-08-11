@@ -7,12 +7,15 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include "../common/common.hpp"
+#include "GameObject.hpp"
 
-class Box {
+class GameWorld;
+
+class Box : public GameObject{
     Rect2d rect;
 
 public:
-    Box(Rect2d aRect): rect(aRect) {}
+    Box(Rect2d aRect, GameWorld* aWorld): rect(aRect), GameObject(aWorld) {}
 
     void move(Point2d position) {
         Vector2d dPosition(position, rect.center());

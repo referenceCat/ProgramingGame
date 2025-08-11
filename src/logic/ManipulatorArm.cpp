@@ -4,6 +4,6 @@
 void ManipulatorArm::grab()
 {
     active = true;
-    Box* box = world->getBox(jointsPosition[jointsNumber - 1]);
+    Box* box = GameObject::parentWorld->getBox(jointsPosition[jointsNumber - 1]);
     takeBox(box);
 }

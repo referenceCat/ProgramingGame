@@ -11,11 +11,11 @@
 #include "../common/common.hpp"
 #include "ManipulatorArm.hpp"
 #include "Box.hpp"
+#include "GameObject.hpp"
 
-class Controller {
+class Controller : public GameObject {
     Rect2d rect;
     ManipulatorArm* arm = nullptr;
-    Box* box = nullptr;
 
     std::vector<std::string> instructions;
     int instrPointer = 0;
@@ -24,14 +24,10 @@ class Controller {
     int rDelay = 0;
 
 public:
-    Controller(Point2d aPos): rect(aPos, 40, 30) {}
+    Controller(Point2d aPos, GameWorld* aWorld): rect(aPos, 40, 30), GameObject(aWorld) {}
 
     void setArm(ManipulatorArm* aArm) {
         arm = aArm;
-    }
-
-    void setBox(Box* aBox) {
-        box = aBox;
     }
 
     void draw() {

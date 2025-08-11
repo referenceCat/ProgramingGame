@@ -22,7 +22,6 @@ void init() {
     Controller* controller = gameWorld.addController(Point2d(500, 100));
 
     controller->setArm(arm0);
-    controller->setBox(box0);
     controller->addInstruction("delay 50");
     controller->addInstruction("angle 0 0");
     controller->addInstruction("angle 1 90");

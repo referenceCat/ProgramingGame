@@ -7,12 +7,12 @@ ManipulatorArm* GameWorld::addManipulatorArm(int aJointsNumber, Point2d aRootJoi
     }
 
     Controller* GameWorld::addController(Point2d aPos) {
-        controllers.push_back(new Controller(aPos));
+        controllers.push_back(new Controller(aPos, this));
         return controllers.back();
     }
 
     Box* GameWorld::addBox(Rect2d aRect) {
-        boxes.push_back(new Box(Rect2d(aRect)));
+        boxes.push_back(new Box(Rect2d(aRect), this));
         return boxes.back();
     }
 
@@ -24,7 +24,7 @@ ManipulatorArm* GameWorld::addManipulatorArm(int aJointsNumber, Point2d aRootJoi
         return boxes.at(n);
     }
 
-       Box* GameWorld::getBox(Point2d aPos) {
+    Box* GameWorld::getBox(Point2d aPos) {
         for (auto box:  boxes) {
             if (box->getRect().isInside(aPos)) return box;
         }

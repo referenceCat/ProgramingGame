@@ -13,6 +13,7 @@
 #include "ManipulatorArm.hpp"
 #include "Box.hpp"
 #include "Controller.hpp"
+#include "GameObject.hpp"
 
 class GameWorld {
     std::vector<ManipulatorArm*> arms{};

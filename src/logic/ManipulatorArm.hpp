@@ -10,11 +10,11 @@
 #include <string>
 #include <algorithm>
 #include "Box.hpp"
+#include "GameObject.hpp"
 
 class GameWorld;
 
-class ManipulatorArm {
-    GameWorld* world;
+class ManipulatorArm : public GameObject {
     static constexpr int maxJointsNumber = 256;
     static constexpr double jointRotationSpeed = 0.01;
     static constexpr double segmentResizeSpeed = 1;
@@ -45,7 +45,7 @@ class ManipulatorArm {
     }
 
 public:
-    ManipulatorArm(int aJointsNumber, GameWorld* aWorld):  jointsNumber(aJointsNumber), world(aWorld) {
+    ManipulatorArm(int aJointsNumber, GameWorld* aWorld):  jointsNumber(aJointsNumber), GameObject(aWorld) {
         assert(("incorrect number of joints", 1 <= aJointsNumber <= maxJointsNumber));
         defaultInit();
     }
