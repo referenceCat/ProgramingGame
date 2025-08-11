@@ -10,10 +10,12 @@
 #include <vector>
 #include "common.hpp"
 #include "ManipulatorArm.hpp"
+#include "Box.hpp"
 
 class Controller {
     Rect2d rect;
-    ManipulatorArm* arm;
+    ManipulatorArm* arm = nullptr;
+    Box* box = nullptr;
 
     std::vector<std::string> instructions;
     int instrPointer = 0;
@@ -26,6 +28,10 @@ public:
 
     void setArm(ManipulatorArm* aArm) {
         arm = aArm;
+    }
+
+    void setBox(Box* aBox) {
+        box = aBox;
     }
 
     void draw() {
@@ -60,7 +66,7 @@ public:
         if (instrPointer >= instructions.size()) {
             return 1; // programm ended
         }
-        
+
         if (rDelay) {
             rDelay--;
 
@@ -96,6 +102,9 @@ public:
         if (command == "grab") {
             if (!arm) return 1;
             arm->grab();
+            if (box->getRect().isInside(arm->getLastJointPos())) {
+            arm->takeBox(box);
+        }
             instrPointer++;
             return 0;
         }
@@ -104,6 +113,11 @@ public:
             if (!arm) return 1;
             arm->release();
             instrPointer++;
+            return 0;
+        }
+
+        if (command == "goto") {
+            instrPointer = std::atoi(instr.at(1).c_str()); 
             return 0;
         }
 

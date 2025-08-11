@@ -79,17 +79,35 @@ void init() {
     arm0.recalculate();
 
     controller.setArm(&arm0);
+    controller.setBox(&box0);
+    controller.addInstruction("delay 50");
+    controller.addInstruction("angle 0 0");
+    controller.addInstruction("angle 1 90");
     controller.addInstruction("delay 300");
-    controller.addInstruction("angle 0 120");
-    controller.addInstruction("angle 1 120");
-    controller.addInstruction("delay 600");
     controller.addInstruction("grab");
     controller.addInstruction("delay 100");
-    controller.addInstruction("angle 0 240");
-    controller.addInstruction("angle 1 240");
-    controller.addInstruction("delay 600");
+    controller.addInstruction("angle 0 270");
+    controller.addInstruction("angle 1 30");
+    controller.addInstruction("delay 400");
     controller.addInstruction("release");
     controller.addInstruction("delay 100");
+    controller.addInstruction("angle 0 270");
+    controller.addInstruction("angle 1 60");
+    controller.addInstruction("delay 300");
+    controller.addInstruction("angle 0 270");
+    controller.addInstruction("angle 1 30");
+    controller.addInstruction("delay 300");
+    controller.addInstruction("grab");
+    controller.addInstruction("delay 100");
+    controller.addInstruction("angle 0 0");
+    controller.addInstruction("angle 1 90");
+    controller.addInstruction("delay 300");
+    controller.addInstruction("release");
+    controller.addInstruction("delay 100");
+    controller.addInstruction("angle 0 0");
+    controller.addInstruction("angle 1 0");
+    controller.addInstruction("delay 100");
+    controller.addInstruction("goto 0");
 }
 
 int main(int argc, char **argv) {
