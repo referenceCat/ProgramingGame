@@ -75,6 +75,11 @@ public:
         jointsPosition[0] = position;
     }
 
+    void cleatTarget() {
+        memcpy(jointsTargetRotation, jointsRotation, maxJointsNumber);
+        memcpy(segmentsTargetLength, segmentsLength, maxJointsNumber);
+    }
+
     void recalculate() {
         GlobalRotation lastJointTargetRotation{};
         jointsTargetPosition[0] = jointsPosition[0];

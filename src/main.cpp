@@ -6,12 +6,14 @@
 #include <allegro5/allegro_primitives.h>
 #include "ManipulatorArm.hpp"
 #include "Box.hpp"
+#include "Controller.hpp"
 
 long long tick = 0;
 
 ALLEGRO_FONT *debug_font = nullptr;
-ManipulatorArm* arm0 = new ManipulatorArm(3);
-Box* box0 = new Box(Rect2d(Point2d(300, 300), 30, 30));
+ManipulatorArm arm0(3);
+Box box0(Rect2d(Point2d(300, 300), 30, 30));
+Controller controller(Point2d(500, 100));
 
 void redraw() {
     al_set_target_bitmap(al_get_backbuffer(al_get_current_display()));
@@ -22,42 +24,37 @@ void redraw() {
     al_draw_text(debug_font, al_map_rgb(255, 255, 255), 10, 20, 0, "Current tick:");
     al_draw_text(debug_font, al_map_rgb(255, 255, 255), 110, 20, 0, std::to_string(tick).c_str());
 
-    arm0->draw();
-    box0->draw();
+    arm0.draw();
+    box0.draw();
+    controller.draw();
+    controller.drawInstructions();
+    controller.drawRegisters();
 
     al_hold_bitmap_drawing(false);
     al_flip_display();
 }
 
-void setArmTargetState() {
-    arm0->setJointTargetRotation(0, RelativeRotation(rand() / double(RAND_MAX) * M_PI * 2));
-    arm0->setJointTargetRotation(1, RelativeRotation(rand() / double(RAND_MAX) * M_PI * 2));
-    arm0->setSegmentTargetLength(0, rand() % 150 + 50);
-    arm0->setSegmentTargetLength(1, rand() % 150 + 50);
-}
-
 void update() {
     ALLEGRO_KEYBOARD_STATE keyboardState;
     al_get_keyboard_state(&keyboardState);
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_Q))  arm0->rotateJoint(0, RelativeRotation(-0.01));
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_E))  arm0->rotateJoint(0, RelativeRotation(0.01));
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_A))  arm0->rotateJoint(1, RelativeRotation(-0.01));
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_D))  arm0->rotateJoint(1, RelativeRotation(0.01));
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_Q))  arm0.rotateJoint(0, RelativeRotation(-0.01));
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_E))  arm0.rotateJoint(0, RelativeRotation(0.01));
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_A))  arm0.rotateJoint(1, RelativeRotation(-0.01));
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_D))  arm0.rotateJoint(1, RelativeRotation(0.01));
 
-    if (tick % 600 == 0) {
-        setArmTargetState();
-    }
-    arm0->moveToTarget();
-    arm0->recalculate();
+    controller.execNextInstr();
+
+    arm0.moveToTarget();
+    arm0.recalculate();
 }
 
 void onGrabKey() {
-    if (arm0->isActive()) {
-        arm0->release();
+    if (arm0.isActive()) {
+        arm0.release();
     } else {
-        arm0->grab();
-        if (box0->getRect().isInside(arm0->getLastJointPos())) {
-            arm0->takeBox(box0);
+        arm0.grab();
+        if (box0.getRect().isInside(arm0.getLastJointPos())) {
+            arm0.takeBox(&box0);
         }
     }
 }
@@ -75,11 +72,24 @@ void onKeyDown(int keycode) {
 }
 
 void init() {
-    arm0->setRootJointPosition(Point2d(200, 200));
-    arm0->setSegmentLength(0, 100);
-    arm0->setSegmentLength(1, 100);
-    setArmTargetState();
-    arm0->recalculate();
+    arm0.setRootJointPosition(Point2d(200, 200));
+    arm0.setSegmentLength(0, 100);
+    arm0.setSegmentLength(1, 100);
+    arm0.cleatTarget();
+    arm0.recalculate();
+
+    controller.setArm(&arm0);
+    controller.addInstruction("delay 300");
+    controller.addInstruction("angle 0 120");
+    controller.addInstruction("angle 1 120");
+    controller.addInstruction("delay 600");
+    controller.addInstruction("grab");
+    controller.addInstruction("delay 100");
+    controller.addInstruction("angle 0 240");
+    controller.addInstruction("angle 1 240");
+    controller.addInstruction("delay 600");
+    controller.addInstruction("release");
+    controller.addInstruction("delay 100");
 }
 
 int main(int argc, char **argv) {
@@ -131,7 +141,7 @@ int main(int argc, char **argv) {
 
     // Initialize the display
     ALLEGRO_DISPLAY *display = nullptr;
-    display = al_create_display(500, 500);
+    display = al_create_display(700, 700);
     al_register_event_source(event_queue, al_get_display_event_source(display));
     debug_font = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
 

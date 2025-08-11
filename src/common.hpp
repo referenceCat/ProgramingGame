@@ -92,6 +92,10 @@ struct Rect2d {
     }
 };
 
+double degreesToRadians(int degrees) {
+    return degrees * (M_PI / 180);
+}
+
 
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_COMMON_HPP_
