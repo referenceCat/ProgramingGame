@@ -14,39 +14,38 @@ long long tick = 0;
 GameWorld gameWorld{};
 
 void init() {
-    ManipulatorArm* arm0 = gameWorld.addManipulatorArm(3, Point2d(200, 200));
-    ManipulatorArm* arm1 = gameWorld.addManipulatorArm(3, Point2d(400, 400));
-    Box* box0 = gameWorld.addBox(Rect2d(Point2d(300, 300), 30, 30));
-    Box* box1 = gameWorld.addBox(Rect2d(Point2d(300, 400), 40, 40));
+    ManipulatorArm* arm1 = gameWorld.addManipulatorArm(3, Point2d(200, 300));
+    ManipulatorArm* arm2 = gameWorld.addManipulatorArm(3, Point2d(400, 300));
+    Machine* creator3 = gameWorld.addMachine(Point2d(100, 400));
+    Machine* furnace4 = gameWorld.addMachine(Point2d(300, 400));
+    Machine* destoyer5 = gameWorld.addMachine(Point2d(500, 400));
 
-    Controller* controller = gameWorld.addController(Point2d(500, 100));
+    Controller* controller6 = gameWorld.addController(Point2d(500, 500));
+    controller6->addInstruction("delay 50");
+    controller6->addInstruction("delay 100");
+    controller6->addInstruction("create 3");
+    controller6->addInstruction("destroy 5");
+    controller6->addInstruction("angle 1 0 180");
+    controller6->addInstruction("angle 1 1 270");
+    controller6->addInstruction("angle 2 0 180");
+    controller6->addInstruction("angle 2 1 270");
+    controller6->addInstruction("delay 400");
+    controller6->addInstruction("grab 1");
+    controller6->addInstruction("grab 2");
+    controller6->addInstruction("delay 10");
+    controller6->addInstruction("angle 1 0 0");
+    controller6->addInstruction("angle 1 1 90");
+    controller6->addInstruction("angle 2 0 0");
+    controller6->addInstruction("angle 2 1 90");
+    controller6->addInstruction("delay 400");
+    controller6->addInstruction("release 1");
+    controller6->addInstruction("release 2");
+    controller6->addInstruction("delay 10");
+    controller6->addInstruction("goto 1");
 
-    controller->addInstruction("delay 50");
-    controller->addInstruction("angle 1 0 0");
-    controller->addInstruction("angle 1 1 90");
-    controller->addInstruction("angle 2 0 0");
-    controller->addInstruction("angle 2 1 0");
-    controller->addInstruction("delay 300");
-    controller->addInstruction("grab 1");
-    controller->addInstruction("delay 50");
-    controller->addInstruction("angle 1 0 0");
-    controller->addInstruction("angle 1 1 0");
-    controller->addInstruction("delay 400");
-    controller->addInstruction("release 1");
-    controller->addInstruction("delay 50");
-    controller->addInstruction("angle 1 0 300");
-    controller->addInstruction("angle 1 1 0");
-    controller->addInstruction("angle 2 0 270");
-    controller->addInstruction("angle 2 1 0");
-    controller->addInstruction("delay 300");
-    controller->addInstruction("grab 2");
-    controller->addInstruction("delay 50");
-    controller->addInstruction("angle 2 0 270");
-    controller->addInstruction("angle 2 1 270");
-    controller->addInstruction("delay 300");
-    controller->addInstruction("release 2");
-    controller->addInstruction("delay 50");
-    controller->addInstruction("goto 0");
+    Controller* controller7 = gameWorld.addController(Point2d(500, 600));
+    controller7->addInstruction("grill 4");
+    controller7->addInstruction("goto 0");
 }
 
 void redraw() {
@@ -62,31 +61,31 @@ void redraw() {
     al_draw_text(debug_font, al_map_rgb(255, 255, 255), 110, 20, 0, std::to_string(tick).c_str());
 
     gameWorld.drawAll();
-    gameWorld.getController(5)->drawInstructions();
+    gameWorld.getController(6)->drawInstructions();
 
     al_hold_bitmap_drawing(false);
     al_flip_display();
 }
 
 void update() {
-    ManipulatorArm* arm0 = gameWorld.getManipulatorArm(0);
+    ManipulatorArm* arm1 = gameWorld.getManipulatorArm(0);
     ALLEGRO_KEYBOARD_STATE keyboardState;
     al_get_keyboard_state(&keyboardState);
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_Q))  arm0->rotateJoint(0, RelativeRotation(-0.01));
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_E))  arm0->rotateJoint(0, RelativeRotation(0.01));
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_A))  arm0->rotateJoint(1, RelativeRotation(-0.01));
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_D))  arm0->rotateJoint(1, RelativeRotation(0.01));
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_Q))  arm1->rotateJoint(0, RelativeRotation(-0.01));
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_E))  arm1->rotateJoint(0, RelativeRotation(0.01));
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_A))  arm1->rotateJoint(1, RelativeRotation(-0.01));
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_D))  arm1->rotateJoint(1, RelativeRotation(0.01));
 
     gameWorld.run();
 }
 
 void onGrabKey() {
-    ManipulatorArm* arm0 = gameWorld.getManipulatorArm(0);
+    ManipulatorArm* arm1 = gameWorld.getManipulatorArm(0);
     Box* box0 = gameWorld.getBox(0);
-    if (arm0->isActive()) {
-        arm0->release();
+    if (arm1->isActive()) {
+        arm1->release();
     } else {
-        arm0->grab();
+        arm1->grab();
     }
 }
 

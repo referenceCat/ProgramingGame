@@ -14,20 +14,29 @@
 #include "Box.hpp"
 #include "Controller.hpp"
 #include "GameObject.hpp"
+#include "Machine.hpp"
 
 class GameWorld {
     std::vector<ManipulatorArm*> arms{};
     std::vector<Box*> boxes{};
     std::vector<Controller*> controllers{};
+    std::vector<Machine*> machines{};
 
 public:
     ManipulatorArm *addManipulatorArm(int aJointsNumber, Point2d aRootJointPosition);
     Controller *addController(Point2d aPos);
     Box *addBox(Rect2d aRect);
-    ManipulatorArm *getManipulatorArm(int n);
-    Box *getBox(int n);
+    Machine *addMachine(Point2d aPos);
+
+    void removeBox(int id);
+
+    ManipulatorArm *getManipulatorArm(int id);
+    Controller *getController(int id);
+    Box *getBox(int id);
     Box *getBox(Point2d aPos);
-    Controller *getController(int n);
+    std::vector<Box*> getBoxes();
+    Machine *getMachine(int id);
+
     void drawAll();
     void run();
 };

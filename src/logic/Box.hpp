@@ -13,6 +13,7 @@ class GameWorld;
 
 class Box : public GameObject{
     Rect2d rect;
+    int temperature = 0;
 
 public:
     Box(Rect2d aRect, GameWorld* aWorld): rect(aRect), GameObject(aWorld) {}
@@ -24,11 +25,15 @@ public:
     }
 
     void draw() {
-        al_draw_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, al_map_rgb(255, 255, 255), 1);
+        al_draw_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, al_map_rgb(255, 255 - temperature, 255 - temperature), 1);
     }
 
     Rect2d getRect() {
         return rect;
+    }
+
+    void grill() {
+        if(temperature < 255) temperature++;
     }
 };
 

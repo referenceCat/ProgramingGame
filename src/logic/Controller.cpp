@@ -63,5 +63,32 @@ int Controller::execNextInstr() {
             return 0;
         }
 
+        if (command == "grill") {
+            int id = std::atoi(instr.at(1).c_str()); 
+            Machine* item = parentWorld->getMachine(id);
+            if (!item) return 1;
+            item->grillBoxes();
+            instrPointer++;
+            return 0;
+        }
+
+        if (command == "create") {
+            int id = std::atoi(instr.at(1).c_str()); 
+            Machine* item = parentWorld->getMachine(id);
+            if (!item) return 1;
+            item->createBox();
+            instrPointer++;
+            return 0;
+        }
+
+        if (command == "destroy") {
+            int id = std::atoi(instr.at(1).c_str()); 
+            Machine* item = parentWorld->getMachine(id);
+            if (!item) return 1;
+            item->destroyBoxes();
+            instrPointer++;
+            return 0;
+        }
+
         return 0;
 }

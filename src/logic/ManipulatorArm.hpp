@@ -180,6 +180,16 @@ public:
         return jointsPosition[jointsNumber - 1];
     }
 
+    void removeBox() {
+        takenBox = nullptr;
+    }
+
+    void removeBox(Box* aBox) {
+        if (takenBox == aBox) {
+            removeBox();
+        }
+    }
+
 private:
     void takeBox(Box* aBox)  {
         takenBox = aBox;

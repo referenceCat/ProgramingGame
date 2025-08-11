@@ -1,10 +1,8 @@
 cmake_minimum_required(VERSION 3.28)
 
-add_executable(DevProject   main.cpp
-                            common/common.cpp 
-                            logic/ManipulatorArm.cpp
-                            logic/GameWorld.cpp
-                             logic/Controller.cpp)
+file(GLOB_RECURSE SOURCES *.cpp )
+message(${SOURCES})
+add_executable(DevProject ${SOURCES})
 
 target_include_directories(DevProject PUBLIC logic})
 target_include_directories(DevProject PUBLIC common})

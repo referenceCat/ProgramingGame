@@ -83,6 +83,15 @@ struct Rect2d {
         return p1.x <= point.x && point.x <= p2.x && p1.y <= point.y && point.y <= p2.y;
     }
 
+    bool isInside(Rect2d rect) {
+        return p1.x <= rect.p1.x && rect.p2.x <= p2.x && p1.y <= rect.p1.y && rect.p2.y <= p2.y;
+    }
+
+    bool isIntersecting(Rect2d rect) {
+        bool horizontalIntersect = (p1.x <= rect.p1.x && rect.p1.x <= p2.x) || (p1.x <= rect.p2.x && rect.p2.x <= p2.x) || (rect.p1.x <= p1.x && p1.x <= rect.p2.x);
+        bool verticalIntersect = (p1.y <= rect.p1.y && rect.p1.y <= p2.y) || (p1.y <= rect.p2.y && rect.p2.y <= p2.y) || (rect.p1.y <= p1.y && p1.y <= rect.p2.y);
+    }
+
     Point2d center() {
         return Point2d(p1.x / 2 + p2.x / 2, p1.y/ 2 + p2.y / 2);
     }
