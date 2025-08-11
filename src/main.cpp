@@ -21,33 +21,34 @@ void init() {
 
     Controller* controller = gameWorld.addController(Point2d(500, 100));
 
-    controller->setArm(arm0);
     controller->addInstruction("delay 50");
-    controller->addInstruction("angle 0 0");
-    controller->addInstruction("angle 1 90");
+    controller->addInstruction("angle 1 0 0");
+    controller->addInstruction("angle 1 1 90");
+    controller->addInstruction("angle 2 0 0");
+    controller->addInstruction("angle 2 1 90");
     controller->addInstruction("delay 300");
-    controller->addInstruction("grab");
+    controller->addInstruction("grab 1");
     controller->addInstruction("delay 100");
-    controller->addInstruction("angle 0 270");
-    controller->addInstruction("angle 1 30");
+    controller->addInstruction("angle 1 0 270");
+    controller->addInstruction("angle 1 1 30");
     controller->addInstruction("delay 400");
-    controller->addInstruction("release");
+    controller->addInstruction("release 1");
     controller->addInstruction("delay 100");
-    controller->addInstruction("angle 0 270");
-    controller->addInstruction("angle 1 60");
+    controller->addInstruction("angle 1 0 270");
+    controller->addInstruction("angle 1 1 60");
     controller->addInstruction("delay 300");
-    controller->addInstruction("angle 0 270");
-    controller->addInstruction("angle 1 30");
+    controller->addInstruction("angle 1 0 270");
+    controller->addInstruction("angle 1 1 30");
     controller->addInstruction("delay 300");
-    controller->addInstruction("grab");
+    controller->addInstruction("grab 1");
     controller->addInstruction("delay 100");
-    controller->addInstruction("angle 0 0");
-    controller->addInstruction("angle 1 90");
+    controller->addInstruction("angle 1 0 0");
+    controller->addInstruction("angle 1 1 90");
     controller->addInstruction("delay 300");
-    controller->addInstruction("release");
+    controller->addInstruction("release 1");
     controller->addInstruction("delay 100");
-    controller->addInstruction("angle 0 0");
-    controller->addInstruction("angle 1 0");
+    controller->addInstruction("angle 1 0 0");
+    controller->addInstruction("angle 1 1 0");
     controller->addInstruction("delay 100");
     controller->addInstruction("goto 0");
 }
@@ -65,7 +66,7 @@ void redraw() {
     al_draw_text(debug_font, al_map_rgb(255, 255, 255), 110, 20, 0, std::to_string(tick).c_str());
 
     gameWorld.drawAll();
-    gameWorld.getController(0)->drawInstructions();
+    gameWorld.getController(5)->drawInstructions();
 
     al_hold_bitmap_drawing(false);
     al_flip_display();

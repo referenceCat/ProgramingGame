@@ -16,23 +16,32 @@ ManipulatorArm* GameWorld::addManipulatorArm(int aJointsNumber, Point2d aRootJoi
         return boxes.back();
     }
 
-    ManipulatorArm* GameWorld::getManipulatorArm(int n) {
-        return arms.at(n);
+    ManipulatorArm* GameWorld::getManipulatorArm(int id) {
+        for (auto object: arms) {
+            if (object->getId() == id) return object;
+        }
+        return nullptr;
     }
 
-    Box* GameWorld::getBox(int n) {
-        return boxes.at(n);
+    Box* GameWorld::getBox(int id) {
+        for (auto object: boxes) {
+            if (object->getId() == id) return object;
+        }
+        return nullptr;
     }
 
     Box* GameWorld::getBox(Point2d aPos) {
-        for (auto box:  boxes) {
+        for (auto box: boxes) {
             if (box->getRect().isInside(aPos)) return box;
         }
         return nullptr;
     }
 
-    Controller* GameWorld::getController(int n) {
-        return controllers.at(n);
+    Controller* GameWorld::getController(int id) {
+        for (auto object: controllers) {
+            if (object->getId() == id) return object;
+        }
+        return nullptr;
     }
 
     void GameWorld::drawAll() {

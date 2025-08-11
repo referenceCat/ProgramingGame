@@ -15,7 +15,6 @@
 
 class Controller : public GameObject {
     Rect2d rect;
-    ManipulatorArm* arm = nullptr;
 
     std::vector<std::string> instructions;
     int instrPointer = 0;
@@ -25,10 +24,6 @@ class Controller : public GameObject {
 
 public:
     Controller(Point2d aPos, GameWorld* aWorld): rect(aPos, 40, 30), GameObject(aWorld) {}
-
-    void setArm(ManipulatorArm* aArm) {
-        arm = aArm;
-    }
 
     void draw() {
         al_draw_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, al_map_rgb(100, 255, 100), 1);
@@ -58,64 +53,7 @@ public:
     }
 
     // returns error code
-    int execNextInstr() {
-        if (instrPointer >= instructions.size()) {
-            return 1; // programm ended
-        }
-
-        if (rDelay) {
-            rDelay--;
-
-            if (rDelay == 0) {
-                instrPointer++;
-            }
-
-            return 0;
-        }
-
-        std::vector<std::string> instr = split(instructions.at(instrPointer), " ");
-
-        if (instr.size() < 1) {
-            return 1;
-        }
-
-        std::string command = instr.at(0);
-
-        if (command == "delay") {
-            rDelay = std::atoi(instr.at(1).c_str());
-            return 0;
-        }
-
-        if (command == "angle") {
-            if (!arm) return 1;
-            int joint = std::atoi(instr.at(1).c_str()); 
-            int angle = std::atoi(instr.at(2).c_str()); 
-            arm->setJointTargetRotation(joint, degreesToRadians(angle));
-            instrPointer++;
-            return 0;
-        }
-
-        if (command == "grab") {
-            if (!arm) return 1;
-            arm->grab();
-            instrPointer++;
-            return 0;
-        }
-
-        if (command == "release") {
-            if (!arm) return 1;
-            arm->release();
-            instrPointer++;
-            return 0;
-        }
-
-        if (command == "goto") {
-            instrPointer = std::atoi(instr.at(1).c_str()); 
-            return 0;
-        }
-
-        return 0;
-    }
+    int execNextInstr();
 
     void drawInstructions() {
         ALLEGRO_FONT *debug_font = nullptr;
