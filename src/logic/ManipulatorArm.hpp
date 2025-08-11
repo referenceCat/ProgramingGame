@@ -33,9 +33,9 @@ class ManipulatorArm {
 
     void defaultInit() {
         for (int i = 0; i < jointsNumber; i++) {
-            setSegmentLength(i, 50);
+            setSegmentLength(i, 100);
             setJointRotation(i, RelativeRotation(0.1));
-            setSegmentTargetLength(i, 50);
+            setSegmentTargetLength(i, 100);
             setJointTargetRotation(i, RelativeRotation(0.1));
         }
         recalculate();
