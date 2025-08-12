@@ -20,6 +20,8 @@ auto end = std::chrono::system_clock::now();
 GameWorld gameWorld{};
 GuiEngine guiEngine{};
 
+ALLEGRO_FONT* debug_font = nullptr;
+
 void init() {
     ManipulatorArm* arm1 = gameWorld.addManipulatorArm(3, Point2d(200, 300));
     ManipulatorArm* arm2 = gameWorld.addManipulatorArm(3, Point2d(400, 300));
@@ -58,9 +60,6 @@ void init() {
 }
 
 void redraw() {
-    ALLEGRO_FONT *debug_font = nullptr;
-    debug_font = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
-
     al_set_target_bitmap(al_get_backbuffer(al_get_current_display()));
     al_clear_to_color(al_map_rgb(0, 0, 0));
     al_hold_bitmap_drawing(true);
@@ -177,6 +176,10 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    debug_font = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
+    GameObject::debug_font = debug_font;
+    Button::debug_font = debug_font;
+
     // Initialize allegro primitives addon
     if (!al_init_primitives_addon()) {
         fprintf(stderr, "Failed to primitives allegro ttf addon.\n");
@@ -215,6 +218,7 @@ int main(int argc, char **argv) {
 
     al_destroy_display(display);
     al_destroy_event_queue(event_queue);
+    al_destroy_font(debug_font);
 
     return 0;
 }

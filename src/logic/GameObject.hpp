@@ -2,6 +2,7 @@
 #define __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_GAMEOBJECT_HPP_
 
 class GameWorld;
+#include "allegro5/allegro_font.h"
 
 class GameObject {
 private:
@@ -12,6 +13,7 @@ protected:
     GameWorld* parentWorld;
 
 public:
+    inline static ALLEGRO_FONT* debug_font = nullptr; // TODO wrong way to do it
     GameObject(GameWorld* aWorld):id(++lastId), parentWorld(aWorld) {};
     int getId() {
         return id;

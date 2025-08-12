@@ -7,4 +7,3 @@ Point2d Point2d::operator+ (Vector2d vector) {
 double degreesToRadians(int degrees) {
     return degrees * (M_PI / 180);
 }
-

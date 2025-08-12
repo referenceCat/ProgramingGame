@@ -115,9 +115,7 @@ public:
 
         // draw current state
         for (int i = 0; i < jointsNumber; i++) {
-            ALLEGRO_FONT *debug_font = nullptr;
-            debug_font = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
-            al_draw_text(debug_font, al_map_rgb(255, 255, 255), jointsPosition[i].x + 5, jointsPosition[i].y + 5, 0, std::to_string(i).c_str());
+            al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), jointsPosition[i].x + 5, jointsPosition[i].y + 5, 0, std::to_string(i).c_str());
             al_draw_filled_circle(jointsPosition[i].x, jointsPosition[i].y, 3, al_map_rgb(255, 255, 255));
         }
 

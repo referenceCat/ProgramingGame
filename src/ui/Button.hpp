@@ -17,6 +17,7 @@ class Button {
     bool hover = 0;
 
 public:
+    inline static ALLEGRO_FONT* debug_font = nullptr;
     Button(Rect2d aRect, std::string text): rect(aRect), text(text) {};
     void setText(std::string aText) {
         text = aText;
@@ -35,9 +36,6 @@ public:
         }
 
         al_draw_filled_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, color);
-
-        ALLEGRO_FONT *debug_font = nullptr;
-        debug_font = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
         al_draw_text(debug_font, al_map_rgb(0, 0, 0), rect.center().x - al_get_text_width(debug_font, text.c_str()) / 2, rect.center().y - al_get_font_line_height(debug_font) / 2, 0, text.c_str());
     }
 

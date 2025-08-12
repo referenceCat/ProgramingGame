@@ -56,22 +56,18 @@ public:
     int execNextInstr();
 
     void drawInstructions() {
-        ALLEGRO_FONT *debug_font = nullptr;
-        debug_font = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
         for (int i = 0; i < instructions.size(); i++) {
-            al_draw_text(debug_font, al_map_rgb(255, 255, 255), 30, 40 + i * 10, 0, instructions.at(i).c_str());
+            al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), 30, 40 + i * 10, 0, instructions.at(i).c_str());
         }
         al_draw_line(10,  43 + instrPointer * 10 + 5, 20, 40 + instrPointer * 10 + 5, al_map_rgb(255, 255, 255), 1);
         al_draw_line(10,  37 + instrPointer * 10 + 5, 20, 40 + instrPointer * 10 + 5, al_map_rgb(255, 255, 255), 1);
     }
 
     void drawRegisters() {
-        ALLEGRO_FONT *debug_font = nullptr;
-        debug_font = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
-        al_draw_text(debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 10, 0, std::to_string(instrPointer).c_str());
-        al_draw_text(debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 20, 0, std::to_string(r1).c_str());
-        al_draw_text(debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 30, 0, std::to_string(r2).c_str());
-        al_draw_text(debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 40, 0, std::to_string(rDelay).c_str());
+        al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 10, 0, std::to_string(instrPointer).c_str());
+        al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 20, 0, std::to_string(r1).c_str());
+        al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 30, 0, std::to_string(r2).c_str());
+        al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 40, 0, std::to_string(rDelay).c_str());
     }
 };
 
