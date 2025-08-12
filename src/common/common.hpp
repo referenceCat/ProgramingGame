@@ -90,6 +90,7 @@ struct Rect2d {
     bool isIntersecting(Rect2d rect) {
         bool horizontalIntersect = (p1.x <= rect.p1.x && rect.p1.x <= p2.x) || (p1.x <= rect.p2.x && rect.p2.x <= p2.x) || (rect.p1.x <= p1.x && p1.x <= rect.p2.x);
         bool verticalIntersect = (p1.y <= rect.p1.y && rect.p1.y <= p2.y) || (p1.y <= rect.p2.y && rect.p2.y <= p2.y) || (rect.p1.y <= p1.y && p1.y <= rect.p2.y);
+        return verticalIntersect && horizontalIntersect;
     }
 
     Point2d center() {

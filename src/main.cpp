@@ -1,17 +1,24 @@
 #include <string>
-#include "common/common.hpp"
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_primitives.h>
+#include "common/common.hpp"
 #include "logic/ManipulatorArm.hpp"
 #include "logic/Box.hpp"
 #include "logic/Controller.hpp"
 #include "logic/GameWorld.hpp"
+#include "ui/GuiEngine.hpp"
+#include <iostream>
+#include <chrono>
 
 long long tick = 0;
+long long eventCounter = 0;
+auto start = std::chrono::system_clock::now();
+auto end = std::chrono::system_clock::now();
 
 GameWorld gameWorld{};
+GuiEngine guiEngine{};
 
 void init() {
     ManipulatorArm* arm1 = gameWorld.addManipulatorArm(3, Point2d(200, 300));
@@ -46,6 +53,8 @@ void init() {
     Controller* controller7 = gameWorld.addController(Point2d(500, 600));
     controller7->addInstruction("grill 4");
     controller7->addInstruction("goto 0");
+
+    guiEngine.addButton(Rect2d(Point2d(100, 600), 30, 100), "test");
 }
 
 void redraw() {
@@ -59,15 +68,23 @@ void redraw() {
     al_draw_text(debug_font, al_map_rgb(255, 255, 255), 10, 10, 0, "Programing game");
     al_draw_text(debug_font, al_map_rgb(255, 255, 255), 10, 20, 0, "Current tick:");
     al_draw_text(debug_font, al_map_rgb(255, 255, 255), 110, 20, 0, std::to_string(tick).c_str());
+    al_draw_text(debug_font, al_map_rgb(255, 255, 255), 150, 20, 0, "Events counter:");
+    al_draw_text(debug_font, al_map_rgb(255, 255, 255), 270, 20, 0, std::to_string(eventCounter).c_str());
+    al_draw_text(debug_font, al_map_rgb(255, 255, 255), 320, 20, 0, "FPS:");
+    auto elapsed_ms = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+    al_draw_text(debug_font, al_map_rgb(255, 255, 255), 360, 20, 0, std::to_string(1000000 / elapsed_ms).c_str());
 
     gameWorld.drawAll();
     gameWorld.getController(6)->drawInstructions();
+
+    guiEngine.draw();
 
     al_hold_bitmap_drawing(false);
     al_flip_display();
 }
 
 void update() {
+    tick++;
     ManipulatorArm* arm1 = gameWorld.getManipulatorArm(0);
     ALLEGRO_KEYBOARD_STATE keyboardState;
     al_get_keyboard_state(&keyboardState);
@@ -109,19 +126,28 @@ void mainLoop(ALLEGRO_EVENT_QUEUE* event_queue) {
         // al_init_timeout(&timeout, 0.06);
         // bool get_event = al_wait_for_event_until(event_queue, &event, &timeout);
         al_wait_for_event(event_queue, &event);
-
+        eventCounter++;
         switch (event.type) {
             case ALLEGRO_EVENT_DISPLAY_CLOSE:
                 running = false;
                 break;
             case ALLEGRO_EVENT_TIMER:
-                tick++;
+                start = end;
+                end = std::chrono::system_clock::now();
                 update();
                 redraw();
                 break;
             case ALLEGRO_EVENT_KEY_DOWN:
+                std::cout << event.keyboard.keycode << std::endl;
                 onKeyDown(event.keyboard.keycode);
                 break;
+            case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+                guiEngine.click(Point2d(event.mouse.x, event.mouse.y));
+                break;
+            case ALLEGRO_EVENT_MOUSE_AXES: case ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY: case ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY:
+                guiEngine.moveMouse(Point2d(event.mouse.x, event.mouse.y));
+                break;
+
             default:
                 // fprintf(stderr, "Unsupported event received: %d\n", event.type);
                 break;
@@ -167,8 +193,9 @@ int main(int argc, char **argv) {
 
     //Initialize user inputs
     al_install_keyboard();
-    al_install_mouse();
     al_register_event_source(event_queue, al_get_keyboard_event_source());
+
+    al_install_mouse();
     al_register_event_source(event_queue, al_get_mouse_event_source());
 
     // Initialize the timers
