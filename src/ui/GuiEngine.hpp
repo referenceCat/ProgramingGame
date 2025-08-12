@@ -6,15 +6,22 @@
 #include "allegro5/allegro5.h"
 #include "allegro5/allegro_primitives.h"
 #include "../common/common.hpp"
+#include "Window.hpp"
 
 class GuiEngine {
     std::vector<Button*> buttons;
+    std::vector<Window*> windows;
+    inline static ALLEGRO_FONT* debug_font = nullptr;
 
 public:
     GuiEngine() {};
 
     void draw() {
         for (auto item: buttons) {
+            item->draw();
+        }
+
+        for (auto item: windows) {
             item->draw();
         }
     };
@@ -46,8 +53,12 @@ public:
         return false;
     }
 
-    void addButton(Rect2d aRect, std::string text) {
-        buttons.push_back(new Button(aRect, text));
+    void addButton(Rect2d aRect) {
+        buttons.push_back(new Button(aRect));
+    };
+
+    void addWindow(Rect2d aRect, std::string text, bool movable, bool closable) {
+        windows.push_back(new Window(aRect, text, movable, closable));
     };
 };
 

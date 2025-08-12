@@ -14,8 +14,6 @@
 
 long long tick = 0;
 long long eventCounter = 0;
-auto start = std::chrono::system_clock::now();
-auto end = std::chrono::system_clock::now();
 
 GameWorld gameWorld{};
 GuiEngine guiEngine{};
@@ -56,10 +54,12 @@ void init() {
     controller7->addInstruction("grill 4");
     controller7->addInstruction("goto 0");
 
-    guiEngine.addButton(Rect2d(Point2d(100, 600), 30, 100), "test");
+    guiEngine.addButton(Rect2d(Point2d(100, 600), 30, 100));
+    guiEngine.addWindow(Rect2d(Point2d(300, 300), 400, 200), "window 1", true, true);
 }
 
 void redraw() {
+    auto start = std::chrono::system_clock::now();
     al_set_target_bitmap(al_get_backbuffer(al_get_current_display()));
     al_clear_to_color(al_map_rgb(0, 0, 0));
     al_hold_bitmap_drawing(true);
@@ -69,17 +69,20 @@ void redraw() {
     al_draw_text(debug_font, al_map_rgb(255, 255, 255), 110, 20, 0, std::to_string(tick).c_str());
     al_draw_text(debug_font, al_map_rgb(255, 255, 255), 150, 20, 0, "Events counter:");
     al_draw_text(debug_font, al_map_rgb(255, 255, 255), 270, 20, 0, std::to_string(eventCounter).c_str());
-    al_draw_text(debug_font, al_map_rgb(255, 255, 255), 320, 20, 0, "FPS:");
-    auto elapsed_ms = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-    al_draw_text(debug_font, al_map_rgb(255, 255, 255), 360, 20, 0, std::to_string(1000000 / elapsed_ms).c_str());
 
     gameWorld.drawAll();
     gameWorld.getController(6)->drawInstructions();
 
-    guiEngine.draw();
-
     al_hold_bitmap_drawing(false);
+
+    al_hold_bitmap_drawing(true);
+    guiEngine.draw();
+    al_hold_bitmap_drawing(false);
+    
     al_flip_display();
+    auto end = std::chrono::system_clock::now();
+    auto elapsed_ms = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+    std::cout << elapsed_ms << std::endl;
 }
 
 void update() {
@@ -131,8 +134,6 @@ void mainLoop(ALLEGRO_EVENT_QUEUE* event_queue) {
                 running = false;
                 break;
             case ALLEGRO_EVENT_TIMER:
-                start = end;
-                end = std::chrono::system_clock::now();
                 update();
                 redraw();
                 break;
@@ -178,7 +179,6 @@ int main(int argc, char **argv) {
 
     debug_font = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
     GameObject::debug_font = debug_font;
-    Button::debug_font = debug_font;
 
     // Initialize allegro primitives addon
     if (!al_init_primitives_addon()) {
@@ -208,6 +208,7 @@ int main(int argc, char **argv) {
 
     // Initialize the display
     ALLEGRO_DISPLAY *display = nullptr;
+    al_set_new_display_option(ALLEGRO_VSYNC, 2, ALLEGRO_REQUIRE);
     display = al_create_display(700, 700);
     al_register_event_source(event_queue, al_get_display_event_source(display));
 
