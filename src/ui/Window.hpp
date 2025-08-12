@@ -33,7 +33,7 @@ public:
         }
 
         if (closable) {
-            buttons.push_back(new Button(Rect2d(Point2d(10, 10), 12, 12)));
+            buttons.push_back(new Button(Rect2d(Point2d(10, 10), 14, 14)));
         }
 
         if (closable || movable) {

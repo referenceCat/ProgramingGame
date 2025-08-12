@@ -27,7 +27,7 @@ void Window::draw() {
     GuiEngine::drawingIndent.y -= rect.p1.y;
 
     if (closable) {
-        al_draw_line(rect.p1.x + 6, rect.p1.y + 6, rect.p1.x + 16, rect.p1.y + 16, primaryColor, 2);
-        al_draw_line(rect.p1.x + 6, rect.p1.y + 16, rect.p1.x + 16, rect.p1.y + 6, primaryColor, 2);
+        al_draw_line(rect.p1.x + 5, rect.p1.y + 5, rect.p1.x + 16, rect.p1.y + 16, primaryColor, 2);
+        al_draw_line(rect.p1.x + 5, rect.p1.y + 16, rect.p1.x + 16, rect.p1.y + 5, primaryColor, 2);
     }
 };
