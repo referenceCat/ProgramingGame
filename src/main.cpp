@@ -55,7 +55,7 @@ void init() {
     controller7->addInstruction("goto 0");
 
     guiEngine.addButton(Rect2d(Point2d(100, 600), 30, 100));
-    guiEngine.addWindow(Rect2d(Point2d(300, 300), 400, 200), "window 1", true, true);
+    guiEngine.addWindow(Rect2d(Point2d(300, 300), 400, 200), true, true);
 }
 
 void redraw() {

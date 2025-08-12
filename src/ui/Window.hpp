@@ -11,14 +11,13 @@
 
 class Window {
     Rect2d rect;
-    std::string text;
     bool movable;
     bool closable;
     inline static ALLEGRO_COLOR backgroundColor = al_map_rgb(30, 30, 30);
     inline static ALLEGRO_COLOR primaryColor = al_map_rgb(200, 200, 200);
 
 public:
-    Window(Rect2d rect, std::string name, bool movable = false, bool closable = false): rect(rect), text(name), movable(movable), closable(closable) {};
+    Window(Rect2d rect, bool movable = false, bool closable = false): rect(rect), movable(movable), closable(closable) {};
 
     void draw() {
         al_draw_filled_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, backgroundColor);

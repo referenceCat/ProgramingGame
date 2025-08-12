@@ -57,8 +57,8 @@ public:
         buttons.push_back(new Button(aRect));
     };
 
-    void addWindow(Rect2d aRect, std::string text, bool movable, bool closable) {
-        windows.push_back(new Window(aRect, text, movable, closable));
+    void addWindow(Rect2d aRect, bool movable, bool closable) {
+        windows.push_back(new Window(aRect, movable, closable));
     };
 };
 
