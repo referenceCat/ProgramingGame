@@ -1,0 +1,33 @@
+#include "Window.hpp"
+#include "GuiEngine.hpp"
+
+void Window::draw() {
+    al_draw_filled_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, backgroundColor);
+    al_draw_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, primaryColor, 2);
+    if (movable || closable) {
+        al_draw_rectangle(rect.p1.x + 4, rect.p1.y + 20, rect.p2.x - 4, rect.p2.y - 4, primaryColor, 2);
+    } else {
+        al_draw_rectangle(rect.p1.x + 4, rect.p1.y + 4, rect.p2.x - 4, rect.p2.y - 4, primaryColor, 2);
+    }
+
+    if (movable) {
+        al_draw_filled_rectangle(rect.p1.x + dragArea.p1.x, rect.p1.y + dragArea.p1.y, rect.p1.x + dragArea.p2.x, rect.p1.y + dragArea.p2.y, primaryColor);
+    }
+
+    GuiEngine::drawingIndent.x += rect.p1.x;
+    GuiEngine::drawingIndent.y += rect.p1.y;
+
+    // draw every child here
+
+    for (auto item: buttons) {
+        item->draw();
+    }
+
+    GuiEngine::drawingIndent.x -= rect.p1.x;
+    GuiEngine::drawingIndent.y -= rect.p1.y;
+
+    if (closable) {
+        al_draw_line(rect.p1.x + 6, rect.p1.y + 6, rect.p1.x + 16, rect.p1.y + 16, primaryColor, 2);
+        al_draw_line(rect.p1.x + 6, rect.p1.y + 16, rect.p1.x + 16, rect.p1.y + 6, primaryColor, 2);
+    }
+};

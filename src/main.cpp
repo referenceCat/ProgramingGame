@@ -54,12 +54,11 @@ void init() {
     controller7->addInstruction("grill 4");
     controller7->addInstruction("goto 0");
 
-    guiEngine.addButton(Rect2d(Point2d(100, 600), 30, 100));
     guiEngine.addWindow(Rect2d(Point2d(300, 300), 400, 200), true, true);
 }
 
 void redraw() {
-    auto start = std::chrono::system_clock::now();
+    // auto start = std::chrono::system_clock::now();
     al_set_target_bitmap(al_get_backbuffer(al_get_current_display()));
     al_clear_to_color(al_map_rgb(0, 0, 0));
     al_hold_bitmap_drawing(true);
@@ -80,9 +79,9 @@ void redraw() {
     al_hold_bitmap_drawing(false);
     
     al_flip_display();
-    auto end = std::chrono::system_clock::now();
-    auto elapsed_ms = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-    std::cout << elapsed_ms << std::endl;
+    // auto end = std::chrono::system_clock::now();
+    // auto elapsed_ms = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+    // std::cout << elapsed_ms << std::endl;
 }
 
 void update() {

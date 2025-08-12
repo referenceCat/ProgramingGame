@@ -8,35 +8,74 @@
 #include "allegro5/allegro_ttf.h"
 #include <functional>
 #include "../common/common.hpp"
+#include "Button.hpp"
+#include <memory>
+#include <vector>
+
+class GuiEngine;
 
 class Window {
     Rect2d rect;
+    int z = 0;
     bool movable;
     bool closable;
+    Vector2d indent{8, 8};
     inline static ALLEGRO_COLOR backgroundColor = al_map_rgb(30, 30, 30);
     inline static ALLEGRO_COLOR primaryColor = al_map_rgb(200, 200, 200);
 
+    Rect2d dragArea = Rect2d();
+    std::vector<Button*> buttons;
+
 public:
-    Window(Rect2d rect, bool movable = false, bool closable = false): rect(rect), movable(movable), closable(closable) {};
-
-    void draw() {
-        al_draw_filled_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, backgroundColor);
-        al_draw_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, primaryColor, 2);
-        if (movable || closable) {
-            al_draw_rectangle(rect.p1.x + 4, rect.p1.y + 20, rect.p2.x - 4, rect.p2.y - 4, primaryColor, 2);
-        } else {
-            al_draw_rectangle(rect.p1.x + 4, rect.p1.y + 4, rect.p2.x - 4, rect.p2.y - 4, primaryColor, 2);
-        }
-        
-        if (closable) {
-            al_draw_line(rect.p1.x + 6, rect.p1.y + 6, rect.p1.x + 16, rect.p1.y + 16, primaryColor, 2);
-            al_draw_line(rect.p1.x + 6, rect.p1.y + 16, rect.p1.x + 16, rect.p1.y + 6, primaryColor, 2);
-        }
-
+    Window(Rect2d rect, bool movable = false, bool closable = false): rect(rect), movable(movable), closable(closable) {
         if (movable) {
-            al_draw_filled_rectangle(rect.p1.x + 20, rect.p1.y + 4, rect.p1.x + 70, rect.p1.y + 16, primaryColor);
+            dragArea = Rect2d(Point2d(20, 4), Point2d(70, 16));
         }
-        
+
+        if (closable) {
+            buttons.push_back(new Button(Rect2d(Point2d(10, 10), 12, 12)));
+        }
+
+        if (closable || movable) {
+            indent.y = 24;
+        }
+    };
+
+    void draw();
+
+    // returns true if clicked on some gui element
+    bool click(Point2d aPos) {
+        for (auto item: buttons) {
+            if (item->getRect().isInside(aPos)) {
+                item->click();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool moveMouse(Point2d aPos) {
+        for (auto item: buttons) {
+            item->setTinted(false);
+        }
+
+        for (auto item: buttons) {
+            if (item->getRect().isInside(aPos)) {
+                item->setTinted(true);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    void addButton(Rect2d aRect) {
+        buttons.push_back(new Button(aRect));
+    };
+
+    Rect2d getRect() {
+        return rect;
     }
 };
 

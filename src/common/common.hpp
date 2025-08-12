@@ -49,6 +49,7 @@ struct Point2d {
     Point2d(): x(0), y(0) {}
 
     Point2d operator+ (Vector2d vector);
+    Point2d operator- (Vector2d vector);
 };
 
 struct Vector2d {
@@ -56,6 +57,8 @@ struct Vector2d {
     double y;
 
     Vector2d(): x(0), y(0) {}
+
+    Vector2d(double x, double y): x(x), y(y) {}
 
     Vector2d(Point2d p1, Point2d p2) {
         x = p1.x - p2.x;
@@ -72,12 +75,16 @@ struct Rect2d {
     Point2d p1;
     Point2d p2;
 
+    Rect2d(): p1(Point2d()), p2(Point2d()) {};
+
     Rect2d(Point2d center, double height, double width) {
         p1.x = center.x - width / 2;
         p1.y = center.y - height / 2;
         p2.x = center.x + width / 2;
         p2.y = center.y + height / 2;
     }
+
+    Rect2d(Point2d p1, Point2d p2): p1(p1), p2(p2) {}
 
     bool isInside(Point2d point) {
         return p1.x <= point.x && point.x <= p2.x && p1.y <= point.y && point.y <= p2.y;

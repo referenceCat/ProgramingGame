@@ -9,18 +9,15 @@
 #include "Window.hpp"
 
 class GuiEngine {
-    std::vector<Button*> buttons;
     std::vector<Window*> windows;
-    inline static ALLEGRO_FONT* debug_font = nullptr;
 
 public:
+    inline static ALLEGRO_FONT* debug_font = nullptr;
+    inline static Vector2d drawingIndent{};
+    
     GuiEngine() {};
 
     void draw() {
-        for (auto item: buttons) {
-            item->draw();
-        }
-
         for (auto item: windows) {
             item->draw();
         }
@@ -28,9 +25,12 @@ public:
 
     // returns true if clicked on some gui element
     bool click(Point2d aPos) {
-        for (auto item: buttons) {
+        for (auto item: windows) {
             if (item->getRect().isInside(aPos)) {
-                item->click();
+                Point2d relativePos = aPos;
+                relativePos.x -= item->getRect().p1.x;
+                relativePos.y -= item->getRect().p1.y;
+                item->click(relativePos);
                 return true;
             }
         }
@@ -39,23 +39,18 @@ public:
     }
 
     bool moveMouse(Point2d aPos)  {
-        for (auto item: buttons) {
-            item->setTinted(false);
-        }
-
-        for (auto item: buttons) {
+        for (auto item: windows) {
             if (item->getRect().isInside(aPos)) {
-                item->setTinted(true);
+                Point2d relativePos = aPos;
+                relativePos.x -= item->getRect().p1.x;
+                relativePos.y -= item->getRect().p1.y;
+                item->moveMouse(relativePos);
                 return true;
             }
         }
 
         return false;
     }
-
-    void addButton(Rect2d aRect) {
-        buttons.push_back(new Button(aRect));
-    };
 
     void addWindow(Rect2d aRect, bool movable, bool closable) {
         windows.push_back(new Window(aRect, movable, closable));

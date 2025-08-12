@@ -9,6 +9,8 @@
 #include <functional>
 #include "../common/common.hpp"
 
+class GuiEngine;
+
 class Button {
     Rect2d rect;
     std::string text;
@@ -23,16 +25,7 @@ public:
         hover = value;
     }
 
-    void draw() {
-        ALLEGRO_COLOR color = al_map_rgb(20 + tintLevel * 15, 20 + tintLevel * 15, 20 + tintLevel * 15);
-        if (hover && tintLevel <= 5) {
-            tintLevel = 5;
-        } else if (tintLevel > 0) {
-            tintLevel--;
-        }
-
-        al_draw_filled_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, color);
-    }
+    void draw();
 
     void setOnClickCallback(std::function<void()> aCallback) {
         onClickCallback = aCallback;
