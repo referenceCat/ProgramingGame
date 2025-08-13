@@ -15,17 +15,17 @@
 long long tick = 0;
 long long eventCounter = 0;
 
-GameWorld gameWorld{};
+GameWorld gameWorld{}; // should be singleton? maybe not?
 ALLEGRO_FONT* debug_font = nullptr;
 
 void init() {
-    ManipulatorArm* arm1 = gameWorld.addManipulatorArm(3, Point2d(200, 300));
-    ManipulatorArm* arm2 = gameWorld.addManipulatorArm(3, Point2d(400, 300));
-    Machine* creator3 = gameWorld.addMachine(Point2d(100, 400));
-    Machine* furnace4 = gameWorld.addMachine(Point2d(300, 400));
-    Machine* destoyer5 = gameWorld.addMachine(Point2d(500, 400));
+    auto arm1 = gameWorld.addManipulatorArm(3, Point2d(200, 300));
+    auto arm2 = gameWorld.addManipulatorArm(3, Point2d(400, 300));
+    auto creator3 = gameWorld.addMachine(Point2d(100, 400));
+    auto furnace4 = gameWorld.addMachine(Point2d(300, 400));
+    auto destoyer5 = gameWorld.addMachine(Point2d(500, 400));
 
-    Controller* controller6 = gameWorld.addController(Point2d(500, 500));
+    auto controller6 = gameWorld.addController(Point2d(500, 500));
     controller6->addInstruction("delay 50");
     controller6->addInstruction("delay 100");
     controller6->addInstruction("create 3");
@@ -48,11 +48,14 @@ void init() {
     controller6->addInstruction("delay 10");
     controller6->addInstruction("goto 1");
 
-    Controller* controller7 = gameWorld.addController(Point2d(500, 600));
+    auto controller7 = gameWorld.addController(Point2d(500, 600));
     controller7->addInstruction("grill 4");
     controller7->addInstruction("goto 0");
 
-    GuiEngine::getInstance()->addWindow(Rect2d(Point2d(300, 300), 400, 200), true, true);
+    auto window = GuiEngine::getInstance()->addWindow(Rect2d(Point2d(300, 300), 400, 200), true, true);
+    auto button = window->addButton(Rect2d(Point2d(20, 40), Point2d(120, 80)));
+    button->setOnClickCallback([](){std::cout << "Hello!" << std::endl;});
+    
 }
 
 void redraw() {
@@ -84,7 +87,7 @@ void redraw() {
 
 void update() {
     tick++;
-    ManipulatorArm* arm1 = gameWorld.getManipulatorArm(0);
+    auto arm1 = gameWorld.getManipulatorArm(0);
     ALLEGRO_KEYBOARD_STATE keyboardState;
     al_get_keyboard_state(&keyboardState);
     if (al_key_down(&keyboardState, ALLEGRO_KEY_Q))  arm1->rotateJoint(0, RelativeRotation(-0.01));
@@ -96,8 +99,8 @@ void update() {
 }
 
 void onGrabKey() {
-    ManipulatorArm* arm1 = gameWorld.getManipulatorArm(0);
-    Box* box0 = gameWorld.getBox(0);
+    auto arm1 = gameWorld.getManipulatorArm(0);
+    auto box0 = gameWorld.getBox(0);
     if (arm1->isActive()) {
         arm1->release();
     } else {

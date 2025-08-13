@@ -18,7 +18,7 @@ class Window {
     Rect2d rect;
     int z = 0;
 
-    Vector2d indent{8, 8};
+    // Vector2d indent{8, 8};
     inline static ALLEGRO_COLOR backgroundColor = al_map_rgb(30, 30, 30);
     inline static ALLEGRO_COLOR primaryColor = al_map_rgb(200, 200, 200);
 
@@ -79,8 +79,9 @@ public:
         return false;
     }
 
-    void addButton(Rect2d aRect) {
+    Button* addButton(Rect2d aRect) {
         buttons.push_back(new Button(aRect));
+        return buttons.back();
     };
 
     Rect2d getRect() {

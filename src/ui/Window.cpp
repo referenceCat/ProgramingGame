@@ -10,7 +10,7 @@ Window::Window(Rect2d rect, bool movable = false, bool closable = false): rect(r
         buttons.back()->setOnClickCallback([=]() {GuiEngine::getInstance()->closeWindow(this);});
     }
     if (closable || movable) {
-        indent.y = 24;
+        // indent.y = 24;
     }
 };
 
