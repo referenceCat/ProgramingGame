@@ -33,6 +33,7 @@ public:
     Rect2d getRect() {
         return rect;
     }
-};
 
+    void setText(std::string aText);
+};
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_UI_TEXT_HPP_

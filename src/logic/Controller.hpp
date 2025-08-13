@@ -12,15 +12,21 @@
 #include "ManipulatorArm.hpp"
 #include "Box.hpp"
 #include "GameObject.hpp"
+#include "../ui/GuiEngine.hpp"
 
 class Controller : public GameObject {
     Rect2d rect;
 
     std::vector<std::string> instructions;
-    int instrPointer = 0;
+    int rInstr = 0;
     int r1 = 0;
     int r2 = 0;
     int rDelay = 0;
+
+    Window* window = nullptr;
+    std::vector<Label*> instrLabels;
+    Label* rInstrLabel;
+    Label* rDelayLabel;
 
 public:
     Controller(Point2d aPos, GameWorld* aWorld): rect(aPos, 40, 30), GameObject(aWorld) {}
@@ -52,6 +58,10 @@ public:
         return tokens;
     }
 
+    void createWindow();
+
+    void updateWindow();
+
     // returns error code
     int execNextInstr();
 
@@ -59,12 +69,12 @@ public:
         for (int i = 0; i < instructions.size(); i++) {
             al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), 30, 40 + i * 10, 0, instructions.at(i).c_str());
         }
-        al_draw_line(10,  43 + instrPointer * 10 + 5, 20, 40 + instrPointer * 10 + 5, al_map_rgb(255, 255, 255), 1);
-        al_draw_line(10,  37 + instrPointer * 10 + 5, 20, 40 + instrPointer * 10 + 5, al_map_rgb(255, 255, 255), 1);
+        al_draw_line(10,  43 + rInstr * 10 + 5, 20, 40 + rInstr * 10 + 5, al_map_rgb(255, 255, 255), 1);
+        al_draw_line(10,  37 + rInstr * 10 + 5, 20, 40 + rInstr * 10 + 5, al_map_rgb(255, 255, 255), 1);
     }
 
     void drawRegisters() {
-        al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 10, 0, std::to_string(instrPointer).c_str());
+        al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 10, 0, std::to_string(rInstr).c_str());
         al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 20, 0, std::to_string(r1).c_str());
         al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 30, 0, std::to_string(r2).c_str());
         al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 40, 0, std::to_string(rDelay).c_str());

@@ -52,16 +52,17 @@ void init() {
     controller7->addInstruction("grill 4");
     controller7->addInstruction("goto 0");
 
-    auto window = GuiEngine::getInstance()->addWindow(Rect2d(Point2d(300, 300), 400, 200), true, true);
-    auto button = window->addButton(Rect2d(Point2d(20, 40), Point2d(120.5, 80.5)));
-    button->setOnClickCallback([](){std::cout << "Hello!" << std::endl;});
-    window->addLabel(button->getRect().center(), true, "Some text", 0);
-    window->addLabel(Point2d(20, 90), false, "Some text", 0);
-    window->addLabel(Point2d(20, 90), false, "More text", 1);
-    window->addLabel(Point2d(20, 90), false, "Hello, World!!!", 2);
-    LabelFlags flags;
-    flags.highlighted = true;
-    window->addLabel(Point2d(20, 90), false, "Highlighted", 3)->setFlags(flags);
+    // auto window = GuiEngine::getInstance()->addWindow(Rect2d(Point2d(300, 300), 400, 200), true, true);
+    // auto button = window->addButton(Rect2d(Point2d(20, 40), Point2d(120.5, 80.5)));
+    // button->setOnClickCallback([](){std::cout << "Hello!" << std::endl;});
+    // window->addLabel(button->getRect().center(), true, "Some text", 0);
+    // window->addLabel(Point2d(20, 90), false, "Some text", 0);
+    // window->addLabel(Point2d(20, 90), false, "More text", 1);
+    // window->addLabel(Point2d(20, 90), false, "Hello, World!!!", 2);
+    // LabelFlags flags;
+    // flags.highlighted = true;
+    // window->addLabel(Point2d(20, 90), false, "Highlighted", 3)->setFlags(flags);
+    controller6->createWindow();
     
 }
 
