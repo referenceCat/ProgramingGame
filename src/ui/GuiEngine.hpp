@@ -41,17 +41,33 @@ public:
     }
 
     bool moveMouse(Point2d aPos)  {
+        bool result = false;
+        for (auto item: windows) {
+            if (item->getRect().isInside(aPos)) {
+                result = true;
+            }
+            Point2d relativePos = aPos;
+            relativePos.x -= item->getRect().p1.x;
+            relativePos.y -= item->getRect().p1.y;
+            item->moveMouse(relativePos);
+        }
+
+        return result;
+    }
+
+    bool releaseMouse(Point2d aPos) {
+        bool result = false;
         for (auto item: windows) {
             if (item->getRect().isInside(aPos)) {
                 Point2d relativePos = aPos;
                 relativePos.x -= item->getRect().p1.x;
                 relativePos.y -= item->getRect().p1.y;
-                item->moveMouse(relativePos);
-                return true;
+                item->releaseMouse(relativePos);
+                result = true;
             }
         }
 
-        return false;
+        return result;
     }
 
     Window* addWindow(Rect2d aRect, bool movable, bool closable) {

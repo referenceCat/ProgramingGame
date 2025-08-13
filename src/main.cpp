@@ -141,6 +141,9 @@ void mainLoop(ALLEGRO_EVENT_QUEUE* event_queue) {
             case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
                 GuiEngine::getInstance()->click(Point2d(event.mouse.x, event.mouse.y));
                 break;
+            case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
+                GuiEngine::getInstance()->releaseMouse(Point2d(event.mouse.x, event.mouse.y));
+                break;
             case ALLEGRO_EVENT_MOUSE_AXES: case ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY: case ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY:
                 GuiEngine::getInstance()->moveMouse(Point2d(event.mouse.x, event.mouse.y));
                 break;

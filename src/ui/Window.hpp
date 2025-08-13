@@ -17,13 +17,17 @@ class GuiEngine;
 class Window {
     Rect2d rect;
     int z = 0;
-    bool movable;
-    bool closable;
+
     Vector2d indent{8, 8};
     inline static ALLEGRO_COLOR backgroundColor = al_map_rgb(30, 30, 30);
     inline static ALLEGRO_COLOR primaryColor = al_map_rgb(200, 200, 200);
 
-    Rect2d dragArea = Rect2d();
+    bool movable;
+    bool moving = false;
+    Rect2d dragArea{};
+    Point2d mouseDragPos{};
+
+    bool closable;
     std::vector<Button*> buttons;
 
 public:
@@ -33,6 +37,12 @@ public:
 
     // returns true if clicked on some gui element
     bool click(Point2d aPos) {
+        if (movable && dragArea.isInside(aPos)) {
+            moving = true;
+            mouseDragPos = aPos;
+            return true;
+        }
+
         for (auto item: buttons) {
             if (item->getRect().isInside(aPos)) {
                 item->click();
@@ -43,7 +53,18 @@ public:
         return false;
     }
 
+    void releaseMouse(Point2d aPos) {
+        moving = false;
+    }
+
     bool moveMouse(Point2d aPos) {
+        if (moving) {
+            Vector2d movement = Vector2d(aPos, mouseDragPos);
+            rect.p1 = rect.p1 + movement;
+            rect.p2= rect.p2 + movement;
+            return true;
+        }
+
         for (auto item: buttons) {
             item->setTinted(false);
         }
