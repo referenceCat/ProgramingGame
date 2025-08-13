@@ -13,6 +13,7 @@ class GuiEngine;
 
 struct LabelFlags {
     bool highlighted : 1;
+    bool error : 1;
 };
 
 class Label {

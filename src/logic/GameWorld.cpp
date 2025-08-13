@@ -97,6 +97,6 @@ void GameWorld::run() {
     }
     // run controllers
     for (auto controller: controllers) {
-        controller->execNextInstr();
+        controller->run();
     }
 }

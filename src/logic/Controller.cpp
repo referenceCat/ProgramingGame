@@ -8,12 +8,16 @@ void Controller::createWindow() {
         instrLabels.push_back(window->addLabel(Point2d(40, 80), false, item, line));
         line++;
     }
-    instrLabels.push_back(window->addLabel(Point2d(40, 80), false, "end", line));
+    instrLabels.push_back(window->addLabel(Point2d(40, 80), false, "                ", line)); // last empty line
     rInstrLabel = window->addLabel(Point2d(20, 30), false, "rInstr: " + std::to_string(rInstr), 0);
     rDelayLabel = window->addLabel(Point2d(20, 30), false, "rDelay: " + std::to_string(rDelay), 1);
 }
 
 void Controller::updateWindow() {
+    if (!window) {
+        return;
+    }
+
     rInstrLabel->setText("rInstr: " + std::to_string(rInstr));
     rDelayLabel->setText("rDelay: " + std::to_string(rDelay));
     
@@ -22,19 +26,14 @@ void Controller::updateWindow() {
     }
 
     LabelFlags flags;
-    flags.highlighted = 1;
+    flags.highlighted = !static_cast<bool>(failure);
+    flags.error = static_cast<bool>(failure);
     instrLabels.at(rInstr)->setFlags(flags);
 }
 
 int Controller::execNextInstr() {
-
-    if (window) {
-        updateWindow();
-    }
-    
-
     if (rInstr >= instructions.size()) {
-            return 1; // programm ended
+            return 3; // program ended
     }
 
     if (rDelay) {
@@ -47,7 +46,7 @@ int Controller::execNextInstr() {
 
     std::vector<std::string> instr = split(instructions.at(rInstr), " ");
     if (instr.size() < 1) {
-        return 1;
+        return 1; // invalid instruction
     }
 
     std::string command = instr.at(0);
@@ -59,62 +58,59 @@ int Controller::execNextInstr() {
     if (command == "angle") {
         int id = std::atoi(instr.at(1).c_str()); 
         ManipulatorArm* arm = parentWorld->getManipulatorArm(id);
-        if (!arm) return 1;
+        if (!arm) return 2;
         int joint = std::atoi(instr.at(2).c_str()); 
         int angle = std::atoi(instr.at(3).c_str()); 
         arm->setJointTargetRotation(joint, degreesToRadians(angle));
         rInstr++;
         return 0;
-    }
-
-    if (command == "grab") {
+    } else if (command == "grab") {
         int id = std::atoi(instr.at(1).c_str()); 
         ManipulatorArm* arm = parentWorld->getManipulatorArm(id);
-        if (!arm) return 1;
+        if (!arm) return 2;
         arm->grab();
         rInstr++;
         return 0;
-    }
-
-    if (command == "release") {
+    } else if (command == "release") {
         int id = std::atoi(instr.at(1).c_str()); 
         ManipulatorArm* arm = parentWorld->getManipulatorArm(id);
-        if (!arm) return 1;
+        if (!arm) return 2;
         arm->release();
         rInstr++;
         return 0;
-    }
-    
-    if (command == "goto") {
+    } else if (command == "goto") {
         rInstr = std::atoi(instr.at(1).c_str()); 
         return 0;
-    }
-
-    if (command == "grill") {
+    } else if (command == "grill") {
         int id = std::atoi(instr.at(1).c_str()); 
         Machine* item = parentWorld->getMachine(id);
-        if (!item) return 1;
+        if (!item) return 2; // incorrect slave address
         item->grillBoxes();
         rInstr++;
         return 0;
-    }
-
-    if (command == "create") {
+    } else if (command == "create") {
         int id = std::atoi(instr.at(1).c_str()); 
         Machine* item = parentWorld->getMachine(id);
-        if (!item) return 1;
+        if (!item) return 2; // incorrect slave address
         item->createBox();
         rInstr++;
         return 0;
-    }
-
-    if (command == "destroy") {
+    } else if (command == "destroy") {
         int id = std::atoi(instr.at(1).c_str()); 
         Machine* item = parentWorld->getMachine(id);
-        if (!item) return 1;
+        if (!item) return 2; // incorrect slave address
         item->destroyBoxes();
         rInstr++;
         return 0;
+    } else if (command == "error") {
+        int error = std::atoi(instr.at(1).c_str());
+        return error;
+    } else if (command == "break") {
+        paused = true;
+        rInstr++;
+        return 0;
+    } else {
+        return 1; // invalid instruction
     }
 
     return 0;

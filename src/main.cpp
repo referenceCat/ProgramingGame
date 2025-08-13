@@ -32,6 +32,7 @@ void init() {
     controller6->addInstruction("destroy 5");
     controller6->addInstruction("angle 1 0 180");
     controller6->addInstruction("angle 1 1 270");
+    controller6->addInstruction("break");
     controller6->addInstruction("angle 2 0 180");
     controller6->addInstruction("angle 2 1 270");
     controller6->addInstruction("delay 400");
@@ -45,6 +46,7 @@ void init() {
     controller6->addInstruction("delay 400");
     controller6->addInstruction("release 1");
     controller6->addInstruction("release 2");
+    // controller6->addInstruction("error 123");
     controller6->addInstruction("delay 10");
     controller6->addInstruction("goto 1");
 
@@ -106,23 +108,18 @@ void update() {
     gameWorld.run();
 }
 
-void onGrabKey() {
-    auto arm1 = gameWorld.getManipulatorArm(0);
-    auto box0 = gameWorld.getBox(0);
-    if (arm1->isActive()) {
-        arm1->release();
-    } else {
-        arm1->grab();
-    }
-}
-
 
 void onKeyDown(int keycode) {
     switch (keycode) {
-        case ALLEGRO_KEY_SPACE:
-            onGrabKey();
+        case ALLEGRO_KEY_0:
+            gameWorld.getController(6)->pause();
             break;
-                    
+        case ALLEGRO_KEY_1:
+            gameWorld.getController(6)->next();
+            break;
+        case ALLEGRO_KEY_2:
+            gameWorld.getController(6)->unpause();
+            break;
         default:
             break;
         }

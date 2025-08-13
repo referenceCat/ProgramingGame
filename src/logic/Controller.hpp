@@ -27,6 +27,8 @@ class Controller : public GameObject {
     std::vector<Label*> instrLabels;
     Label* rInstrLabel;
     Label* rDelayLabel;
+    bool paused = false;
+    int failure = false;
 
 public:
     Controller(Point2d aPos, GameWorld* aWorld): rect(aPos, 40, 30), GameObject(aWorld) {}
@@ -78,6 +80,42 @@ public:
         al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 20, 0, std::to_string(r1).c_str());
         al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 30, 0, std::to_string(r2).c_str());
         al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 40, 0, std::to_string(rDelay).c_str());
+    }
+
+    void run() {
+        if (paused) {
+            return;
+        }
+
+        if (failure) {
+            return;
+        }
+
+        failure = execNextInstr();
+        updateWindow();
+    }
+
+    void pause() {
+        paused = true;
+    }
+
+    void unpause() {
+        if (failure) {
+            return;
+        }
+
+        failure = execNextInstr();
+        paused = false;
+        updateWindow();
+    }
+
+    void next() {
+        if (failure) {
+            return;
+        }
+
+        failure = execNextInstr();
+        updateWindow();
     }
 };
 
