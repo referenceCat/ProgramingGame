@@ -12,16 +12,14 @@ void Controller::createWindow() {
     rInstrLabel = window->addLabel(Point2d(20, 30), false, "rInstr: " + std::to_string(rInstr), 0);
     rDelayLabel = window->addLabel(Point2d(20, 30), false, "rDelay: " + std::to_string(rDelay), 1);
 
-    window->addIcon(Point2d(295, 40), GuiEngine::pauseIcon);
-    window->addButton(Rect2d(Point2d(295, 40), 18, 18));
-    window->addIcon(Point2d(315, 40), GuiEngine::unpauseIcon);
-    window->addButton(Rect2d(Point2d(315, 40), 18, 18));
+    pauseIcon = window->addIcon(Point2d(315, 40), GuiEngine::unpauseIcon);
+    window->addButton(Rect2d(Point2d(315, 40), 18, 18))->setOnClickCallback([this](){this->pauseUnpause();});
     window->addIcon(Point2d(335, 40), GuiEngine::downIcon);
-    window->addButton(Rect2d(Point2d(335, 40), 18, 18));
+    window->addButton(Rect2d(Point2d(335, 40), 18, 18))->setOnClickCallback([this](){this->down();});
     window->addIcon(Point2d(355, 40), GuiEngine::upIcon);
-    window->addButton(Rect2d(Point2d(355, 40), 18, 18));
+    window->addButton(Rect2d(Point2d(355, 40), 18, 18))->setOnClickCallback([this](){this->up();});
     window->addIcon(Point2d(375, 40), GuiEngine::nextIcon);
-    window->addButton(Rect2d(Point2d(375, 40), 18, 18));
+    window->addButton(Rect2d(Point2d(375, 40), 18, 18))->setOnClickCallback([this](){this->next();});
 }
 
 void Controller::updateWindow() {
@@ -45,6 +43,12 @@ void Controller::updateWindow() {
         instrLabels.at(rInstr)->setBackgroundColor(al_map_rgb(150, 150, 0));
     } else {
         instrLabels.at(rInstr)->setBackgroundColor(al_map_rgb(100, 100, 100));
+    }
+
+    if (paused) {
+        pauseIcon->setBitmap(GuiEngine::unpauseIcon);
+    } else {
+        pauseIcon->setBitmap(GuiEngine::pauseIcon);
     }
     
 }

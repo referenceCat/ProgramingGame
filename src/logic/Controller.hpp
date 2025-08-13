@@ -29,6 +29,7 @@ class Controller : public GameObject {
     Label* rDelayLabel;
     bool paused = false;
     int failure = false;
+    Icon* pauseIcon = nullptr;
 
 public:
     Controller(Point2d aPos, GameWorld* aWorld): rect(aPos, 40, 30), GameObject(aWorld) {}
@@ -107,6 +108,38 @@ public:
 
         failure = execNextInstr();
         paused = false;
+        updateWindow();
+    }
+
+    void pauseUnpause() {
+        if (paused) {
+            unpause();
+        } else {
+            pause();
+        }
+    }
+
+    void up() {
+        if (!paused) {
+            return;
+        }
+        failure = 0;
+        rDelay = 0;
+        if (rInstr > 0) {
+            rInstr--;
+        }
+        updateWindow();
+    }
+
+    void down() {
+        if (!paused) {
+            return;
+        }
+        failure = 0;
+        rDelay = 0;
+        if (rInstr < instructions.size() - 1) {
+            rInstr++;
+        }
         updateWindow();
     }
 
