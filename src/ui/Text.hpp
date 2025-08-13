@@ -14,6 +14,7 @@ class GuiEngine;
 struct LabelFlags {
     bool highlighted : 1;
     bool error : 1;
+    bool pause : 1;
 };
 
 class Label {
@@ -21,6 +22,7 @@ class Label {
     bool isCentered;
     std::string text;
     LabelFlags flags;
+    ALLEGRO_COLOR backgroundColor = al_map_rgb(100, 100, 100);
 
 public:
     Label (Point2d aPos, bool isCentered, std::string text);
@@ -36,5 +38,9 @@ public:
     }
 
     void setText(std::string aText);
+
+    void setBackgroundColor(ALLEGRO_COLOR aColor) {
+        backgroundColor = aColor;
+    }
 };
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_UI_TEXT_HPP_

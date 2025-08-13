@@ -97,6 +97,7 @@ public:
 
     void pause() {
         paused = true;
+        updateWindow();
     }
 
     void unpause() {
@@ -111,6 +112,10 @@ public:
 
     void next() {
         if (failure) {
+            return;
+        }
+
+        if (!paused) {
             return;
         }
 

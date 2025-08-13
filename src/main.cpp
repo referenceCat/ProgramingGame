@@ -27,12 +27,14 @@ void init() {
 
     auto controller6 = gameWorld.addController(Point2d(500, 500));
     controller6->addInstruction("delay 50");
+    // controller6->addInstruction("error 123");
     controller6->addInstruction("delay 100");
     controller6->addInstruction("create 3");
     controller6->addInstruction("destroy 5");
     controller6->addInstruction("angle 1 0 180");
     controller6->addInstruction("angle 1 1 270");
     controller6->addInstruction("break");
+    controller6->addInstruction("error 123");
     controller6->addInstruction("angle 2 0 180");
     controller6->addInstruction("angle 2 1 270");
     controller6->addInstruction("delay 400");
@@ -46,7 +48,7 @@ void init() {
     controller6->addInstruction("delay 400");
     controller6->addInstruction("release 1");
     controller6->addInstruction("release 2");
-    // controller6->addInstruction("error 123");
+    controller6->addInstruction("error 123");
     controller6->addInstruction("delay 10");
     controller6->addInstruction("goto 1");
 

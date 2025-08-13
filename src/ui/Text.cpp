@@ -4,10 +4,7 @@
 void Label::draw() {
     Rect2d globalRect = Rect2d(rect.p1 + GuiEngine::drawingIndent, rect.p2 + GuiEngine::drawingIndent);
     if (flags.highlighted) {
-        al_draw_filled_rectangle(globalRect.p1.x - 4, globalRect.p1.y - 2, globalRect.p2.x + 2, globalRect.p2.y + 1, al_map_rgb(100, 100, 100));
-    }
-    if (flags.error) {
-        al_draw_filled_rectangle(globalRect.p1.x - 4, globalRect.p1.y - 2, globalRect.p2.x + 2, globalRect.p2.y + 1, al_map_rgb(150, 0, 0));
+        al_draw_filled_rectangle(globalRect.p1.x - 4, globalRect.p1.y - 2, globalRect.p2.x + 2, globalRect.p2.y + 1, backgroundColor);
     }
     al_draw_text(GuiEngine::debug_font, al_map_rgb(255, 255, 255), globalRect.p1.x, globalRect.p1.y, 0, text.c_str());
 };
