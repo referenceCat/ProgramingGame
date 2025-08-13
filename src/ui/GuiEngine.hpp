@@ -7,6 +7,7 @@
 #include "allegro5/allegro_primitives.h"
 #include "../common/common.hpp"
 #include "Window.hpp"
+#include "Text.hpp"
 
 class GuiEngine {
     std::vector<Window*> windows;

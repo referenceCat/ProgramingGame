@@ -11,6 +11,7 @@
 #include "Button.hpp"
 #include <memory>
 #include <vector>
+#include "Text.hpp"
 
 class GuiEngine;
 
@@ -22,13 +23,14 @@ class Window {
     inline static ALLEGRO_COLOR backgroundColor = al_map_rgb(30, 30, 30);
     inline static ALLEGRO_COLOR primaryColor = al_map_rgb(200, 200, 200);
 
+    bool closable;
     bool movable;
     bool moving = false;
     Rect2d dragArea{};
     Point2d mouseDragPos{};
 
-    bool closable;
     std::vector<Button*> buttons;
+    std::vector<Label*> labels;
 
 public:
     Window(Rect2d rect, bool movable, bool closable);
@@ -82,6 +84,12 @@ public:
     Button* addButton(Rect2d aRect) {
         buttons.push_back(new Button(aRect));
         return buttons.back();
+    };
+
+    Label* addLabel(Point2d aPos, bool centered, std::string text, int line = 0) {
+        aPos.y += line * 14;
+        labels.push_back(new Label(aPos, centered, text));
+        return labels.back();
     };
 
     Rect2d getRect() {

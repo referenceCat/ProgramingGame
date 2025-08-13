@@ -53,8 +53,15 @@ void init() {
     controller7->addInstruction("goto 0");
 
     auto window = GuiEngine::getInstance()->addWindow(Rect2d(Point2d(300, 300), 400, 200), true, true);
-    auto button = window->addButton(Rect2d(Point2d(20, 40), Point2d(120, 80)));
+    auto button = window->addButton(Rect2d(Point2d(20, 40), Point2d(120.5, 80.5)));
     button->setOnClickCallback([](){std::cout << "Hello!" << std::endl;});
+    window->addLabel(button->getRect().center(), true, "Some text", 0);
+    window->addLabel(Point2d(20, 90), false, "Some text", 0);
+    window->addLabel(Point2d(20, 90), false, "More text", 1);
+    window->addLabel(Point2d(20, 90), false, "Hello, World!!!", 2);
+    LabelFlags flags;
+    flags.highlighted = true;
+    window->addLabel(Point2d(20, 90), false, "Highlighted", 3)->setFlags(flags);
     
 }
 
@@ -182,6 +189,7 @@ int main(int argc, char **argv) {
 
     debug_font = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
     GameObject::debug_font = debug_font;
+    GuiEngine::debug_font = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
 
     // Initialize allegro primitives addon
     if (!al_init_primitives_addon()) {

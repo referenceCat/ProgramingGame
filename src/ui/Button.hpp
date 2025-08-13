@@ -13,7 +13,6 @@ class GuiEngine;
 
 class Button {
     Rect2d rect;
-    std::string text;
     std::function<void()> onClickCallback = nullptr;
     int tintLevel = 0;
     bool hover = 0;
