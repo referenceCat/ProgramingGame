@@ -12,6 +12,7 @@
 #include <memory>
 #include <vector>
 #include "Text.hpp"
+#include "Icon.hpp"
 
 class GuiEngine;
 
@@ -31,6 +32,7 @@ class Window {
 
     std::vector<Button*> buttons;
     std::vector<Label*> labels;
+    std::vector<Icon*> icons;
 
 public:
     Window(Rect2d rect, bool movable, bool closable);
@@ -90,6 +92,11 @@ public:
         aPos.y += line * 14;
         labels.push_back(new Label(aPos, centered, text));
         return labels.back();
+    };
+
+    Icon* addIcon(Point2d aPos, ALLEGRO_BITMAP* bitmap) {
+        icons.push_back(new Icon(aPos, bitmap));
+        return icons.back();
     };
 
     Rect2d getRect() {

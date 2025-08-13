@@ -15,6 +15,13 @@ class GuiEngine {
     GuiEngine() {};
 
 public:
+    inline static ALLEGRO_BITMAP* circleIcon = nullptr; // TODO move to separate guiResources class
+    inline static ALLEGRO_BITMAP* pauseIcon = nullptr;
+    inline static ALLEGRO_BITMAP* unpauseIcon = nullptr;
+    inline static ALLEGRO_BITMAP* downIcon = nullptr;
+    inline static ALLEGRO_BITMAP* upIcon = nullptr;
+    inline static ALLEGRO_BITMAP* nextIcon = nullptr;
+
     inline static ALLEGRO_FONT* debug_font = nullptr;
     inline static Vector2d drawingIndent{};
     
@@ -25,6 +32,42 @@ public:
             item->draw();
         }
     };
+
+    void init() {
+        createProceduralIcons();
+    }
+
+    void createProceduralIcons() {
+        ALLEGRO_COLOR blue = al_map_rgb(20, 120, 200);
+
+        circleIcon = al_create_bitmap(14, 14);
+        al_set_target_bitmap(circleIcon);
+        al_draw_filled_circle(7, 7, 7, al_map_rgb(255, 255, 255));
+
+        pauseIcon = al_create_bitmap(14, 14);
+        al_set_target_bitmap(pauseIcon);
+        al_draw_line(4, 0, 4, 14, blue, 3);
+        al_draw_line(11, 0, 11, 14, blue, 3);
+
+        unpauseIcon = al_create_bitmap(14, 14);
+        al_set_target_bitmap(unpauseIcon);
+        al_draw_triangle(3, 2, 3, 12, 12, 7, blue, 3);
+
+        downIcon = al_create_bitmap(14, 14);
+        al_set_target_bitmap(downIcon);
+        al_draw_line(3, 4, 7, 11, blue, 3);
+        al_draw_line(11, 4, 7, 11, blue, 3);
+
+        upIcon = al_create_bitmap(14, 14);
+        al_set_target_bitmap(upIcon);
+        al_draw_line(3, 9, 7, 2, blue, 3);
+        al_draw_line(11, 9, 7, 2, blue, 3);
+
+        nextIcon = al_create_bitmap(14, 14);
+        al_set_target_bitmap(nextIcon);
+        al_draw_triangle(3, 2, 3, 12, 10, 7, blue, 3);
+        al_draw_line(13, 0, 13, 14, blue, 3);
+    }
 
     // returns true if clicked on some gui element
     bool click(Point2d aPos) {

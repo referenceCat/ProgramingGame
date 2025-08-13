@@ -40,6 +40,10 @@ void Window::draw() {
         item->draw();
     }
 
+    for (auto item: icons) {
+        item->draw();
+    }
+
     GuiEngine::drawingIndent.x -= rect.p1.x;
     GuiEngine::drawingIndent.y -= rect.p1.y;
 

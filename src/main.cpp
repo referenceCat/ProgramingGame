@@ -19,6 +19,9 @@ GameWorld gameWorld{}; // should be singleton? maybe not?
 ALLEGRO_FONT* debug_font = nullptr;
 
 void init() {
+    GuiEngine::getInstance()->init();
+
+    // TEST 
     auto arm1 = gameWorld.addManipulatorArm(3, Point2d(200, 300));
     auto arm2 = gameWorld.addManipulatorArm(3, Point2d(400, 300));
     auto creator3 = gameWorld.addMachine(Point2d(100, 400));
@@ -34,7 +37,7 @@ void init() {
     controller6->addInstruction("angle 1 0 180");
     controller6->addInstruction("angle 1 1 270");
     controller6->addInstruction("break");
-    controller6->addInstruction("error 123");
+    // controller6->addInstruction("error 123");
     controller6->addInstruction("angle 2 0 180");
     controller6->addInstruction("angle 2 1 270");
     controller6->addInstruction("delay 400");
@@ -48,7 +51,7 @@ void init() {
     controller6->addInstruction("delay 400");
     controller6->addInstruction("release 1");
     controller6->addInstruction("release 2");
-    controller6->addInstruction("error 123");
+    // controller6->addInstruction("error 123");
     controller6->addInstruction("delay 10");
     controller6->addInstruction("goto 1");
 
@@ -163,7 +166,7 @@ void mainLoop(ALLEGRO_EVENT_QUEUE* event_queue) {
                 break;
         }
     }
-    
+
 }
 
 int main(int argc, char **argv) {
