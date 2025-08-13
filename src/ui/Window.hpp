@@ -27,19 +27,7 @@ class Window {
     std::vector<Button*> buttons;
 
 public:
-    Window(Rect2d rect, bool movable = false, bool closable = false): rect(rect), movable(movable), closable(closable) {
-        if (movable) {
-            dragArea = Rect2d(Point2d(20, 4), Point2d(70, 16));
-        }
-
-        if (closable) {
-            buttons.push_back(new Button(Rect2d(Point2d(10, 10), 14, 14)));
-        }
-
-        if (closable || movable) {
-            indent.y = 24;
-        }
-    };
+    Window(Rect2d rect, bool movable, bool closable);
 
     void draw();
 
@@ -76,6 +64,12 @@ public:
 
     Rect2d getRect() {
         return rect;
+    }
+
+    ~Window() {
+        for (auto item: buttons) {
+            delete item;
+        }
     }
 };
 

@@ -1,6 +1,18 @@
 #include "Window.hpp"
 #include "GuiEngine.hpp"
 
+Window::Window(Rect2d rect, bool movable = false, bool closable = false): rect(rect), movable(movable), closable(closable) {
+    if (movable) {
+        dragArea = Rect2d(Point2d(20, 4), Point2d(70, 16));
+    }
+    if (closable) {
+        buttons.push_back(new Button(Rect2d(Point2d(10, 10), 14, 14)));
+    }
+    if (closable || movable) {
+        indent.y = 24;
+    }
+};
+
 void Window::draw() {
     al_draw_filled_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, backgroundColor);
     al_draw_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, primaryColor, 2);

@@ -10,12 +10,14 @@
 
 class GuiEngine {
     std::vector<Window*> windows;
+    static GuiEngine* instance;
+    GuiEngine() {};
 
 public:
     inline static ALLEGRO_FONT* debug_font = nullptr;
     inline static Vector2d drawingIndent{};
     
-    GuiEngine() {};
+    static GuiEngine* getInstance();
 
     void draw() {
         for (auto item: windows) {
@@ -52,9 +54,15 @@ public:
         return false;
     }
 
-    void addWindow(Rect2d aRect, bool movable, bool closable) {
+    Window* addWindow(Rect2d aRect, bool movable, bool closable) {
         windows.push_back(new Window(aRect, movable, closable));
+        return windows.back();
     };
+
+    void closeWindow(Window* window) {
+        delete window;
+        windows.erase(std::remove(windows.begin(), windows.end(), window), windows.end());
+    }
 };
 
 

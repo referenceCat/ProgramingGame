@@ -16,8 +16,6 @@ long long tick = 0;
 long long eventCounter = 0;
 
 GameWorld gameWorld{};
-GuiEngine guiEngine{};
-
 ALLEGRO_FONT* debug_font = nullptr;
 
 void init() {
@@ -54,7 +52,7 @@ void init() {
     controller7->addInstruction("grill 4");
     controller7->addInstruction("goto 0");
 
-    guiEngine.addWindow(Rect2d(Point2d(300, 300), 400, 200), true, true);
+    GuiEngine::getInstance()->addWindow(Rect2d(Point2d(300, 300), 400, 200), true, true);
 }
 
 void redraw() {
@@ -75,7 +73,7 @@ void redraw() {
     al_hold_bitmap_drawing(false);
 
     al_hold_bitmap_drawing(true);
-    guiEngine.draw();
+    GuiEngine::getInstance()->draw();
     al_hold_bitmap_drawing(false);
     
     al_flip_display();
@@ -141,10 +139,10 @@ void mainLoop(ALLEGRO_EVENT_QUEUE* event_queue) {
                 onKeyDown(event.keyboard.keycode);
                 break;
             case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-                guiEngine.click(Point2d(event.mouse.x, event.mouse.y));
+                GuiEngine::getInstance()->click(Point2d(event.mouse.x, event.mouse.y));
                 break;
             case ALLEGRO_EVENT_MOUSE_AXES: case ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY: case ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY:
-                guiEngine.moveMouse(Point2d(event.mouse.x, event.mouse.y));
+                GuiEngine::getInstance()->moveMouse(Point2d(event.mouse.x, event.mouse.y));
                 break;
 
             default:
