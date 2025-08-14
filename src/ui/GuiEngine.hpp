@@ -21,6 +21,8 @@ public:
     inline static ALLEGRO_BITMAP* downIcon = nullptr;
     inline static ALLEGRO_BITMAP* upIcon = nullptr;
     inline static ALLEGRO_BITMAP* nextIcon = nullptr;
+    inline static ALLEGRO_BITMAP* emptyIcon = nullptr;
+    inline static ALLEGRO_BITMAP* breakpointIcon = nullptr;
 
     inline static ALLEGRO_FONT* debug_font = nullptr;
     inline static Vector2d drawingIndent{};
@@ -67,6 +69,12 @@ public:
         al_set_target_bitmap(nextIcon);
         al_draw_triangle(3, 2, 3, 12, 10, 7, blue, 3);
         al_draw_line(13, 0, 13, 14, blue, 3);
+
+        emptyIcon = al_create_bitmap(14, 14);
+
+        breakpointIcon= al_create_bitmap(14, 14);
+        al_set_target_bitmap(breakpointIcon);
+        al_draw_filled_circle(7, 7, 4, al_map_rgb(200, 0, 0));
     }
 
     // returns true if clicked on some gui element

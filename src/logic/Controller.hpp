@@ -17,14 +17,21 @@
 class Controller : public GameObject {
     Rect2d rect;
 
+    struct InstructionLine {
+        Label* label;
+        Button* breakpointButton;
+        Icon* breakpointIcon;
+    };
+
     std::vector<std::string> instructions;
+    std::vector<bool> breakpoints;
     int rInstr = 0;
     int r1 = 0;
     int r2 = 0;
     int rDelay = 0;
 
     Window* window = nullptr;
-    std::vector<Label*> instrLabels;
+    std::vector<InstructionLine> instructionsGui;
     Label* rInstrLabel;
     Label* rDelayLabel;
     bool paused = false;
@@ -44,6 +51,7 @@ public:
 
     void addInstruction(std::string instr) {
         instructions.push_back(instr);
+        breakpoints.push_back(false);
     }
 
     std::vector<std::string> split(const std::string& s, const std::string& delimiter) {
@@ -155,6 +163,8 @@ public:
         failure = execNextInstr();
         updateWindow();
     }
+
+    void toggle(int line);
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_CONTROLLER_HPP_

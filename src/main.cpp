@@ -36,7 +36,6 @@ void init() {
     controller6->addInstruction("destroy 5");
     controller6->addInstruction("angle 1 0 180");
     controller6->addInstruction("angle 1 1 270");
-    controller6->addInstruction("break");
     // controller6->addInstruction("error 123");
     controller6->addInstruction("angle 2 0 180");
     controller6->addInstruction("angle 2 1 270");

@@ -5,10 +5,17 @@ void Controller::createWindow() {
     window = GuiEngine::getInstance()->addWindow(Rect2d(Point2d(400, 400), 600, 400), true, true);
     int line = 0;
     for (auto item: instructions) {
-        instrLabels.push_back(window->addLabel(Point2d(40, 80), false, item, line));
+        InstructionLine instructionLine;
+        instructionLine.label = window->addLabel(Point2d(40, 80), false, item, line);
+        instructionLine.breakpointButton = window->addButton(Rect2d(Point2d(18, 80 + line * 14), Point2d(32, 94 + line * 14)));
+        instructionLine.breakpointIcon = window->addIcon(Point2d(18 + 7, 80 + line * 14 + 7), GuiEngine::emptyIcon);
+        instructionLine.breakpointButton->setOnClickCallback([this, line](){this->toggle(line);});
+        instructionsGui.push_back(instructionLine);
         line++;
     }
-    instrLabels.push_back(window->addLabel(Point2d(40, 80), false, "", line)); // last empty line
+    InstructionLine lastInstructionLine;
+    lastInstructionLine.label = window->addLabel(Point2d(40, 80), false, "", line);
+    instructionsGui.push_back(lastInstructionLine); // last empty line
     rInstrLabel = window->addLabel(Point2d(20, 30), false, "rInstr: " + std::to_string(rInstr), 0);
     rDelayLabel = window->addLabel(Point2d(20, 30), false, "rDelay: " + std::to_string(rDelay), 1);
 
@@ -30,19 +37,19 @@ void Controller::updateWindow() {
     rInstrLabel->setText("rInstr: " + std::to_string(rInstr));
     rDelayLabel->setText("rDelay: " + std::to_string(rDelay));
     
-    for (auto item: instrLabels) {
-        item->setFlags(LabelFlags());
+    for (auto item: instructionsGui) {
+        item.label->setFlags(LabelFlags());
     }
 
     LabelFlags flags;
     flags.background = true;
-    instrLabels.at(rInstr)->setFlags(flags);
+    instructionsGui.at(rInstr).label->setFlags(flags);
     if (failure) {
-        instrLabels.at(rInstr)->setBackgroundColor(al_map_rgb(150, 0, 0));
+        instructionsGui.at(rInstr).label->setBackgroundColor(al_map_rgb(150, 0, 0));
     } else if (paused) {
-        instrLabels.at(rInstr)->setBackgroundColor(al_map_rgb(150, 150, 0));
+        instructionsGui.at(rInstr).label->setBackgroundColor(al_map_rgb(150, 150, 0));
     } else {
-        instrLabels.at(rInstr)->setBackgroundColor(al_map_rgb(100, 100, 100));
+        instructionsGui.at(rInstr).label->setBackgroundColor(al_map_rgb(100, 100, 100));
     }
 
     if (paused) {
@@ -56,6 +63,11 @@ void Controller::updateWindow() {
 int Controller::execNextInstr() {
     if (rInstr >= instructions.size()) {
             return 3; // program ended
+    }
+
+    if (breakpoints.at(rInstr) && !paused) {
+        pause();
+        return 0;
     }
 
     if (rDelay) {
@@ -127,13 +139,18 @@ int Controller::execNextInstr() {
     } else if (command == "error") {
         int error = std::atoi(instr.at(1).c_str());
         return error;
-    } else if (command == "break") {
-        paused = true;
-        rInstr++;
-        return 0;
     } else {
         return 1; // invalid instruction
     }
 
     return 0;
+}
+
+void Controller::toggle(int line) {
+    assert(line < instructions.size());
+    breakpoints.at(line) = !breakpoints.at(line);
+    if (window) {
+        if (breakpoints.at(line)) instructionsGui.at(line).breakpointIcon->setBitmap(GuiEngine::breakpointIcon);
+        else instructionsGui.at(line).breakpointIcon->setBitmap(GuiEngine::emptyIcon);
+    }
 }
