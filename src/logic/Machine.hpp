@@ -15,6 +15,7 @@
 
 class Machine : public GameObject {
     Rect2d rect;
+    int counter = 0;
 
 public:
     Machine(Point2d aPos, GameWorld* aWorld): rect(aPos, 50, 50), GameObject(aWorld) {}

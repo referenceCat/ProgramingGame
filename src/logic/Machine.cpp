@@ -2,7 +2,8 @@
 #include "GameWorld.hpp"
 
 void Machine::createBox() {
-    parentWorld->addBox(Rect2d(rect.center(), 25, 25));
+    parentWorld->addBox(Rect2d(rect.center(), 24, 24))->setContent(static_cast<BoxContent>(counter % 4));
+    counter++;
 }
 
 void Machine::destroyBoxes() {
