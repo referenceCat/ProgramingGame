@@ -153,6 +153,9 @@ void mainLoop(ALLEGRO_EVENT_QUEUE* event_queue) {
             case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
                 GuiEngine::getInstance()->click(Point2d(event.mouse.x, event.mouse.y));
                 break;
+            case ALLEGRO_EVENT_DISPLAY_RESIZE:
+                al_acknowledge_resize(event.display.source);
+                break;
             case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
                 GuiEngine::getInstance()->releaseMouse(Point2d(event.mouse.x, event.mouse.y));
                 break;
@@ -222,7 +225,8 @@ int main(int argc, char **argv) {
     // Initialize the display
     ALLEGRO_DISPLAY *display = nullptr;
     al_set_new_display_option(ALLEGRO_VSYNC, 2, ALLEGRO_REQUIRE);
-    display = al_create_display(700, 700);
+    al_set_new_display_flags(ALLEGRO_RESIZABLE);
+    display = al_create_display(900, 900);
     al_register_event_source(event_queue, al_get_display_event_source(display));
 
     init();
