@@ -35,7 +35,7 @@ void Controller::updateWindow() {
     }
 
     LabelFlags flags;
-    flags.highlighted = true;
+    flags.background = true;
     instrLabels.at(rInstr)->setFlags(flags);
     if (failure) {
         instrLabels.at(rInstr)->setBackgroundColor(al_map_rgb(150, 0, 0));

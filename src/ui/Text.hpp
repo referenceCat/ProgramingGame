@@ -12,9 +12,7 @@
 class GuiEngine;
 
 struct LabelFlags {
-    bool highlighted : 1;
-    bool error : 1;
-    bool pause : 1;
+    bool background : 1;
 };
 
 class Label {

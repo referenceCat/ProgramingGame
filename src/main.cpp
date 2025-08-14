@@ -67,7 +67,7 @@ void init() {
     // window->addLabel(Point2d(20, 90), false, "More text", 1);
     // window->addLabel(Point2d(20, 90), false, "Hello, World!!!", 2);
     // LabelFlags flags;
-    // flags.highlighted = true;
+    // flags.background = true;
     // window->addLabel(Point2d(20, 90), false, "Highlighted", 3)->setFlags(flags);
     controller6->createWindow();
     
