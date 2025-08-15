@@ -12,6 +12,7 @@
 #include <iostream>
 #include <chrono>
 #include "logic/CustomMachines.hpp"
+#include "graphics/GraphicsEngine.hpp"
 
 long long tick = 0;
 long long eventCounter = 0;
@@ -21,6 +22,14 @@ ALLEGRO_FONT* debug_font = nullptr;
 
 void init() {
     GuiEngine::getInstance()->init();
+
+    CameraParameters parameters;
+    parameters.fov = 900;
+    parameters.displaySize = Point2d(900, 900);
+    parameters.position = Point2d(450, 450);
+    parameters.z = -400; // fov = 90 deg
+
+    GraphicsEngine::instance()->setCameraParameters(parameters);
 
     // TEST 
     auto arm1 = gameWorld.addManipulatorArm(3, Point2d(200, 300));
@@ -131,6 +140,16 @@ void redraw() {
 
     al_hold_bitmap_drawing(false);
 
+    // testing graphics engine
+    al_hold_bitmap_drawing(true);
+    al_draw_circle(450, 450, 4, al_map_rgb(255, 255, 255), 1);
+    al_draw_circle(500, 500, 2, al_map_rgb(255, 255, 255), 1);
+    for (int z = 0; z < 500; z++) {
+        GraphicsEngine::instance()->draw_point(Point2d(500, 500), z, al_map_rgb(255 - z / 2, 255 - z / 2, 255 - z / 2));
+    }
+    
+    al_hold_bitmap_drawing(false);
+
     al_hold_bitmap_drawing(true);
     GuiEngine::getInstance()->draw();
     al_hold_bitmap_drawing(false);
@@ -143,13 +162,15 @@ void redraw() {
 
 void update() {
     tick++;
-    auto arm1 = gameWorld.getManipulatorArm(0);
     ALLEGRO_KEYBOARD_STATE keyboardState;
     al_get_keyboard_state(&keyboardState);
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_Q))  arm1->rotateJoint(0, RelativeRotation(-0.01));
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_E))  arm1->rotateJoint(0, RelativeRotation(0.01));
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_A))  arm1->rotateJoint(1, RelativeRotation(-0.01));
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_D))  arm1->rotateJoint(1, RelativeRotation(0.01));
+
+    CameraParameters camera = GraphicsEngine::instance()->getCameraParameters();
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_W))  camera.position.y--;
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_S))  camera.position.y++;
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_A))  camera.position.x--;
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_D))  camera.position.x++;
+     GraphicsEngine::instance()->setCameraParameters(camera);
 
     gameWorld.run();
 }
