@@ -48,6 +48,7 @@ struct Point2d {
     Point2d(double x, double y): x(x), y(y) {}
     Point2d(): x(0), y(0) {}
 
+    Point2d operator+ (Point2d other);
     Point2d operator+ (Vector2d vector);
     Point2d operator- (Vector2d vector);
 };

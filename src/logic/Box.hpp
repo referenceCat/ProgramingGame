@@ -60,10 +60,6 @@ public:
         return rect;
     }
 
-    void grill() {
-        if(temperature < 255) temperature++;
-    }
-
     void setContent(BoxContent aContent) {
         content = aContent;
     }
@@ -73,7 +69,16 @@ public:
     }
 
     void update() {
-        temperature -= temperature * 0.01;
+        if (temperature > 0)
+        temperature -= 0.1;
+    }
+
+    double getTemperature() {
+        return temperature;
+    }
+
+    void setTemperature(double aTemperature) {
+        temperature = aTemperature;
     }
 };
 

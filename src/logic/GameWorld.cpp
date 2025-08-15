@@ -103,4 +103,9 @@ void GameWorld::run() {
     for (auto machine: machines) {
         machine->run();
     }
+
+    // run boxes
+    for (auto box: boxes) {
+        box->update();
+    }
 }

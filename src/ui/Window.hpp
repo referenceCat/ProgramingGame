@@ -16,7 +16,7 @@
 
 class GuiEngine;
 
-class Window {
+class Window { // TODO add close event handler + write callbacks for each thing, what creates windows
     Rect2d rect;
     int z = 0;
 

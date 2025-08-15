@@ -11,7 +11,7 @@ public:
 
     void run() override {
         for (auto item: getBoxesInside(heatingArea))  {
-            item->grill();
+            if(item->getTemperature() < 255) item->setTemperature(item->getTemperature() + 1);
         }
     }
 };
@@ -41,7 +41,7 @@ public:
         if (cooldown > 0) cooldown--;
 
         if (cooldown == 0 && getBoxesTouching(creatingArea).size() == 0) {
-            createBox()->setContent(boxContent);
+            createBox(creatingArea)->setContent(boxContent);
             cooldown = period;
         }
     }
@@ -61,6 +61,61 @@ public:
         for (auto item: getBoxesInside(destroyingArea))  {
             destroyBox(item);
         }
+    }
+};
+
+class PlateCombiner: public Machine {
+    ProductionArea ingridientArea0;
+    ProductionArea ingridientArea1;
+    ProductionArea resultArea;
+    int period = 160;
+    int processTime = 0;
+    bool processRunning = false;
+    
+
+public:
+    PlateCombiner(Point2d aPos, GameWorld* aWorld): Machine(Rect2d(aPos, 75, 160), aWorld) {
+        ingridientArea0.rect = Rect2d(Point2d(5, 5), Point2d(35, 35)); // TODO process class for this kind of behavior
+        ingridientArea1.rect = Rect2d(Point2d(5, 40), Point2d(35, 70));
+        resultArea.rect = Rect2d(Point2d(125, 5), Point2d(155, 35));
+        areas.push_back(&ingridientArea0);
+        areas.push_back(&ingridientArea1);
+        areas.push_back(&resultArea);
+    }
+
+    void setPeriod(int aPeriod) {
+        period = aPeriod;
+    }
+
+    void run() override {
+        if (!processRunning && getBoxesInside(ingridientArea0).size() && getBoxesInside(ingridientArea0).size()) {
+            auto box0 = getBoxesInside(ingridientArea0).at(0);
+            auto box1 = getBoxesInside(ingridientArea1).at(0);
+            if (box0->getContent() == BoxContent::IronPlate 
+                && box1->getContent() == BoxContent::IronPlate
+                && box0->getTemperature() > 100
+                && box1->getTemperature() > 100) {
+                destroyBox(box0); // process begins here
+                destroyBox(box1);
+                processRunning = true;
+            }
+        }
+
+        if (processRunning && processTime < period) processTime++;
+
+        if (processRunning && processTime >= period) {
+            if (getBoxesTouching(resultArea).size() == 0) { // check if can create box
+                auto resultBox = createBox(resultArea); // process stops here
+                resultBox->setContent(BoxContent::HeavyIronPlate);
+                processRunning = false;
+                processTime == 0;
+            }
+        }
+    }
+
+    void draw() override {
+        Machine::draw();
+        al_draw_line(rect.p1.x, rect.p2.y + 3, rect.p1.x + processTime, rect.p2.y + 3, al_map_rgb(255, 255, 255), 2);
     }
 };
 

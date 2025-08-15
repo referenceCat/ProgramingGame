@@ -24,14 +24,12 @@ protected:
     std::vector<ProductionArea*>  areas;
 
     void destroyBox(Box* box);
-    Box* createBox();
+    Box* createBox(ProductionArea area);
     std::vector<Box*> getBoxesInside(ProductionArea area);
     std::vector<Box*> getBoxesTouching(ProductionArea area);
 
 public:
-    Machine(Rect2d rect, GameWorld* aWorld): rect(rect), GameObject(aWorld) {
-        // aWorld->addMachine(this); // TODO not sure
-    }
+    Machine(Rect2d rect, GameWorld* aWorld);
 
     virtual void draw() {
         al_draw_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, al_map_rgb(100, 255, 100), 1);
