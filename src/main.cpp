@@ -26,6 +26,8 @@ void init() {
     auto arm1 = gameWorld.addManipulatorArm(3, Point2d(200, 300));
     auto arm2 = gameWorld.addManipulatorArm(3, Point2d(400, 300));
     auto creator3 = new BoxGenerator(Point2d(100, 400), &gameWorld);
+    creator3->setPeriod(300);
+    creator3->setType(BoxContent::IronPlate);
     auto furnace4 = new Furnace(Point2d(300, 400), &gameWorld);
     auto destoyer5 = new BoxDestroyer(Point2d(500, 400), &gameWorld);
     gameWorld.addMachine(creator3);

@@ -5,10 +5,9 @@ void Machine::destroyBox(Box *box) {
     parentWorld->removeBox(box->getId());
 }
 
-void Machine::createBox()
+Box* Machine::createBox()
 {
-    parentWorld->addBox(Rect2d(rect.center(), 24, 24))->setContent(static_cast<BoxContent>(counter % 5));
-    counter++;
+    return parentWorld->addBox(Rect2d(rect.center(), 24, 24));
 }
 
 std::vector<Box *> Machine::getBoxesInside(ProductionArea area) {

@@ -16,7 +16,6 @@
 class Machine : public GameObject {
 protected:
     Rect2d rect;
-    int counter = 0;
 
     struct ProductionArea {
         Rect2d rect;
@@ -25,7 +24,7 @@ protected:
     std::vector<ProductionArea*>  areas;
 
     void destroyBox(Box* box);
-    void createBox();
+    Box* createBox();
     std::vector<Box*> getBoxesInside(ProductionArea area);
     std::vector<Box*> getBoxesTouching(ProductionArea area);
 

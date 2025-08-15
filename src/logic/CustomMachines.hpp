@@ -18,7 +18,10 @@ public:
 
 class BoxGenerator: public Machine {
     ProductionArea creatingArea;
-    int cooldown = 200;
+    int period = 200;
+    int cooldown = period;
+    BoxContent boxContent = BoxContent::EmptyBox;
+    
 
 public:
     BoxGenerator(Point2d aPos, GameWorld* aWorld): Machine(Rect2d(aPos, 50, 50), aWorld) {
@@ -26,12 +29,20 @@ public:
         areas.push_back(&creatingArea);
     }
 
+    void setPeriod(int aPeriod) {
+        period = aPeriod;
+    }
+
+    void setType(BoxContent aContent) {
+        boxContent = aContent;
+    }
+
     void run() override {
         if (cooldown > 0) cooldown--;
 
         if (cooldown == 0 && getBoxesTouching(creatingArea).size() == 0) {
-            createBox();
-            cooldown = 200;
+            createBox()->setContent(boxContent);
+            cooldown = period;
         }
     }
 };
