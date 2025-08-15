@@ -26,7 +26,7 @@ public:
     ManipulatorArm *addManipulatorArm(int aJointsNumber, Point2d aRootJointPosition);
     Controller *addController(Point2d aPos);
     Box *addBox(Rect2d aRect);
-    Machine *addMachine(Point2d aPos);
+    void addMachine(Machine* machine);
 
     void removeBox(int id);
 

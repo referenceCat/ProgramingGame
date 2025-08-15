@@ -11,6 +11,7 @@
 #include "ui/GuiEngine.hpp"
 #include <iostream>
 #include <chrono>
+#include "logic/CustomMachines.hpp"
 
 long long tick = 0;
 long long eventCounter = 0;
@@ -24,16 +25,21 @@ void init() {
     // TEST 
     auto arm1 = gameWorld.addManipulatorArm(3, Point2d(200, 300));
     auto arm2 = gameWorld.addManipulatorArm(3, Point2d(400, 300));
-    auto creator3 = gameWorld.addMachine(Point2d(100, 400));
-    auto furnace4 = gameWorld.addMachine(Point2d(300, 400));
-    auto destoyer5 = gameWorld.addMachine(Point2d(500, 400));
+    auto creator3 = new BoxGenerator(Point2d(100, 400), &gameWorld);
+    auto furnace4 = new Furnace(Point2d(300, 400), &gameWorld);
+    auto destoyer5 = new BoxDestroyer(Point2d(500, 400), &gameWorld);
+    gameWorld.addMachine(creator3);
+    gameWorld.addMachine(furnace4);
+    gameWorld.addMachine(destoyer5);
+    // auto furnace4 = gameWorld.addMachine(Point2d(300, 400));
+    // auto destoyer5 = gameWorld.addMachine(Point2d(300, 400));
 
     auto controller6 = gameWorld.addController(Point2d(500, 500));
     controller6->addInstruction("delay 50");
     // controller6->addInstruction("error 123");
     controller6->addInstruction("delay 100");
-    controller6->addInstruction("create 3");
-    controller6->addInstruction("destroy 5");
+    // controller6->addInstruction("create 3");
+    // controller6->addInstruction("destroy 5");
     controller6->addInstruction("angle 1 0 180");
     controller6->addInstruction("angle 1 1 270");
     // controller6->addInstruction("error 123");

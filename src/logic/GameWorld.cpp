@@ -16,9 +16,8 @@ Box* GameWorld::addBox(Rect2d aRect) {
     return boxes.back();
 }
 
-Machine* GameWorld::addMachine(Point2d aPos) {
-    machines.push_back(new Machine(aPos, this));
-    return machines.back();
+void GameWorld::addMachine(Machine *machine) {
+    machines.push_back(machine);
 }
 
 void GameWorld::removeBox(int id) {
@@ -98,5 +97,10 @@ void GameWorld::run() {
     // run controllers
     for (auto controller: controllers) {
         controller->run();
+    }
+
+    // run arms
+    for (auto machine: machines) {
+        machine->run();
     }
 }

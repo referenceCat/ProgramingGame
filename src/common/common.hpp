@@ -103,6 +103,10 @@ struct Rect2d {
     Point2d center() {
         return Point2d(p1.x / 2 + p2.x / 2, p1.y/ 2 + p2.y / 2);
     }
+
+    Vector2d dimensions() {
+        return Vector2d(p2, p1);
+    }
 };
 
 double degreesToRadians(int degrees);

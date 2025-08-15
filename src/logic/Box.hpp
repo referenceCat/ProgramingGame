@@ -6,6 +6,7 @@
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
+#include  <algorithm>
 #include "../common/common.hpp"
 #include "GameObject.hpp"
 
@@ -15,12 +16,13 @@ enum BoxContent {
     EmptyBox,
     IronPlate,
     HeavyIronPlate,
-    VeryHeavyIronPlate
+    VeryHeavyIronPlate,
+    Coal
 };
 
-class Box : public GameObject{
+class Box : public GameObject {
     Rect2d rect;
-    int temperature = 0;
+    double temperature = 0;
     BoxContent content;
 
 public:
@@ -33,18 +35,25 @@ public:
     }
 
     void draw() {
-        al_draw_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, al_map_rgb(255, 255 - temperature, 255 - temperature), 1);
+        int r = (temperature < -255) ? 0 : ((temperature > 0) ? 255 : (temperature + 255));
+        int g = (temperature > 255) ? 0 : ((temperature < 0) ? 255 : (-temperature + 255));
+        int b = (temperature < -255 || temperature > 255) ? 0 : ((temperature >= 0) ? (-temperature + 255) : (temperature + 255));
+        ALLEGRO_COLOR color = al_map_rgb(r, g, b);
+        
+        al_draw_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, color, 1);
 
         if (content == BoxContent::IronPlate) {
-            al_draw_filled_rectangle(rect.p1.x + 2, rect.p1.y + 2, rect.p1.x + 6, rect.p2.y - 2, al_map_rgb(255, 255 - temperature, 255 - temperature));
+            al_draw_filled_rectangle(rect.p1.x + 2, rect.p1.y + 2, rect.p1.x + 6, rect.p2.y - 2, color);
         } else if (content == BoxContent::HeavyIronPlate) {
-            al_draw_filled_rectangle(rect.p1.x + 2, rect.p1.y + 2, rect.p1.x + 6, rect.p2.y - 2, al_map_rgb(255, 255 - temperature, 255 - temperature));
-            al_draw_filled_rectangle(rect.p1.x + 8, rect.p1.y + 2, rect.p1.x + 12, rect.p2.y - 2, al_map_rgb(255, 255 - temperature, 255 - temperature));
+            al_draw_filled_rectangle(rect.p1.x + 2, rect.p1.y + 2, rect.p1.x + 6, rect.p2.y - 2, color);
+            al_draw_filled_rectangle(rect.p1.x + 8, rect.p1.y + 2, rect.p1.x + 12, rect.p2.y - 2, color);
         } else if (content == BoxContent::VeryHeavyIronPlate) {
-            al_draw_filled_rectangle(rect.p1.x + 2, rect.p1.y + 2, rect.p1.x + 6, rect.p2.y - 2, al_map_rgb(255, 255 - temperature, 255 - temperature));
-            al_draw_filled_rectangle(rect.p1.x + 8, rect.p1.y + 2, rect.p1.x + 12, rect.p2.y - 2, al_map_rgb(255, 255 - temperature, 255 - temperature));
-            al_draw_filled_rectangle(rect.p1.x + 14, rect.p1.y + 2, rect.p1.x + 16, rect.p2.y - 2, al_map_rgb(255, 255 - temperature, 255 - temperature));
-        }
+            al_draw_filled_rectangle(rect.p1.x + 2, rect.p1.y + 2, rect.p1.x + 6, rect.p2.y - 2, color);
+            al_draw_filled_rectangle(rect.p1.x + 8, rect.p1.y + 2, rect.p1.x + 12, rect.p2.y - 2, color);
+            al_draw_filled_rectangle(rect.p1.x + 14, rect.p1.y + 2, rect.p1.x + 18, rect.p2.y - 2, color);
+        } else if (content == BoxContent::Coal) {
+            al_draw_filled_rectangle(rect.p1.x + 2, rect.p1.y + 2, rect.p2.x - 2, rect.p2.y - 2, color);
+        }    
     }
 
     Rect2d getRect() {
@@ -61,6 +70,10 @@ public:
 
     BoxContent getContent() {
         return content;
+    }
+
+    void update() {
+        temperature -= temperature * 0.01;
     }
 };
 
