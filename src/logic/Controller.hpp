@@ -42,7 +42,7 @@ public:
     Controller(Point2d aPos, GameWorld* aWorld): rect(aPos, 40, 30), GameObject(aWorld) {}
 
     void draw() {
-        al_draw_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, al_map_rgb(100, 255, 100), 1);
+        GraphicsEngine::instance()->draw_rectangle(rect, 0, al_map_rgb(100, 255, 100));
     }
 
     Rect2d getRect() {
@@ -85,10 +85,11 @@ public:
     }
 
     void drawRegisters() {
-        al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 10, 0, std::to_string(rInstr).c_str());
-        al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 20, 0, std::to_string(r1).c_str());
-        al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 30, 0, std::to_string(r2).c_str());
-        al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 40, 0, std::to_string(rDelay).c_str());
+        // TODO
+        // al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 10, 0, std::to_string(rInstr).c_str());
+        // al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 20, 0, std::to_string(r1).c_str());
+        // al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 30, 0, std::to_string(r2).c_str());
+        // al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 40, 0, std::to_string(rDelay).c_str());
     }
 
     void run() {

@@ -2,6 +2,8 @@
 #define __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_GAMEOBJECT_HPP_
 
 class GameWorld;
+
+#include "../graphics/GraphicsEngine.hpp"
 #include "allegro5/allegro_font.h"
 
 class GameObject {

@@ -137,17 +137,6 @@ void redraw() {
 
     gameWorld.drawAll();
     // gameWorld.getController(6)->drawInstructions();
-
-    al_hold_bitmap_drawing(false);
-
-    // testing graphics engine
-    al_hold_bitmap_drawing(true);
-    al_draw_circle(450, 450, 4, al_map_rgb(255, 255, 255), 1);
-    al_draw_circle(500, 500, 2, al_map_rgb(255, 255, 255), 1);
-    for (int z = 0; z < 500; z++) {
-        GraphicsEngine::instance()->draw_point(Point2d(500, 500), z, al_map_rgb(255 - z / 2, 255 - z / 2, 255 - z / 2));
-    }
-    
     al_hold_bitmap_drawing(false);
 
     al_hold_bitmap_drawing(true);
@@ -166,11 +155,19 @@ void update() {
     al_get_keyboard_state(&keyboardState);
 
     CameraParameters camera = GraphicsEngine::instance()->getCameraParameters();
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_W))  camera.position.y--;
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_S))  camera.position.y++;
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_A))  camera.position.x--;
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_D))  camera.position.x++;
-     GraphicsEngine::instance()->setCameraParameters(camera);
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_W)) camera.position.y -= 3;
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_S)) camera.position.y += 3;
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_A)) camera.position.x -= 3;
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_D)) camera.position.x += 3;
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_EQUALS)) {
+        camera.z /= 1.01;
+        camera.fov /= 1.01;
+    }
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_MINUS)) {
+        camera.z *= 1.01;
+        camera.fov *= 1.01;
+    }
+    GraphicsEngine::instance()->setCameraParameters(camera);
 
     gameWorld.run();
 }

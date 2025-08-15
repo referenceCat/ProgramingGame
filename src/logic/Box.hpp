@@ -40,19 +40,19 @@ public:
         int b = (temperature < -255 || temperature > 255) ? 0 : ((temperature >= 0) ? (-temperature + 255) : (temperature + 255));
         ALLEGRO_COLOR color = al_map_rgb(r, g, b);
         
-        al_draw_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, color, 1);
+        GraphicsEngine::instance()->draw_rectangle(rect, 0, color, 1);
 
         if (content == BoxContent::IronPlate) {
-            al_draw_filled_rectangle(rect.p1.x + 2, rect.p1.y + 2, rect.p1.x + 6, rect.p2.y - 2, color);
+            GraphicsEngine::instance()->draw_line(rect.p1 + Point2d(4, 2), rect.p1 + Point2d(4, 10), 0, color, 3);
         } else if (content == BoxContent::HeavyIronPlate) {
-            al_draw_filled_rectangle(rect.p1.x + 2, rect.p1.y + 2, rect.p1.x + 6, rect.p2.y - 2, color);
-            al_draw_filled_rectangle(rect.p1.x + 8, rect.p1.y + 2, rect.p1.x + 12, rect.p2.y - 2, color);
+            GraphicsEngine::instance()->draw_line(rect.p1 + Point2d(4, 2), rect.p1 + Point2d(4, 10), 0, color, 3);
+            GraphicsEngine::instance()->draw_line(rect.p1 + Point2d(8, 2), rect.p1 + Point2d(8, 10), 0, color, 3);
         } else if (content == BoxContent::VeryHeavyIronPlate) {
-            al_draw_filled_rectangle(rect.p1.x + 2, rect.p1.y + 2, rect.p1.x + 6, rect.p2.y - 2, color);
-            al_draw_filled_rectangle(rect.p1.x + 8, rect.p1.y + 2, rect.p1.x + 12, rect.p2.y - 2, color);
-            al_draw_filled_rectangle(rect.p1.x + 14, rect.p1.y + 2, rect.p1.x + 18, rect.p2.y - 2, color);
+            GraphicsEngine::instance()->draw_line(rect.p1 + Point2d(4, 2), rect.p1 + Point2d(4, 10), 0, color, 3);
+            GraphicsEngine::instance()->draw_line(rect.p1 + Point2d(8, 2), rect.p1 + Point2d(8, 10), 0, color, 3);
+            GraphicsEngine::instance()->draw_line(rect.p1 + Point2d(12, 2), rect.p1 + Point2d(12, 10), 0, color, 3);
         } else if (content == BoxContent::Coal) {
-            al_draw_filled_rectangle(rect.p1.x + 2, rect.p1.y + 2, rect.p2.x - 2, rect.p2.y - 2, color);
+            GraphicsEngine::instance()->draw_rectangle(rect, 0, color);
         }    
     }
 

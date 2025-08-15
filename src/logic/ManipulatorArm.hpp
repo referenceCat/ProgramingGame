@@ -26,7 +26,7 @@ class ManipulatorArm : public GameObject {
     float segmentsLength[maxJointsNumber];
 
     // target state
-    RelativeRotation jointsTargetRotation[maxJointsNumber];
+    RelativeRotation jointsTargetRotation[maxJointsNumber]; // TODO use vector
     Point2d jointsTargetPosition[maxJointsNumber];
     float segmentsTargetLength[maxJointsNumber];
 
@@ -106,26 +106,26 @@ public:
     void draw() {
         // draw target state
         for (int i = 0; i < jointsNumber; i++) {
-            al_draw_filled_circle(jointsTargetPosition[i].x, jointsTargetPosition[i].y, 3, al_map_rgb(0, 100, 100));
+            GraphicsEngine::instance()->draw_circle(jointsTargetPosition[i], 3, 0, al_map_rgb(0, 100, 100));
         }
 
         for (int i = 1; i < jointsNumber; i++) {
-            al_draw_line(jointsTargetPosition[i - 1].x, jointsTargetPosition[i - 1].y, jointsTargetPosition[i].x, jointsTargetPosition[i].y, al_map_rgb(0, 100, 100), 1);
+           GraphicsEngine::instance()->draw_line(jointsTargetPosition[i - 1], jointsTargetPosition[i], 0, al_map_rgb(0, 100, 100), 1);
         }
 
         // draw current state
         for (int i = 0; i < jointsNumber; i++) {
-            al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), jointsPosition[i].x + 5, jointsPosition[i].y + 5, 0, std::to_string(i).c_str());
-            al_draw_filled_circle(jointsPosition[i].x, jointsPosition[i].y, 3, al_map_rgb(255, 255, 255));
+            // TODO al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), jointsPosition[i].x + 5, jointsPosition[i].y + 5, 0, std::to_string(i).c_str());
+            GraphicsEngine::instance()->draw_circle(jointsPosition[i], 3, 0, al_map_rgb(255, 255, 255), 0);
         }
 
         for (int i = 1; i < jointsNumber; i++) {
-            al_draw_line(jointsPosition[i - 1].x, jointsPosition[i - 1].y, jointsPosition[i].x, jointsPosition[i].y, al_map_rgb(255, 255, 255), 1);
+            GraphicsEngine::instance()->draw_line(jointsPosition[i - 1], jointsPosition[i], 0, al_map_rgb(255, 255, 255), 1);
         }
 
         // draw active arm
         if (active) {
-            al_draw_filled_circle(jointsPosition[jointsNumber - 1].x, jointsPosition[jointsNumber - 1].y, 3, al_map_rgb(0, 255, 0));
+            GraphicsEngine::instance()->draw_circle(jointsPosition[jointsNumber - 1], 4, 0, al_map_rgb(0, 255, 0));
         }
     }
 

@@ -115,7 +115,8 @@ public:
 
     void draw() override {
         Machine::draw();
-        al_draw_line(rect.p1.x, rect.p2.y + 3, rect.p1.x + processTime, rect.p2.y + 3, al_map_rgb(255, 255, 255), 2);
+        GraphicsEngine::instance()->draw_line(Point2d(rect.p1.x, rect.p2.y + 3), Point2d(rect.p1.x + processTime, rect.p2.y + 3), 0, al_map_rgb(100, 100, 100), 2);
+        GraphicsEngine::instance()->draw_line(Point2d(rect.p1.x, rect.p2.y + 3), Point2d(rect.p1.x + processTime, rect.p2.y + 3), -2, al_map_rgb(255, 255, 255), 2);
     }
 };
 
