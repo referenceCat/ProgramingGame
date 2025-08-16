@@ -32,13 +32,13 @@ public:
     Machine(Rect2d rect, GameWorld* aWorld);
 
     virtual void draw() {
-        GraphicsEngine::instance()->draw_rectangle(rect, 0,  al_map_rgb(100, 255, 100), 1);
+        GraphicsEngine::instance()->drawRectangle(rect, 0,  al_map_rgb(100, 255, 100), 1);
 
         for (auto item: areas) {
             Rect2d areaRect;
             areaRect.p1 = item->rect.p1 + rect.p1;
             areaRect.p2 = item->rect.p2 + rect.p1;
-            GraphicsEngine::instance()->draw_rectangle(areaRect, 0,  al_map_rgb(100, 100, 255), 1);
+            GraphicsEngine::instance()->drawRectangle(areaRect, 0,  al_map_rgb(100, 100, 255), 1);
         }
     }
 

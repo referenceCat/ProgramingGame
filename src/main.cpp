@@ -3,6 +3,7 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_image.h>
 #include "common/common.hpp"
 #include "logic/ManipulatorArm.hpp"
 #include "logic/Box.hpp"
@@ -252,9 +253,16 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    // Initialize allegro image addon
+    if (!al_init_image_addon()) {
+        fprintf(stderr, "Failed to initialize allegro image addon.\n");
+        return 1;
+    }
+
     debug_font = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
     GameObject::debug_font = debug_font;
     GuiEngine::debug_font = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
+    GraphicsEngine::instance()->loadImages();
 
     // Initialize allegro primitives addon
     if (!al_init_primitives_addon()) {

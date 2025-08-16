@@ -106,26 +106,26 @@ public:
     void draw() {
         // draw target state
         for (int i = 0; i < jointsNumber; i++) {
-            GraphicsEngine::instance()->draw_circle(jointsTargetPosition[i], 3, 0, al_map_rgb(0, 100, 100));
+            GraphicsEngine::instance()->drawCircle(jointsTargetPosition[i], 3, 0, al_map_rgb(0, 100, 100));
         }
 
         for (int i = 1; i < jointsNumber; i++) {
-           GraphicsEngine::instance()->draw_line(jointsTargetPosition[i - 1], jointsTargetPosition[i], 0, al_map_rgb(0, 100, 100), 1);
+           GraphicsEngine::instance()->drawLine(jointsTargetPosition[i - 1], jointsTargetPosition[i], 0, al_map_rgb(0, 100, 100), 1);
         }
 
         // draw current state
         for (int i = 0; i < jointsNumber; i++) {
             // TODO al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), jointsPosition[i].x + 5, jointsPosition[i].y + 5, 0, std::to_string(i).c_str());
-            GraphicsEngine::instance()->draw_circle(jointsPosition[i], 3, 0, al_map_rgb(255, 255, 255), 0);
+            GraphicsEngine::instance()->drawCircle(jointsPosition[i], 3, 0, al_map_rgb(255, 255, 255), 0);
         }
 
         for (int i = 1; i < jointsNumber; i++) {
-            GraphicsEngine::instance()->draw_line(jointsPosition[i - 1], jointsPosition[i], 0, al_map_rgb(255, 255, 255), 1);
+            GraphicsEngine::instance()->drawLine(jointsPosition[i - 1], jointsPosition[i], 0, al_map_rgb(255, 255, 255), 1);
         }
 
         // draw active arm
         if (active) {
-            GraphicsEngine::instance()->draw_circle(jointsPosition[jointsNumber - 1], 4, 0, al_map_rgb(0, 255, 0));
+            GraphicsEngine::instance()->drawCircle(jointsPosition[jointsNumber - 1], 4, 0, al_map_rgb(0, 255, 0));
         }
     }
 
