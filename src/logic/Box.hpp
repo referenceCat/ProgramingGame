@@ -35,24 +35,25 @@ public:
     }
 
     void draw() {
+        double z = -1;
         int r = (temperature < -255) ? 0 : ((temperature > 0) ? 255 : (temperature + 255));
         int g = (temperature > 255) ? 0 : ((temperature < 0) ? 255 : (-temperature + 255));
         int b = (temperature < -255 || temperature > 255) ? 0 : ((temperature >= 0) ? (-temperature + 255) : (temperature + 255));
         ALLEGRO_COLOR color = al_map_rgb(r, g, b);
         
-        GraphicsEngine::instance()->draw_rectangle(rect, 0, color, 1);
+        GraphicsEngine::instance()->drawRectangle(rect, z, color, 1);
 
         if (content == BoxContent::IronPlate) {
-            GraphicsEngine::instance()->draw_line(rect.p1 + Point2d(4, 2), rect.p1 + Point2d(4, 10), 0, color, 3);
+            GraphicsEngine::instance()->drawLine(rect.p1 + Point2d(4, 2), rect.p1 + Point2d(4, 10), z, color, 3);
         } else if (content == BoxContent::HeavyIronPlate) {
-            GraphicsEngine::instance()->draw_line(rect.p1 + Point2d(4, 2), rect.p1 + Point2d(4, 10), 0, color, 3);
-            GraphicsEngine::instance()->draw_line(rect.p1 + Point2d(8, 2), rect.p1 + Point2d(8, 10), 0, color, 3);
+            GraphicsEngine::instance()->drawLine(rect.p1 + Point2d(4, 2), rect.p1 + Point2d(4, 10), z, color, 3);
+            GraphicsEngine::instance()->drawLine(rect.p1 + Point2d(8, 2), rect.p1 + Point2d(8, 10), z, color, 3);
         } else if (content == BoxContent::VeryHeavyIronPlate) {
-            GraphicsEngine::instance()->draw_line(rect.p1 + Point2d(4, 2), rect.p1 + Point2d(4, 10), 0, color, 3);
-            GraphicsEngine::instance()->draw_line(rect.p1 + Point2d(8, 2), rect.p1 + Point2d(8, 10), 0, color, 3);
-            GraphicsEngine::instance()->draw_line(rect.p1 + Point2d(12, 2), rect.p1 + Point2d(12, 10), 0, color, 3);
+            GraphicsEngine::instance()->drawLine(rect.p1 + Point2d(4, 2), rect.p1 + Point2d(4, 10), z, color, 3);
+            GraphicsEngine::instance()->drawLine(rect.p1 + Point2d(8, 2), rect.p1 + Point2d(8, 10), z, color, 3);
+            GraphicsEngine::instance()->drawLine(rect.p1 + Point2d(12, 2), rect.p1 + Point2d(12, 10), z, color, 3);
         } else if (content == BoxContent::Coal) {
-            GraphicsEngine::instance()->draw_rectangle(rect, 0, color);
+            GraphicsEngine::instance()->drawRectangle(rect, z, color);
         }    
     }
 

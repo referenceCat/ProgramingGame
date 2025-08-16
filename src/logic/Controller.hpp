@@ -42,7 +42,7 @@ public:
     Controller(Point2d aPos, GameWorld* aWorld): rect(aPos, 40, 30), GameObject(aWorld) {}
 
     void draw() {
-        GraphicsEngine::instance()->draw_rectangle(rect, 0, al_map_rgb(100, 255, 100));
+        GraphicsEngine::instance()->drawRectangle(rect, 0, al_map_rgb(100, 255, 100));
     }
 
     Rect2d getRect() {

@@ -14,6 +14,11 @@ public:
             if(item->getTemperature() < 255) item->setTemperature(item->getTemperature() + 1);
         }
     }
+
+    void draw() override {
+        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->image, 1);
+        // Machine::draw();
+    }
 };
 
 class BoxGenerator: public Machine {
@@ -45,6 +50,13 @@ public:
             cooldown = period;
         }
     }
+
+    void draw() override {
+        Machine::draw();
+        GraphicsEngine::instance()->drawLine(Point2d(rect.p1.x, rect.p2.y + 10), Point2d(rect.p1.x + (period - cooldown) / 4, rect.p2.y + 10), 0, al_map_rgb(100, 100, 100), 2);
+        GraphicsEngine::instance()->drawLine(Point2d(rect.p1.x, rect.p2.y + 10), Point2d(rect.p1.x + (period - cooldown) / 4, rect.p2.y + 10), -5, al_map_rgb(255, 255, 255), 2);
+    }
+
 };
 
 class BoxDestroyer: public Machine {
@@ -115,8 +127,8 @@ public:
 
     void draw() override {
         Machine::draw();
-        GraphicsEngine::instance()->draw_line(Point2d(rect.p1.x, rect.p2.y + 3), Point2d(rect.p1.x + processTime, rect.p2.y + 3), 0, al_map_rgb(100, 100, 100), 2);
-        GraphicsEngine::instance()->draw_line(Point2d(rect.p1.x, rect.p2.y + 3), Point2d(rect.p1.x + processTime, rect.p2.y + 3), -2, al_map_rgb(255, 255, 255), 2);
+        GraphicsEngine::instance()->drawLine(Point2d(rect.p1.x, rect.p2.y + 10), Point2d(rect.p1.x + processTime, rect.p2.y + 10), 0, al_map_rgb(100, 100, 100), 2);
+        GraphicsEngine::instance()->drawLine(Point2d(rect.p1.x, rect.p2.y + 10), Point2d(rect.p1.x + processTime, rect.p2.y + 10), -5, al_map_rgb(255, 255, 255), 2);
     }
 };
 

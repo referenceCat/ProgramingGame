@@ -3,6 +3,7 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_image.h>
 #include "common/common.hpp"
 #include "logic/ManipulatorArm.hpp"
 #include "logic/Box.hpp"
@@ -125,8 +126,21 @@ void init() {
 
 void redraw() {
     // auto start = std::chrono::system_clock::now();
+    gameWorld.drawAll();
     al_set_target_bitmap(al_get_backbuffer(al_get_current_display()));
     al_clear_to_color(al_map_rgb(0, 0, 0));
+
+    al_hold_bitmap_drawing(true);
+    GraphicsEngine::instance()->draw();
+    al_hold_bitmap_drawing(false);
+
+
+    // gameWorld.getController(6)->drawInstructions();
+
+    al_hold_bitmap_drawing(true);
+    GuiEngine::getInstance()->draw();
+    al_hold_bitmap_drawing(false);
+
     al_hold_bitmap_drawing(true);
 
     al_draw_text(debug_font, al_map_rgb(255, 255, 255), 10, 10, 0, "Programing game");
@@ -135,15 +149,10 @@ void redraw() {
     al_draw_text(debug_font, al_map_rgb(255, 255, 255), 150, 20, 0, "Events counter:");
     al_draw_text(debug_font, al_map_rgb(255, 255, 255), 270, 20, 0, std::to_string(eventCounter).c_str());
 
-    gameWorld.drawAll();
-    // gameWorld.getController(6)->drawInstructions();
     al_hold_bitmap_drawing(false);
-
-    al_hold_bitmap_drawing(true);
-    GuiEngine::getInstance()->draw();
-    al_hold_bitmap_drawing(false);
-    
+    GraphicsEngine::instance()->clearBitmaps();
     al_flip_display();
+
     // auto end = std::chrono::system_clock::now();
     // auto elapsed_ms = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
     // std::cout << elapsed_ms << std::endl;
@@ -252,9 +261,16 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    // Initialize allegro image addon
+    if (!al_init_image_addon()) {
+        fprintf(stderr, "Failed to initialize allegro image addon.\n");
+        return 1;
+    }
+
     debug_font = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
     GameObject::debug_font = debug_font;
     GuiEngine::debug_font = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
+    GraphicsEngine::instance()->loadImages();
 
     // Initialize allegro primitives addon
     if (!al_init_primitives_addon()) {
