@@ -267,11 +267,6 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    debug_font = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
-    GameObject::debug_font = debug_font;
-    GuiEngine::debug_font = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
-    GraphicsEngine::instance()->loadImages();
-
     // Initialize allegro primitives addon
     if (!al_init_primitives_addon()) {
         fprintf(stderr, "Failed to primitives allegro ttf addon.\n");
@@ -285,6 +280,11 @@ int main(int argc, char **argv) {
         fprintf(stderr, "Failed to create event queue.");
         return 1;
     }
+
+    debug_font = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
+    GameObject::debug_font = debug_font;
+    GuiEngine::debug_font = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
+    GraphicsEngine::instance()->loadImages();
 
     //Initialize user inputs
     al_install_keyboard();

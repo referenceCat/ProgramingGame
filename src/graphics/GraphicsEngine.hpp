@@ -14,7 +14,6 @@ struct CameraParameters {
     double z;
     double fov; // horizontal
     Point2d displaySize;
-    Rect2d renderingArea;
 };
 
 class GraphicsEngine {
@@ -56,9 +55,20 @@ public:
     ALLEGRO_BITMAP* assemblerCyllindersSprite = nullptr;
     ALLEGRO_BITMAP* assemblerPressSprite = nullptr;
     ALLEGRO_BITMAP* assemblerPlateSprite = nullptr;
+    ALLEGRO_BITMAP* backhroundTile100x100 = nullptr;
     
 
     void loadImages() {
+        backhroundTile100x100 = al_create_bitmap(100, 100);
+        al_set_target_bitmap(backhroundTile100x100);
+        al_draw_filled_rectangle(0, 0, 100, 100, al_map_rgb(50, 50, 50));
+        for (int i = 0; i < 100; i++) {
+            int x = i % 10;
+            int y = i / 10;
+            if ((x + y) % 2) al_draw_filled_rectangle(x * 10, y * 10, x * 10 + 10, y * 10 + 10, al_map_rgb(20, 20, 20));
+
+        }
+
         furnaceSprite = al_load_bitmap("resources/assets/heater.png");
 
         baseSpite = al_load_bitmap("resources/assets/base.png");
@@ -69,6 +79,14 @@ public:
         assemblerCyllindersSprite = al_load_bitmap("resources/assets/assembler1.png");
         assemblerPressSprite = al_load_bitmap("resources/assets/assembler3.png");
         assemblerPlateSprite = al_load_bitmap("resources/assets/assembler2.png");
+    }
+
+    void drawBackground() { // TODO very slow way to draw tiles
+        double tileSize = transformScalar(al_get_bitmap_width(backhroundTile100x100), 0, camera);
+        Point2d position = transformPoint(Point2d(static_cast<int> (camera.position.x) / 100 * 100, static_cast<int> (camera.position.y) / 100 * 100) , 0, camera);
+        for (int x = -10; x < 10; x++) for (int y = -10; y < 10; y++) {
+            al_draw_scaled_bitmap(backhroundTile100x100, 0, 0, 100, 100, position.x + x * tileSize, position.y + y * tileSize, tileSize, tileSize, 0);
+        }
     }
 
     static Point2d transformPoint(Point2d originalPoint, double z, const CameraParameters& cameraParameters) {
@@ -153,6 +171,7 @@ public:
     }
 
     void draw() {
+        drawBackground();
         for (int i = layers.size() - 1; i >= 0; i--) {
             al_draw_bitmap(layers.at(i).bitmap, 0, 0, 0); 
         }

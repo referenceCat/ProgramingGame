@@ -107,7 +107,7 @@ public:
     }
 
     void run() override {
-        if (!processRunning && getBoxesInside(ingridientArea0).size() && getBoxesInside(ingridientArea0).size()) {
+        if (!processRunning && getBoxesInside(ingridientArea0).size() && getBoxesInside(ingridientArea1).size()) {
             auto box0 = getBoxesInside(ingridientArea0).at(0);
             auto box1 = getBoxesInside(ingridientArea1).at(0);
             if (box0->getContent() == BoxContent::IronPlate 
