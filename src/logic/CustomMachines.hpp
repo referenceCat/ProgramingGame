@@ -16,7 +16,7 @@ public:
     }
 
     void draw() override {
-        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->image, 1);
+        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->furnaceSprite, 5);
         // Machine::draw();
     }
 };

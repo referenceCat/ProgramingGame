@@ -3,6 +3,8 @@
 
 #include <math.h>
 
+// TODO remove global/local and vector/point 
+
 struct RelativeRotation {
     double radians;
 
@@ -25,6 +27,10 @@ struct RelativeRotation {
 
 struct GlobalRotation {
     double radians = 0;
+
+    GlobalRotation(): radians(0) {}
+
+    GlobalRotation(double radians): radians(radians) {}
 
     GlobalRotation operator+ (RelativeRotation other) {
         GlobalRotation result;
@@ -70,6 +76,10 @@ struct Vector2d {
     Vector2d(GlobalRotation rotation, double length) {
         x = cos(rotation.radians) * length;
         y = sin(rotation.radians) * length;
+    }
+
+    GlobalRotation getDirection() {
+        return GlobalRotation(std::atan2(y, x));
     }
 };
 

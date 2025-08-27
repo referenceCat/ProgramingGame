@@ -48,10 +48,17 @@ class GraphicsEngine {
     }
 
 public:
-    ALLEGRO_BITMAP* image = nullptr;
+    ALLEGRO_BITMAP* furnaceSprite = nullptr;
+    ALLEGRO_BITMAP* baseSpite = nullptr;
+    ALLEGRO_BITMAP* segment0Sprite = nullptr;
+    ALLEGRO_BITMAP* segment1Sprite = nullptr;
+    
 
     void loadImages() {
-        image = al_load_bitmap("resources/assets/heater.png");
+        furnaceSprite = al_load_bitmap("resources/assets/heater.png");
+        baseSpite = al_load_bitmap("resources/assets/base.png");
+        segment0Sprite = al_load_bitmap("resources/assets/segment0.png");
+        segment1Sprite = al_load_bitmap("resources/assets/segment1.png");
     }
 
     static Point2d transformPoint(Point2d originalPoint, double z, const CameraParameters& cameraParameters) {
@@ -119,12 +126,15 @@ public:
         else al_draw_circle(displayPoint.x, displayPoint.y, r, color, thickness);
     }
 
-    void drawBitmap(Point2d aPoint, ALLEGRO_BITMAP* bitmap, double z) {
+    void drawBitmap(Point2d aPoint, ALLEGRO_BITMAP* bitmap, double z, Point2d bitmapPivot = Point2d(), GlobalRotation bitmapRotation = GlobalRotation()) {
         setLayerAsTargetBitmap(z);
         Point2d displayPoint = transformPoint(aPoint, z, camera);
-        double displayW = transformScalar(al_get_bitmap_width(bitmap), z, camera);
-        double displayH = transformScalar(al_get_bitmap_height(bitmap), z, camera);
-        al_draw_scaled_bitmap(bitmap, 0, 0, al_get_bitmap_width(bitmap), al_get_bitmap_height(bitmap), displayPoint.x, displayPoint.y, displayW, displayH, 0);
+        // double displayW = transformScalar(al_get_bitmap_width(bitmap), z, camera);
+        // double displayH = transformScalar(al_get_bitmap_height(bitmap), z, camera);
+        // al_draw_scaled_bitmap(bitmap, 0, 0, al_get_bitmap_width(bitmap), al_get_bitmap_height(bitmap), displayPoint.x, displayPoint.y, displayW, displayH, 0);
+
+        double sizeMultiplayer = transformScalar(1, z, camera);
+        al_draw_scaled_rotated_bitmap(bitmap, bitmapPivot.x, bitmapPivot.y, displayPoint.x, displayPoint.y, sizeMultiplayer, sizeMultiplayer, bitmapRotation.radians, 0);
     }
 
     static GraphicsEngine* instance() {

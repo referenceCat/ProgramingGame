@@ -7,3 +7,5 @@
 # build
 build/
 cmake-build-*/
+
+*.blend1

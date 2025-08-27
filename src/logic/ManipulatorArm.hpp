@@ -14,7 +14,7 @@
 
 class GameWorld;
 
-class ManipulatorArm : public GameObject {
+class ManipulatorArm : public GameObject { // TODO now supports rendering of 2 segment manipulator only
     static constexpr int maxJointsNumber = 256;
     static constexpr double jointRotationSpeed = 0.01;
     static constexpr double segmentResizeSpeed = 1;
@@ -103,7 +103,7 @@ public:
         }
     }
 
-    void draw() {
+    void drawDebug() {
         // draw target state
         for (int i = 0; i < jointsNumber; i++) {
             GraphicsEngine::instance()->drawCircle(jointsTargetPosition[i], 3, 0, al_map_rgb(0, 100, 100));
@@ -128,6 +128,17 @@ public:
             GraphicsEngine::instance()->drawCircle(jointsPosition[jointsNumber - 1], 4, 0, al_map_rgb(0, 255, 0));
         }
     }
+
+     void draw() {
+        if (jointsNumber == 3) {
+            GraphicsEngine::instance()->drawBitmap(jointsPosition[0],  GraphicsEngine::instance()->baseSpite, 1, Point2d(25, 25));
+            GraphicsEngine::instance()->drawBitmap(jointsPosition[0],  GraphicsEngine::instance()->segment0Sprite, 0.5, Point2d(25, 25), Vector2d(jointsPosition[1], jointsPosition[0]).getDirection());
+            GraphicsEngine::instance()->drawBitmap(jointsPosition[1],  GraphicsEngine::instance()->segment1Sprite, 1, Point2d(25, 50), Vector2d(jointsPosition[2], jointsPosition[1]).getDirection());
+        } else {
+            drawDebug();
+        }
+        
+     }
 
     void rotateJointToTarget(int i) { // TODO stop after reacing target rotation
         double dRotation = std::fmod(jointsTargetRotation[i].radians - jointsRotation[i].radians, M_PI * 2);
