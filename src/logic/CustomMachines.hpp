@@ -120,7 +120,7 @@ public:
                 auto resultBox = createBox(resultArea); // process stops here
                 resultBox->setContent(BoxContent::HeavyIronPlate);
                 processRunning = false;
-                processTime == 0;
+                processTime = 0;
             }
         }
     }
