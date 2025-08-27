@@ -52,13 +52,23 @@ public:
     ALLEGRO_BITMAP* baseSpite = nullptr;
     ALLEGRO_BITMAP* segment0Sprite = nullptr;
     ALLEGRO_BITMAP* segment1Sprite = nullptr;
+    ALLEGRO_BITMAP* assemblerBaseSprite = nullptr;
+    ALLEGRO_BITMAP* assemblerCyllindersSprite = nullptr;
+    ALLEGRO_BITMAP* assemblerPressSprite = nullptr;
+    ALLEGRO_BITMAP* assemblerPlateSprite = nullptr;
     
 
     void loadImages() {
         furnaceSprite = al_load_bitmap("resources/assets/heater.png");
+
         baseSpite = al_load_bitmap("resources/assets/base.png");
         segment0Sprite = al_load_bitmap("resources/assets/segment0.png");
         segment1Sprite = al_load_bitmap("resources/assets/segment1.png");
+
+        assemblerBaseSprite = al_load_bitmap("resources/assets/assembler0.png");
+        assemblerCyllindersSprite = al_load_bitmap("resources/assets/assembler1.png");
+        assemblerPressSprite = al_load_bitmap("resources/assets/assembler3.png");
+        assemblerPlateSprite = al_load_bitmap("resources/assets/assembler2.png");
     }
 
     static Point2d transformPoint(Point2d originalPoint, double z, const CameraParameters& cameraParameters) {

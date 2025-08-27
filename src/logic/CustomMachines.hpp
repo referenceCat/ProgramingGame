@@ -83,6 +83,13 @@ class PlateCombiner: public Machine {
     int period = 160;
     int processTime = 0;
     bool processRunning = false;
+
+    int pressShiftByProcessTime() {
+        if (processTime < 20 || processTime > 140) return 0;
+        if (processTime > 60 && processTime < 100) return 20;
+        if (processTime < 80) return (processTime - 20) / 2;
+        return (140 - processTime) / 2;
+    }
     
 
 public:
@@ -126,7 +133,11 @@ public:
     }
 
     void draw() override {
-        Machine::draw();
+        // Machine::draw();
+        GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerBaseSprite, 2, Point2d(165, 165));
+        GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerCyllindersSprite, 10, Point2d(165, 165));
+        GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerPressSprite, 2, Point2d(165, 165 - pressShiftByProcessTime() + 4));
+        GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerPlateSprite, 5, Point2d(165, 165));
         GraphicsEngine::instance()->drawLine(Point2d(rect.p1.x, rect.p2.y + 10), Point2d(rect.p1.x + processTime, rect.p2.y + 10), 0, al_map_rgb(100, 100, 100), 2);
         GraphicsEngine::instance()->drawLine(Point2d(rect.p1.x, rect.p2.y + 10), Point2d(rect.p1.x + processTime, rect.p2.y + 10), -5, al_map_rgb(255, 255, 255), 2);
     }
