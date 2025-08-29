@@ -86,6 +86,9 @@ public:
 
     ALLEGRO_BITMAP* moduleLayer0 = nullptr;
     ALLEGRO_BITMAP* moduleLayer1 = nullptr;
+
+    ALLEGRO_BITMAP* beamLayer0 = nullptr;
+    ALLEGRO_BITMAP* beamLayer1 = nullptr;
     
 
     void loadImages() {
@@ -120,6 +123,9 @@ public:
 
         moduleLayer0 = al_load_bitmap("resources/assets/modules/corridor_background2.png");
         moduleLayer1 = al_load_bitmap("resources/assets/modules/corridor_walls.png");
+
+        beamLayer0 = al_load_bitmap("resources/assets/modules/beam1.png");
+        beamLayer1 = al_load_bitmap("resources/assets/modules/beam3.png");
     }
 
     void drawDebugBackgroung() { // TODO very slow way to draw tiles
