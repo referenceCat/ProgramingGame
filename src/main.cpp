@@ -164,10 +164,10 @@ void update() {
     al_get_keyboard_state(&keyboardState);
 
     CameraParameters camera = GraphicsEngine::instance()->getCameraParameters();
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_W)) camera.position.y -= 3;
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_S)) camera.position.y += 3;
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_A)) camera.position.x -= 3;
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_D)) camera.position.x += 3;
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_W)) camera.position.y -= 7;
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_S)) camera.position.y += 7;
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_A)) camera.position.x -= 7;
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_D)) camera.position.x += 7;
     if (al_key_down(&keyboardState, ALLEGRO_KEY_EQUALS)) {
         camera.z /= 1.01;
         camera.fov /= 1.01;
