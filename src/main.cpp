@@ -27,24 +27,24 @@ void init() {
     CameraParameters parameters;
     parameters.fov = 900;
     parameters.displaySize = Point2d(900, 900);
-    parameters.position = Point2d(450, 450);
+    parameters.position = Point2d(600, 300);
     parameters.z = -400; // fov = 90 deg
 
     GraphicsEngine::instance()->setCameraParameters(parameters);
 
     // TEST 
-    auto arm1 = gameWorld.addManipulatorArm(3, Point2d(200, 300));
-    auto arm2 = gameWorld.addManipulatorArm(3, Point2d(400, 300));
-    auto creator3 = new BoxGenerator(Point2d(100, 400), &gameWorld);
+    auto arm1 = gameWorld.addManipulatorArm(3, Point2d(200, 510));
+    auto arm2 = gameWorld.addManipulatorArm(3, Point2d(600, 510));
+    auto creator3 = new BoxGenerator(Point2d(100, 505), &gameWorld);
     creator3->setPeriod(300);
     creator3->setType(BoxContent::IronPlate);
-    auto furnace4 = new Furnace(Point2d(150, 200), &gameWorld);
-    auto destoyer5 = new BoxDestroyer(Point2d(500, 400), &gameWorld);
-    auto assembler6 = new PlateCombiner(Point2d(300, 200), &gameWorld);
+    auto furnace4 = new Furnace(Point2d(280, 460), &gameWorld);
+    auto destoyer5 = new BoxDestroyer(Point2d(700, 505), &gameWorld);
+    auto assembler6 = new PlateCombiner(Point2d(440, 505), &gameWorld);
     // auto furnace4 = gameWorld.addMachine(Point2d(300, 400));
     // auto destoyer5 = gameWorld.addMachine(Point2d(300, 400));
 
-    auto controller7 = gameWorld.addController(Point2d(500, 500));
+    auto controller7 = gameWorld.addController(Point2d(900, 370));
     controller7->addInstruction("delay 50");
     controller7->addInstruction("delay 100");
     controller7->addInstruction("angle 1 0 180");
@@ -93,7 +93,7 @@ void init() {
 
     controller7->addInstruction("goto 1");
 
-    auto controller8 = gameWorld.addController(Point2d(400, 500));
+    auto controller8 = gameWorld.addController(Point2d(1000, 370));
 
     controller8->addInstruction("delay 50");
     controller8->addInstruction("delay 100");

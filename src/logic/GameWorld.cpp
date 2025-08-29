@@ -89,7 +89,7 @@ void GameWorld::drawAll() {
 
     GraphicsEngine::instance()->drawBitmap(Point2d(0, 0), GraphicsEngine::instance()->worldLayer0, 20);
     GraphicsEngine::instance()->drawBitmap(Point2d(0, 0), GraphicsEngine::instance()->worldLayer1, 10);
-    GraphicsEngine::instance()->drawBitmap(Point2d(0, 0), GraphicsEngine::instance()->worldLayer2, -10);
+    GraphicsEngine::instance()->drawBitmap(Point2d(0, 0), GraphicsEngine::instance()->worldLayer2, -2);
 }
 
 void GameWorld::run() {
