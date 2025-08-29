@@ -58,6 +58,10 @@ public:
     ALLEGRO_BITMAP* backhroundTile100x100 = nullptr;
     ALLEGRO_BITMAP* controllerSprite = nullptr;
     ALLEGRO_BITMAP* boxCreatorDestroyerBaseSprite = nullptr;
+
+    ALLEGRO_BITMAP* worldLayer0 = nullptr;
+    ALLEGRO_BITMAP* worldLayer1 = nullptr;
+    ALLEGRO_BITMAP* worldLayer2 = nullptr;
     
 
     void loadImages() {
@@ -85,6 +89,10 @@ public:
         controllerSprite = al_load_bitmap("resources/assets/controller.png");
 
         boxCreatorDestroyerBaseSprite = al_load_bitmap("resources/assets/box_creator_destroyer_base.png");
+
+        worldLayer0 = al_load_bitmap("resources/assets/background0.png");
+        worldLayer1 = al_load_bitmap("resources/assets/background1.png");
+        worldLayer2 = al_load_bitmap("resources/assets/background2.png");
     }
 
     void drawBackground() { // TODO very slow way to draw tiles
