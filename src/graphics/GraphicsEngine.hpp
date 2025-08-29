@@ -91,7 +91,7 @@ public:
         boxCreatorDestroyerBaseSprite = al_load_bitmap("resources/assets/box_creator_destroyer_base.png");
 
         worldLayer0 = al_load_bitmap("resources/assets/background0.png");
-        worldLayer1 = al_load_bitmap("resources/assets/background1.png");
+        worldLayer1 = al_load_bitmap("resources/assets/background1_no_shadow.png");
         worldLayer2 = al_load_bitmap("resources/assets/background2.png");
     }
 
