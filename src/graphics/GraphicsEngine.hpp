@@ -124,7 +124,7 @@ public:
     }
 
     static double transformScalar(double value, double z, const CameraParameters& cameraParameters) {
-        value *= (z - cameraParameters.z) / -cameraParameters.z;
+        value /= (z - cameraParameters.z) / -cameraParameters.z;
         value /= cameraParameters.fov;
         value *= cameraParameters.displaySize.x;
         return value;
