@@ -57,6 +57,7 @@ public:
     ALLEGRO_BITMAP* assemblerPlateSprite = nullptr;
     ALLEGRO_BITMAP* backhroundTile100x100 = nullptr;
     ALLEGRO_BITMAP* controllerSprite = nullptr;
+    ALLEGRO_BITMAP* boxCreatorDestroyerBaseSprite = nullptr;
     
 
     void loadImages() {
@@ -82,6 +83,8 @@ public:
         assemblerPlateSprite = al_load_bitmap("resources/assets/assembler2.png");
 
         controllerSprite = al_load_bitmap("resources/assets/controller.png");
+
+        boxCreatorDestroyerBaseSprite = al_load_bitmap("resources/assets/box_creator_destroyer_base.png");
     }
 
     void drawBackground() { // TODO very slow way to draw tiles

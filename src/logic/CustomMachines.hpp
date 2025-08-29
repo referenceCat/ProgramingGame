@@ -52,9 +52,10 @@ public:
     }
 
     void draw() override {
-        Machine::draw();
+        // Machine::draw();
         GraphicsEngine::instance()->drawLine(Point2d(rect.p1.x, rect.p2.y + 10), Point2d(rect.p1.x + (period - cooldown) / 4, rect.p2.y + 10), 0, al_map_rgb(100, 100, 100), 2);
         GraphicsEngine::instance()->drawLine(Point2d(rect.p1.x, rect.p2.y + 10), Point2d(rect.p1.x + (period - cooldown) / 4, rect.p2.y + 10), -5, al_map_rgb(255, 255, 255), 2);
+        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->boxCreatorDestroyerBaseSprite, 2);
     }
 
 };
@@ -73,6 +74,11 @@ public:
         for (auto item: getBoxesInside(destroyingArea))  {
             destroyBox(item);
         }
+    }
+
+    void draw() override {
+        // Machine::draw();
+        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->boxCreatorDestroyerBaseSprite, 2);
     }
 };
 
