@@ -24,6 +24,12 @@ class GraphicsEngine {
         ALLEGRO_BITMAP* bitmap = nullptr;
     };
 
+    struct BackgroundStar{
+        Point2d pos;
+        double radius;
+        ALLEGRO_COLOR color;
+    };
+
     std::vector<Layer> layers{};
 
     void setLayerAsTargetBitmap(double z) {
@@ -46,6 +52,21 @@ class GraphicsEngine {
         al_clear_to_color(al_map_rgba(0, 0, 0, 0));
     }
 
+    double fRand(double fMin, double fMax) {
+        double f = (double)rand() / RAND_MAX;
+        return fMin + f * (fMax - fMin);
+    }
+
+    void initStars(std::vector<BackgroundStar> &stars, int n) {
+        for (int i = 0; i < n; i++) {
+            BackgroundStar star;
+            star.color = al_map_rgb(fRand(150, 255), fRand(150, 255), fRand(150, 255));
+            star.radius = fRand(0.3, 2);
+            star.pos = Point2d(fRand(-1000, 1000), fRand(-1000, 1000));
+            stars.push_back(star);
+        }
+    }
+
 public:
     ALLEGRO_BITMAP* furnaceSprite = nullptr;
     ALLEGRO_BITMAP* baseSpite = nullptr;
@@ -62,6 +83,9 @@ public:
     ALLEGRO_BITMAP* worldLayer0 = nullptr;
     ALLEGRO_BITMAP* worldLayer1 = nullptr;
     ALLEGRO_BITMAP* worldLayer2 = nullptr;
+
+    ALLEGRO_BITMAP* moduleLayer0 = nullptr;
+    ALLEGRO_BITMAP* moduleLayer1 = nullptr;
     
 
     void loadImages() {
@@ -93,15 +117,29 @@ public:
         worldLayer0 = al_load_bitmap("resources/assets/background0.png");
         worldLayer1 = al_load_bitmap("resources/assets/background1_no_shadow.png");
         worldLayer2 = al_load_bitmap("resources/assets/background2.png");
+
+        moduleLayer0 = al_load_bitmap("resources/assets/modules/corridor_background2.png");
+        moduleLayer1 = al_load_bitmap("resources/assets/modules/corridor_walls.png");
     }
 
-    void drawBackground() { // TODO very slow way to draw tiles
+    void drawDebugBackgroung() { // TODO very slow way to draw tiles
         double tileSize = transformScalar(al_get_bitmap_width(backhroundTile100x100), 0, camera);
         Point2d position = transformPoint(Point2d(static_cast<int> (camera.position.x) / 100 * 100, static_cast<int> (camera.position.y) / 100 * 100) , 0, camera);
         for (int x = -10; x < 10; x++) for (int y = -10; y < 10; y++) {
             al_draw_scaled_bitmap(backhroundTile100x100, 0, 0, 100, 100, position.x + x * tileSize, position.y + y * tileSize, tileSize, tileSize, 0);
         }
     }
+
+    void drawStarsBackgroung() {
+        static std::vector<BackgroundStar> stars;
+        if (!stars.size()) initStars(stars, 1000);
+
+        for (auto star: stars) {
+            al_draw_filled_circle(star.pos.x, star.pos.y, star.radius, star.color);
+        }
+    }
+
+    
 
     static Point2d transformPoint(Point2d originalPoint, double z, const CameraParameters& cameraParameters) {
         Point2d relativePoint = originalPoint - cameraParameters.position;
@@ -185,7 +223,7 @@ public:
     }
 
     void draw() {
-        // drawBackground();
+        drawStarsBackgroung();
         for (int i = layers.size() - 1; i >= 0; i--) {
             al_draw_bitmap(layers.at(i).bitmap, 0, 0, 0); 
         }
