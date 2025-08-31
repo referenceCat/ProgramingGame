@@ -84,6 +84,9 @@ public:
     ALLEGRO_BITMAP* worldLayer1 = nullptr;
     ALLEGRO_BITMAP* worldLayer2 = nullptr;
 
+    ALLEGRO_BITMAP* xmoduleLayer0 = nullptr;
+    ALLEGRO_BITMAP* xmoduleLayer1 = nullptr;
+
     ALLEGRO_BITMAP* moduleLayer0 = nullptr;
     ALLEGRO_BITMAP* moduleLayer1 = nullptr;
 
@@ -121,7 +124,10 @@ public:
         worldLayer1 = al_load_bitmap("resources/assets/background1_no_shadow.png");
         worldLayer2 = al_load_bitmap("resources/assets/background2.png");
 
-        moduleLayer0 = al_load_bitmap("resources/assets/modules/corridor_background2.png");
+        xmoduleLayer0 = al_load_bitmap("resources/assets/modules/xcorridor_background.png");
+        xmoduleLayer1 = al_load_bitmap("resources/assets/modules/xcorridor_walls.png");
+
+        moduleLayer0 = al_load_bitmap("resources/assets/modules/corridor_background.png");
         moduleLayer1 = al_load_bitmap("resources/assets/modules/corridor_walls.png");
 
         beamLayer0 = al_load_bitmap("resources/assets/modules/beam1.png");
@@ -163,9 +169,10 @@ public:
         return resultPoint;
     }
 
-    static Point2d transformPointInverse(Point2d originalPoint, const CameraParameters& cameraParameter, double z) {
-        // TODO
-    }
+    // TODO
+    // static Point2d transformPointInverse(Point2d originalPoint, const CameraParameters& cameraParameter, double z) {
+    //     
+    // }
 
     static double transformScalar(double value, double z, const CameraParameters& cameraParameters) {
         value /= (z - cameraParameters.z) / -cameraParameters.z;

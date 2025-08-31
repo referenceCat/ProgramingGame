@@ -128,7 +128,7 @@ void redraw() {
     // auto start = std::chrono::system_clock::now();
     gameWorld.drawAll();
     al_set_target_bitmap(al_get_backbuffer(al_get_current_display()));
-    al_clear_to_color(al_map_rgb(0, 0, 0));
+    al_clear_to_color(al_map_rgb(0, 0, 10));
 
     al_hold_bitmap_drawing(true);
     GraphicsEngine::instance()->draw();
@@ -192,6 +192,9 @@ void onKeyDown(int keycode) {
             break;
         case ALLEGRO_KEY_2:
             gameWorld.getController(6)->unpause();
+            break;
+        case ALLEGRO_KEY_R:
+            GraphicsEngine::instance()->loadImages();
             break;
         default:
             break;
