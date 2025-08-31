@@ -20,6 +20,10 @@ Point2d Point2d::operator-(Vector2d vector)
     return Point2d(x - vector.x, y - vector.y);
 }
 
-double degreesToRadians(int degrees) {
+double degreesToRadians(double degrees) {
     return degrees * (M_PI / 180);
+}
+
+double radiansToDegrees(double radians) {
+    return radians * (180 / M_PI);
 }

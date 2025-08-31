@@ -21,12 +21,12 @@ class ManipulatorArm : public GameObject { // TODO now supports rendering of 2 s
     const int jointsNumber;
 
     // current state 
-    RelativeRotation jointsRotation[maxJointsNumber];
+    Rotation jointsRotation[maxJointsNumber];
     Point2d jointsPosition[maxJointsNumber];
     float segmentsLength[maxJointsNumber];
 
     // target state
-    RelativeRotation jointsTargetRotation[maxJointsNumber]; // TODO use vector
+    Rotation jointsTargetRotation[maxJointsNumber]; // TODO use vector
     Point2d jointsTargetPosition[maxJointsNumber];
     float segmentsTargetLength[maxJointsNumber];
 
@@ -37,9 +37,9 @@ class ManipulatorArm : public GameObject { // TODO now supports rendering of 2 s
     void defaultInit() {
         for (int i = 0; i < jointsNumber; i++) {
             setSegmentLength(i, 100);
-            setJointRotation(i, RelativeRotation(0.1));
+            setJointRotation(i, Rotation(0.1));
             setSegmentTargetLength(i, 100);
-            setJointTargetRotation(i, RelativeRotation(0.1));
+            setJointTargetRotation(i, Rotation(0.1));
         }
         recalculate();
     }
@@ -55,12 +55,12 @@ public:
         segmentsLength[aSegment] = aLenght;
     }
 
-    void setJointRotation(int aJoint, RelativeRotation aRotation) {
+    void setJointRotation(int aJoint, Rotation aRotation) {
         assert(("incorrect bone number", aJoint <= jointsNumber));
         jointsRotation[aJoint] = aRotation;
     }
 
-    void setJointTargetRotation(int aJoint, RelativeRotation aRotation) {
+    void setJointTargetRotation(int aJoint, Rotation aRotation) {
         assert(("incorrect bone number", aJoint <= jointsNumber));
         jointsTargetRotation[aJoint] = aRotation;
     }
@@ -70,7 +70,7 @@ public:
         segmentsTargetLength[aSegment] = aLenght;
     }
 
-    void rotateJoint(int aJoint, RelativeRotation aRotation) {
+    void rotateJoint(int aJoint, Rotation aRotation) {
         assert(("incorrect bone number", aJoint <= jointsNumber));
         jointsRotation[aJoint] = jointsRotation[aJoint] + aRotation;
     }
@@ -85,14 +85,14 @@ public:
     }
 
     void recalculate() {
-        GlobalRotation lastJointTargetRotation{};
+        Rotation lastJointTargetRotation{};
         jointsTargetPosition[0] = jointsPosition[0];
         for (int i = 1; i < jointsNumber; i++) {
             lastJointTargetRotation = lastJointTargetRotation + jointsTargetRotation[i - 1];
             jointsTargetPosition[i] = jointsTargetPosition[i - 1] + Vector2d(lastJointTargetRotation, segmentsTargetLength[i - 1]);
         }
 
-        GlobalRotation lastJointRotation{};
+        Rotation lastJointRotation{};
         for (int i = 1; i < jointsNumber; i++) {
             lastJointRotation = lastJointRotation + jointsRotation[i - 1];
             jointsPosition[i] = jointsPosition[i - 1] + Vector2d(lastJointRotation, segmentsLength[i - 1]);

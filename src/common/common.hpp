@@ -5,43 +5,31 @@
 
 // TODO remove global/local and vector/point 
 
-struct RelativeRotation {
-    double radians;
+double degreesToRadians(double degrees);
 
-    RelativeRotation(): radians(0) {}
+double radiansToDegrees(double radians);
 
-    RelativeRotation(double radians): radians(radians) {}
-
-    RelativeRotation operator+ (RelativeRotation other) {
-        RelativeRotation result;
-        result.radians = (radians + other.radians);
-        return result;
-    }
-
-    RelativeRotation operator- (RelativeRotation other) {
-        RelativeRotation result;
-        result.radians = (radians - other.radians);
-        return result;
-    }
-};
-
-struct GlobalRotation {
+struct Rotation {
     double radians = 0;
 
-    GlobalRotation(): radians(0) {}
+    Rotation(): radians(0) {}
 
-    GlobalRotation(double radians): radians(radians) {}
+    Rotation(double radians): radians(radians) {}
 
-    GlobalRotation operator+ (RelativeRotation other) {
-        GlobalRotation result;
+    Rotation operator+ (Rotation other) {
+        Rotation result;
         result.radians = std::fmod(radians + other.radians, M_PI * 2);
         return result;
     }
 
-    RelativeRotation operator- (GlobalRotation other) {
-        RelativeRotation result;
+    Rotation operator- (Rotation other) {
+        Rotation result;
         result.radians = std::fmod(radians - other.radians, M_PI * 2);
         return result;
+    }
+
+    double degress() {
+        return degreesToRadians(radians);
     }
 };
 
@@ -73,13 +61,13 @@ struct Vector2d {
         y = p1.y - p2.y;
     }
 
-    Vector2d(GlobalRotation rotation, double length) {
+    Vector2d(Rotation rotation, double length) {
         x = cos(rotation.radians) * length;
         y = sin(rotation.radians) * length;
     }
 
-    GlobalRotation getDirection() {
-        return GlobalRotation(std::atan2(y, x));
+    Rotation getDirection() {
+        return Rotation(std::atan2(y, x));
     }
 };
 
@@ -120,8 +108,6 @@ struct Rect2d {
         return Vector2d(p2, p1);
     }
 };
-
-double degreesToRadians(int degrees);
 
 
 

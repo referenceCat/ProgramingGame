@@ -219,7 +219,7 @@ public:
         else al_draw_circle(displayPoint.x, displayPoint.y, r, color, thickness);
     }
 
-    void drawBitmap(Point2d aPoint, ALLEGRO_BITMAP* bitmap, double z, Point2d bitmapPivot = Point2d(), GlobalRotation bitmapRotation = GlobalRotation()) {
+    void drawBitmap(Point2d aPoint, ALLEGRO_BITMAP* bitmap, double z, Point2d bitmapPivot = Point2d(), Rotation bitmapRotation = Rotation()) {
         setLayerAsTargetBitmap(z);
         Point2d displayPoint = transformPoint(aPoint, z, camera);
         // double displayW = transformScalar(al_get_bitmap_width(bitmap), z, camera);
