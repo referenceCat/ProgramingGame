@@ -39,7 +39,7 @@ class Controller : public GameObject {
     Icon* pauseIcon = nullptr;
 
 public:
-    Controller(Point2d aPos, GameWorld* aWorld): rect(aPos, 70, 50), GameObject(aWorld) {}
+    Controller(Vector2d aPos, GameWorld* aWorld): rect(aPos, 70, 50), GameObject(aWorld) {}
 
     void draw() {
         // GraphicsEngine::instance()->drawRectangle(rect, 0, al_map_rgb(100, 255, 100));

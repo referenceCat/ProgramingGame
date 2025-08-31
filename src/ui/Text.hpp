@@ -23,7 +23,7 @@ class Label {
     ALLEGRO_COLOR backgroundColor = al_map_rgb(100, 100, 100);
 
 public:
-    Label (Point2d aPos, bool isCentered, std::string text);
+    Label (Vector2d aPos, bool isCentered, std::string text);
 
     void setFlags(LabelFlags aFlags) {
         flags = aFlags;

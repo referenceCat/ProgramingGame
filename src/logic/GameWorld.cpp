@@ -1,12 +1,12 @@
 #include "GameWorld.hpp"
 
-ManipulatorArm* GameWorld::addManipulatorArm(int aJointsNumber, Point2d aRootJointPosition) {
+ManipulatorArm* GameWorld::addManipulatorArm(int aJointsNumber, Vector2d aRootJointPosition) {
     arms.push_back(new ManipulatorArm(aJointsNumber, this));
     arms.back()->setRootJointPosition(aRootJointPosition);
     return arms.back();
 }
 
-Controller* GameWorld::addController(Point2d aPos) {
+Controller* GameWorld::addController(Vector2d aPos) {
     controllers.push_back(new Controller(aPos, this));
     return controllers.back();
 }
@@ -55,7 +55,7 @@ Box* GameWorld::getBox(int id) {
     return nullptr;
 }
 
-Box* GameWorld::getBox(Point2d aPos) {
+Box* GameWorld::getBox(Vector2d aPos) {
     for (auto item: boxes) {
         if (item->getRect().isInside(aPos)) return item;
     }
@@ -87,19 +87,19 @@ void GameWorld::drawAll() {
         item->draw();
     }
 
-    GraphicsEngine::instance()->drawBitmap(Point2d(0, 0), GraphicsEngine::instance()->worldLayer0, 20);
-    GraphicsEngine::instance()->drawBitmap(Point2d(0, 0), GraphicsEngine::instance()->worldLayer1, 10);
-    GraphicsEngine::instance()->drawBitmap(Point2d(0, 0), GraphicsEngine::instance()->worldLayer2, -2);
+    GraphicsEngine::instance()->drawBitmap(Vector2d(0, 0), GraphicsEngine::instance()->worldLayer0, 20);
+    GraphicsEngine::instance()->drawBitmap(Vector2d(0, 0), GraphicsEngine::instance()->worldLayer1, 10);
+    GraphicsEngine::instance()->drawBitmap(Vector2d(0, 0), GraphicsEngine::instance()->worldLayer2, -2);
 
-    GraphicsEngine::instance()->drawBitmap(Point2d(0, 1000), GraphicsEngine::instance()->moduleLayer0, 5);
-    GraphicsEngine::instance()->drawBitmap(Point2d(0, 1000), GraphicsEngine::instance()->moduleLayer1, -2);
-    GraphicsEngine::instance()->drawBitmap(Point2d(-320, 1000), GraphicsEngine::instance()->moduleLayer0, 5);
-    GraphicsEngine::instance()->drawBitmap(Point2d(-320, 1000), GraphicsEngine::instance()->moduleLayer1, -2);
-    GraphicsEngine::instance()->drawBitmap(Point2d(-640, 1000), GraphicsEngine::instance()->xmoduleLayer0, 5);
-    GraphicsEngine::instance()->drawBitmap(Point2d(-640, 1000), GraphicsEngine::instance()->xmoduleLayer1, -2);
+    GraphicsEngine::instance()->drawBitmap(Vector2d(0, 1000), GraphicsEngine::instance()->moduleLayer0, 5);
+    GraphicsEngine::instance()->drawBitmap(Vector2d(0, 1000), GraphicsEngine::instance()->moduleLayer1, -2);
+    GraphicsEngine::instance()->drawBitmap(Vector2d(-320, 1000), GraphicsEngine::instance()->moduleLayer0, 5);
+    GraphicsEngine::instance()->drawBitmap(Vector2d(-320, 1000), GraphicsEngine::instance()->moduleLayer1, -2);
+    GraphicsEngine::instance()->drawBitmap(Vector2d(-640, 1000), GraphicsEngine::instance()->xmoduleLayer0, 5);
+    GraphicsEngine::instance()->drawBitmap(Vector2d(-640, 1000), GraphicsEngine::instance()->xmoduleLayer1, -2);
 
-    GraphicsEngine::instance()->drawBitmap(Point2d(500, 1000), GraphicsEngine::instance()->beamLayer0, -2);
-    GraphicsEngine::instance()->drawBitmap(Point2d(500, 1000), GraphicsEngine::instance()->beamLayer1, 10);
+    GraphicsEngine::instance()->drawBitmap(Vector2d(500, 1000), GraphicsEngine::instance()->beamLayer0, -2);
+    GraphicsEngine::instance()->drawBitmap(Vector2d(500, 1000), GraphicsEngine::instance()->beamLayer1, 10);
 }
 
 void GameWorld::run() {

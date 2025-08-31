@@ -28,8 +28,8 @@ class Box : public GameObject {
 public:
     Box(Rect2d aRect, GameWorld* aWorld): rect(aRect), GameObject(aWorld) {}
 
-    void move(Point2d position) {
-        Vector2d dPosition(position, rect.center());
+    void move(Vector2d position) {
+        Vector2d dPosition = rect.center() - position;
         rect.p1 = rect.p1 + dPosition;
         rect.p2 = rect.p2 + dPosition;
     }
@@ -44,14 +44,14 @@ public:
         GraphicsEngine::instance()->drawRectangle(rect, z, color);
 
         if (content == BoxContent::IronPlate) {
-            GraphicsEngine::instance()->drawLine(rect.p1 + Point2d(4, 2), rect.p1 + Point2d(4, 10), z, al_map_rgb(0, 0, 0), 3);
+            GraphicsEngine::instance()->drawLine(rect.p1 + Vector2d(4, 2), rect.p1 + Vector2d(4, 10), z, al_map_rgb(0, 0, 0), 3);
         } else if (content == BoxContent::HeavyIronPlate) {
-            GraphicsEngine::instance()->drawLine(rect.p1 + Point2d(4, 2), rect.p1 + Point2d(4, 10), z, al_map_rgb(0, 0, 0), 3);
-            GraphicsEngine::instance()->drawLine(rect.p1 + Point2d(8, 2), rect.p1 + Point2d(8, 10), z, al_map_rgb(0, 0, 0), 3);
+            GraphicsEngine::instance()->drawLine(rect.p1 + Vector2d(4, 2), rect.p1 + Vector2d(4, 10), z, al_map_rgb(0, 0, 0), 3);
+            GraphicsEngine::instance()->drawLine(rect.p1 + Vector2d(8, 2), rect.p1 + Vector2d(8, 10), z, al_map_rgb(0, 0, 0), 3);
         } else if (content == BoxContent::VeryHeavyIronPlate) {
-            GraphicsEngine::instance()->drawLine(rect.p1 + Point2d(4, 2), rect.p1 + Point2d(4, 10), z, al_map_rgb(0, 0, 0), 3);
-            GraphicsEngine::instance()->drawLine(rect.p1 + Point2d(8, 2), rect.p1 + Point2d(8, 10), z, al_map_rgb(0, 0, 0), 3);
-            GraphicsEngine::instance()->drawLine(rect.p1 + Point2d(12, 2), rect.p1 + Point2d(12, 10), z, al_map_rgb(0, 0, 0), 3);
+            GraphicsEngine::instance()->drawLine(rect.p1 + Vector2d(4, 2), rect.p1 + Vector2d(4, 10), z, al_map_rgb(0, 0, 0), 3);
+            GraphicsEngine::instance()->drawLine(rect.p1 + Vector2d(8, 2), rect.p1 + Vector2d(8, 10), z, al_map_rgb(0, 0, 0), 3);
+            GraphicsEngine::instance()->drawLine(rect.p1 + Vector2d(12, 2), rect.p1 + Vector2d(12, 10), z, al_map_rgb(0, 0, 0), 3);
         } else if (content == BoxContent::Coal) {
             GraphicsEngine::instance()->drawRectangle(rect, z, al_map_rgb(0, 0, 0));
         }    

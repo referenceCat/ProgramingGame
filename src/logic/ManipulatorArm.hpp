@@ -22,12 +22,12 @@ class ManipulatorArm : public GameObject { // TODO now supports rendering of 2 s
 
     // current state 
     Rotation jointsRotation[maxJointsNumber];
-    Point2d jointsPosition[maxJointsNumber];
+    Vector2d jointsPosition[maxJointsNumber];
     float segmentsLength[maxJointsNumber];
 
     // target state
     Rotation jointsTargetRotation[maxJointsNumber]; // TODO use vector
-    Point2d jointsTargetPosition[maxJointsNumber];
+    Vector2d jointsTargetPosition[maxJointsNumber];
     float segmentsTargetLength[maxJointsNumber];
 
     bool active = false;
@@ -75,7 +75,7 @@ public:
         jointsRotation[aJoint] = jointsRotation[aJoint] + aRotation;
     }
 
-    void setRootJointPosition(Point2d position) {
+    void setRootJointPosition(Vector2d position) {
         jointsPosition[0] = position;
     }
 
@@ -131,9 +131,9 @@ public:
 
      void draw() {
         if (jointsNumber == 3) {
-            GraphicsEngine::instance()->drawBitmap(jointsPosition[0],  GraphicsEngine::instance()->baseSpite, 1, Point2d(25, 25));
-            GraphicsEngine::instance()->drawBitmap(jointsPosition[0],  GraphicsEngine::instance()->segment0Sprite, 0.5, Point2d(25, 25), Vector2d(jointsPosition[1], jointsPosition[0]).getDirection());
-            GraphicsEngine::instance()->drawBitmap(jointsPosition[1],  GraphicsEngine::instance()->segment1Sprite, 1, Point2d(25, 50), Vector2d(jointsPosition[2], jointsPosition[1]).getDirection());
+            GraphicsEngine::instance()->drawBitmap(jointsPosition[0],  GraphicsEngine::instance()->baseSpite, 1, Vector2d(25, 25));
+            GraphicsEngine::instance()->drawBitmap(jointsPosition[0],  GraphicsEngine::instance()->segment0Sprite, 0.5, Vector2d(25, 25), (jointsPosition[1] - jointsPosition[0]).getDirection());
+            GraphicsEngine::instance()->drawBitmap(jointsPosition[1],  GraphicsEngine::instance()->segment1Sprite, 1, Vector2d(25, 50), (jointsPosition[2] - jointsPosition[1]).getDirection());
         } else {
             drawDebug();
         }
@@ -185,7 +185,7 @@ public:
         return active;
     }
 
-    Point2d getLastJointPos() {
+    Vector2d getLastJointPos() {
         return jointsPosition[jointsNumber - 1];
     }
 
@@ -202,7 +202,7 @@ public:
 private:
     void takeBox(Box* aBox)  {
         takenBox = aBox;
-        relativeBoxPosition = Vector2d(takenBox->getRect().center(), jointsPosition[jointsNumber - 1]);
+        relativeBoxPosition = jointsPosition[jointsNumber - 1] - takenBox->getRect().center();
     }
     
 };

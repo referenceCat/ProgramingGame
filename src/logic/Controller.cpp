@@ -2,31 +2,31 @@
 #include "GameWorld.hpp"
 
 void Controller::createWindow() {
-    window = GuiEngine::getInstance()->addWindow(Rect2d(Point2d(400, 400), 750, 400), true, true);
+    window = GuiEngine::getInstance()->addWindow(Rect2d(Vector2d(400, 400), 750, 400), true, true);
     int line = 0;
     for (auto item: instructions) {
         InstructionLine instructionLine;
-        instructionLine.label = window->addLabel(Point2d(40, 80), false, item, line);
-        instructionLine.breakpointButton = window->addButton(Rect2d(Point2d(18, 80 + line * 14), Point2d(32, 94 + line * 14)));
-        instructionLine.breakpointIcon = window->addIcon(Point2d(18 + 7, 80 + line * 14 + 7), GuiEngine::emptyIcon);
+        instructionLine.label = window->addLabel(Vector2d(40, 80), false, item, line);
+        instructionLine.breakpointButton = window->addButton(Rect2d(Vector2d(18, 80 + line * 14), Vector2d(32, 94 + line * 14)));
+        instructionLine.breakpointIcon = window->addIcon(Vector2d(18 + 7, 80 + line * 14 + 7), GuiEngine::emptyIcon);
         instructionLine.breakpointButton->setOnClickCallback([this, line](){this->toggle(line);});
         instructionsGui.push_back(instructionLine);
         line++;
     }
     InstructionLine lastInstructionLine;
-    lastInstructionLine.label = window->addLabel(Point2d(40, 80), false, "", line);
+    lastInstructionLine.label = window->addLabel(Vector2d(40, 80), false, "", line);
     instructionsGui.push_back(lastInstructionLine); // last empty line
-    rInstrLabel = window->addLabel(Point2d(20, 30), false, "rInstr: " + std::to_string(rInstr), 0);
-    rDelayLabel = window->addLabel(Point2d(20, 30), false, "rDelay: " + std::to_string(rDelay), 1);
+    rInstrLabel = window->addLabel(Vector2d(20, 30), false, "rInstr: " + std::to_string(rInstr), 0);
+    rDelayLabel = window->addLabel(Vector2d(20, 30), false, "rDelay: " + std::to_string(rDelay), 1);
 
-    pauseIcon = window->addIcon(Point2d(315, 40), GuiEngine::unpauseIcon);
-    window->addButton(Rect2d(Point2d(315, 40), 18, 18))->setOnClickCallback([this](){this->pauseUnpause();});
-    window->addIcon(Point2d(335, 40), GuiEngine::downIcon);
-    window->addButton(Rect2d(Point2d(335, 40), 18, 18))->setOnClickCallback([this](){this->down();});
-    window->addIcon(Point2d(355, 40), GuiEngine::upIcon);
-    window->addButton(Rect2d(Point2d(355, 40), 18, 18))->setOnClickCallback([this](){this->up();});
-    window->addIcon(Point2d(375, 40), GuiEngine::nextIcon);
-    window->addButton(Rect2d(Point2d(375, 40), 18, 18))->setOnClickCallback([this](){this->next();});
+    pauseIcon = window->addIcon(Vector2d(315, 40), GuiEngine::unpauseIcon);
+    window->addButton(Rect2d(Vector2d(315, 40), 18, 18))->setOnClickCallback([this](){this->pauseUnpause();});
+    window->addIcon(Vector2d(335, 40), GuiEngine::downIcon);
+    window->addButton(Rect2d(Vector2d(335, 40), 18, 18))->setOnClickCallback([this](){this->down();});
+    window->addIcon(Vector2d(355, 40), GuiEngine::upIcon);
+    window->addButton(Rect2d(Vector2d(355, 40), 18, 18))->setOnClickCallback([this](){this->up();});
+    window->addIcon(Vector2d(375, 40), GuiEngine::nextIcon);
+    window->addButton(Rect2d(Vector2d(375, 40), 18, 18))->setOnClickCallback([this](){this->next();});
 }
 
 void Controller::updateWindow() {

@@ -4,8 +4,8 @@
 class Furnace: public Machine {
     ProductionArea heatingArea;
 public:
-    Furnace(Point2d aPos, GameWorld* aWorld): Machine(Rect2d(aPos, 100, 100), aWorld) {
-        heatingArea.rect = Rect2d(Point2d(10, 10), Point2d(rect.dimensions().x - 10, rect.dimensions().y - 10));
+    Furnace(Vector2d aPos, GameWorld* aWorld): Machine(Rect2d(aPos, 100, 100), aWorld) {
+        heatingArea.rect = Rect2d(Vector2d(10, 10), Vector2d(rect.dimensions().x - 10, rect.dimensions().y - 10));
         areas.push_back(&heatingArea);
     }
 
@@ -29,8 +29,8 @@ class BoxGenerator: public Machine {
     
 
 public:
-    BoxGenerator(Point2d aPos, GameWorld* aWorld): Machine(Rect2d(aPos, 50, 50), aWorld) {
-        creatingArea.rect = Rect2d(Point2d(10, 10), Point2d(rect.dimensions().x - 10, rect.dimensions().y - 10));
+    BoxGenerator(Vector2d aPos, GameWorld* aWorld): Machine(Rect2d(aPos, 50, 50), aWorld) {
+        creatingArea.rect = Rect2d(Vector2d(10, 10), Vector2d(rect.dimensions().x - 10, rect.dimensions().y - 10));
         areas.push_back(&creatingArea);
     }
 
@@ -53,8 +53,8 @@ public:
 
     void draw() override {
         // Machine::draw();
-        GraphicsEngine::instance()->drawLine(Point2d(rect.p1.x, rect.p2.y + 10), Point2d(rect.p1.x + (period - cooldown) / 4, rect.p2.y + 10), 0, al_map_rgb(100, 100, 100), 2);
-        GraphicsEngine::instance()->drawLine(Point2d(rect.p1.x, rect.p2.y + 10), Point2d(rect.p1.x + (period - cooldown) / 4, rect.p2.y + 10), -5, al_map_rgb(255, 255, 255), 2);
+        GraphicsEngine::instance()->drawLine(Vector2d(rect.p1.x, rect.p2.y + 10), Vector2d(rect.p1.x + (period - cooldown) / 4, rect.p2.y + 10), 0, al_map_rgb(100, 100, 100), 2);
+        GraphicsEngine::instance()->drawLine(Vector2d(rect.p1.x, rect.p2.y + 10), Vector2d(rect.p1.x + (period - cooldown) / 4, rect.p2.y + 10), -5, al_map_rgb(255, 255, 255), 2);
         GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->boxCreatorDestroyerBaseSprite, 2);
     }
 
@@ -65,8 +65,8 @@ class BoxDestroyer: public Machine {
     int cooldown = 200;
 
 public:
-    BoxDestroyer(Point2d aPos, GameWorld* aWorld): Machine(Rect2d(aPos, 50, 50), aWorld) {
-        destroyingArea.rect = Rect2d(Point2d(10, 10), Point2d(rect.dimensions().x - 10, rect.dimensions().y - 10));
+    BoxDestroyer(Vector2d aPos, GameWorld* aWorld): Machine(Rect2d(aPos, 50, 50), aWorld) {
+        destroyingArea.rect = Rect2d(Vector2d(10, 10), Vector2d(rect.dimensions().x - 10, rect.dimensions().y - 10));
         areas.push_back(&destroyingArea);
     }
 
@@ -99,10 +99,10 @@ class PlateCombiner: public Machine {
     
 
 public:
-    PlateCombiner(Point2d aPos, GameWorld* aWorld): Machine(Rect2d(aPos, 75, 160), aWorld) {
-        ingridientArea0.rect = Rect2d(Point2d(5, 5), Point2d(35, 35)); // TODO process class for this kind of behavior
-        ingridientArea1.rect = Rect2d(Point2d(5, 40), Point2d(35, 70));
-        resultArea.rect = Rect2d(Point2d(125, 5), Point2d(155, 35));
+    PlateCombiner(Vector2d aPos, GameWorld* aWorld): Machine(Rect2d(aPos, 75, 160), aWorld) {
+        ingridientArea0.rect = Rect2d(Vector2d(5, 5), Vector2d(35, 35)); // TODO process class for this kind of behavior
+        ingridientArea1.rect = Rect2d(Vector2d(5, 40), Vector2d(35, 70));
+        resultArea.rect = Rect2d(Vector2d(125, 5), Vector2d(155, 35));
         areas.push_back(&ingridientArea0);
         areas.push_back(&ingridientArea1);
         areas.push_back(&resultArea);
@@ -140,12 +140,12 @@ public:
 
     void draw() override {
         // Machine::draw();
-        GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerBaseSprite, 2, Point2d(165, 165));
-        GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerCyllindersSprite, 8, Point2d(165, 165));
-        GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerPressSprite, 2, Point2d(165, 165 - pressShiftByProcessTime() + 4));
-        GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerPlateSprite, 5, Point2d(165, 165));
-        GraphicsEngine::instance()->drawLine(Point2d(rect.p1.x, rect.p2.y + 10), Point2d(rect.p1.x + processTime, rect.p2.y + 10), 0, al_map_rgb(100, 100, 100), 2);
-        GraphicsEngine::instance()->drawLine(Point2d(rect.p1.x, rect.p2.y + 10), Point2d(rect.p1.x + processTime, rect.p2.y + 10), -5, al_map_rgb(255, 255, 255), 2);
+        GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerBaseSprite, 2, Vector2d(165, 165));
+        GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerCyllindersSprite, 8, Vector2d(165, 165));
+        GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerPressSprite, 2, Vector2d(165, 165 - pressShiftByProcessTime() + 4));
+        GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerPlateSprite, 5, Vector2d(165, 165));
+        GraphicsEngine::instance()->drawLine(Vector2d(rect.p1.x, rect.p2.y + 10), Vector2d(rect.p1.x + processTime, rect.p2.y + 10), 0, al_map_rgb(100, 100, 100), 2);
+        GraphicsEngine::instance()->drawLine(Vector2d(rect.p1.x, rect.p2.y + 10), Vector2d(rect.p1.x + processTime, rect.p2.y + 10), -5, al_map_rgb(255, 255, 255), 2);
     }
 };
 

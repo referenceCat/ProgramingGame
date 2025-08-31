@@ -3,10 +3,10 @@
 
 Window::Window(Rect2d rect, bool movable = false, bool closable = false): rect(rect), movable(movable), closable(closable) {
     if (movable) {
-        dragArea = Rect2d(Point2d(20, 4), Point2d(70, 16));
+        dragArea = Rect2d(Vector2d(20, 4), Vector2d(70, 16));
     }
     if (closable) {
-        buttons.push_back(new Button(Rect2d(Point2d(10, 10), 14, 14)));
+        buttons.push_back(new Button(Rect2d(Vector2d(10, 10), 14, 14)));
         buttons.back()->setOnClickCallback([=]() {GuiEngine::getInstance()->closeWindow(this);});
     }
     if (closable || movable) {

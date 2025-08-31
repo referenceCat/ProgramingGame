@@ -10,10 +10,10 @@
 
 
 struct CameraParameters {
-    Point2d position;
+    Vector2d position;
     double z;
     double fov; // horizontal
-    Point2d displaySize;
+    Vector2d displaySize;
 };
 
 class GraphicsEngine {
@@ -25,7 +25,7 @@ class GraphicsEngine {
     };
 
     struct BackgroundStar{
-        Point2d pos;
+        Vector2d pos;
         double radius;
         ALLEGRO_COLOR color;
     };
@@ -62,7 +62,7 @@ class GraphicsEngine {
             BackgroundStar star;
             star.color = al_map_rgb(fRand(150, 255), fRand(150, 255), fRand(150, 255));
             star.radius = fRand(0.3, 2);
-            star.pos = Point2d(fRand(-1000, 1000), fRand(-1000, 1000));
+            star.pos = Vector2d(fRand(-1000, 1000), fRand(-1000, 1000));
             stars.push_back(star);
         }
     }
@@ -136,7 +136,7 @@ public:
 
     void drawDebugBackgroung() { // TODO very slow way to draw tiles
         double tileSize = transformScalar(al_get_bitmap_width(backhroundTile100x100), 0, camera);
-        Point2d position = transformPoint(Point2d(static_cast<int> (camera.position.x) / 100 * 100, static_cast<int> (camera.position.y) / 100 * 100) , 0, camera);
+        Vector2d position = transformPoint(Vector2d(static_cast<int> (camera.position.x) / 100 * 100, static_cast<int> (camera.position.y) / 100 * 100) , 0, camera);
         for (int x = -10; x < 10; x++) for (int y = -10; y < 10; y++) {
             al_draw_scaled_bitmap(backhroundTile100x100, 0, 0, 100, 100, position.x + x * tileSize, position.y + y * tileSize, tileSize, tileSize, 0);
         }
@@ -153,16 +153,16 @@ public:
 
     
 
-    static Point2d transformPoint(Point2d originalPoint, double z, const CameraParameters& cameraParameters) {
-        Point2d relativePoint = originalPoint - cameraParameters.position;
+    static Vector2d transformPoint(Vector2d originalPoint, double z, const CameraParameters& cameraParameters) {
+        Vector2d relativePoint = originalPoint - cameraParameters.position;
 
-        Point2d proportionalPoint = relativePoint;
+        Vector2d proportionalPoint = relativePoint;
         proportionalPoint.x /= cameraParameters.fov / 2;
         proportionalPoint.y /= cameraParameters.fov / 2;
         proportionalPoint.x /= (z - cameraParameters.z) / -cameraParameters.z;
         proportionalPoint.y /= (z - cameraParameters.z) / -cameraParameters.z;
 
-        Point2d resultPoint;
+        Vector2d resultPoint;
         double pixelPerUnit = cameraParameters.displaySize.x / 2;
         resultPoint.x = cameraParameters.displaySize.x / 2 + proportionalPoint.x * pixelPerUnit;
         resultPoint.y = cameraParameters.displaySize.y / 2 + proportionalPoint.y * pixelPerUnit;
@@ -170,7 +170,7 @@ public:
     }
 
     // TODO
-    // static Point2d transformPointInverse(Point2d originalPoint, const CameraParameters& cameraParameter, double z) {
+    // static Vector2d transformPointInverse(Vector2d originalPoint, const CameraParameters& cameraParameter, double z) {
     //     
     // }
 
@@ -189,9 +189,9 @@ public:
         return camera;
     }
 
-    void drawPoint(Point2d aPoint, double z, ALLEGRO_COLOR color) {
+    void drawPoint(Vector2d aPoint, double z, ALLEGRO_COLOR color) {
         setLayerAsTargetBitmap(z);
-        Point2d displayPoint = transformPoint(aPoint, z, camera);
+        Vector2d displayPoint = transformPoint(aPoint, z, camera);
         al_draw_filled_circle(displayPoint.x, displayPoint.y, 3, color);
     }
 
@@ -204,24 +204,24 @@ public:
         else al_draw_rectangle(displayRect.p1.x, displayRect.p1.y, displayRect.p2.x, displayRect.p2.y, color, thickness);
     }
 
-    void drawLine(Point2d aPoint0, Point2d aPoint1, double z, ALLEGRO_COLOR color, int thickness = 0) {
+    void drawLine(Vector2d aPoint0, Vector2d aPoint1, double z, ALLEGRO_COLOR color, int thickness = 0) {
         setLayerAsTargetBitmap(z);
-        Point2d displayPoint0 = transformPoint(aPoint0, z, camera);
-        Point2d displayPoint1 = transformPoint(aPoint1, z, camera);
+        Vector2d displayPoint0 = transformPoint(aPoint0, z, camera);
+        Vector2d displayPoint1 = transformPoint(aPoint1, z, camera);
         al_draw_line(displayPoint0.x, displayPoint0.y, displayPoint1.x, displayPoint1.y, color, thickness);
     }
 
-    void drawCircle(Point2d aPoint, double r, double z, ALLEGRO_COLOR color, int thickness = 0) {
+    void drawCircle(Vector2d aPoint, double r, double z, ALLEGRO_COLOR color, int thickness = 0) {
         setLayerAsTargetBitmap(z);
-        Point2d displayPoint = transformPoint(aPoint, z, camera);
+        Vector2d displayPoint = transformPoint(aPoint, z, camera);
         double displayR = transformScalar(r, z, camera);
         if (thickness <= 0) al_draw_filled_circle(displayPoint.x, displayPoint.y, r, color);
         else al_draw_circle(displayPoint.x, displayPoint.y, r, color, thickness);
     }
 
-    void drawBitmap(Point2d aPoint, ALLEGRO_BITMAP* bitmap, double z, Point2d bitmapPivot = Point2d(), Rotation bitmapRotation = Rotation()) {
+    void drawBitmap(Vector2d aPoint, ALLEGRO_BITMAP* bitmap, double z, Vector2d bitmapPivot = Vector2d(), Rotation bitmapRotation = Rotation()) {
         setLayerAsTargetBitmap(z);
-        Point2d displayPoint = transformPoint(aPoint, z, camera);
+        Vector2d displayPoint = transformPoint(aPoint, z, camera);
         // double displayW = transformScalar(al_get_bitmap_width(bitmap), z, camera);
         // double displayH = transformScalar(al_get_bitmap_height(bitmap), z, camera);
         // al_draw_scaled_bitmap(bitmap, 0, 0, al_get_bitmap_width(bitmap), al_get_bitmap_height(bitmap), displayPoint.x, displayPoint.y, displayW, displayH, 0);

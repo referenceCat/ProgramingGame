@@ -20,7 +20,6 @@ class Window { // TODO add close event handler + write callbacks for each thing,
     Rect2d rect;
     int z = 0;
 
-    // Vector2d indent{8, 8};
     inline static ALLEGRO_COLOR backgroundColor = al_map_rgb(30, 30, 30);
     inline static ALLEGRO_COLOR primaryColor = al_map_rgb(200, 200, 200);
 
@@ -28,7 +27,7 @@ class Window { // TODO add close event handler + write callbacks for each thing,
     bool movable;
     bool moving = false;
     Rect2d dragArea{};
-    Point2d mouseDragPos{};
+    Vector2d mouseDragPos{};
 
     std::vector<Button*> buttons;
     std::vector<Label*> labels;
@@ -40,7 +39,7 @@ public:
     void draw();
 
     // returns true if clicked on some gui element
-    bool click(Point2d aPos) {
+    bool click(Vector2d aPos) {
         if (movable && dragArea.isInside(aPos)) {
             moving = true;
             mouseDragPos = aPos;
@@ -57,15 +56,15 @@ public:
         return false;
     }
 
-    void releaseMouse(Point2d aPos) {
+    void releaseMouse(Vector2d aPos) {
         moving = false;
     }
 
-    bool moveMouse(Point2d aPos) {
+    bool moveMouse(Vector2d aPos) {
         if (moving) {
-            Vector2d movement = Vector2d(aPos, mouseDragPos);
+            Vector2d movement = aPos - mouseDragPos;
             rect.p1 = rect.p1 + movement;
-            rect.p2= rect.p2 + movement;
+            rect.p2 = rect.p2 + movement;
             return true;
         }
 
@@ -88,13 +87,13 @@ public:
         return buttons.back();
     };
 
-    Label* addLabel(Point2d aPos, bool centered, std::string text, int line = 0) {
+    Label* addLabel(Vector2d aPos, bool centered, std::string text, int line = 0) {
         aPos.y += line * 14;
         labels.push_back(new Label(aPos, centered, text));
         return labels.back();
     };
 
-    Icon* addIcon(Point2d aPos, ALLEGRO_BITMAP* bitmap) {
+    Icon* addIcon(Vector2d aPos, ALLEGRO_BITMAP* bitmap) {
         icons.push_back(new Icon(aPos, bitmap));
         return icons.back();
     };

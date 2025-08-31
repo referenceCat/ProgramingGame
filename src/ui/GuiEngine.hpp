@@ -78,10 +78,10 @@ public:
     }
 
     // returns true if clicked on some gui element
-    bool click(Point2d aPos) {
+    bool click(Vector2d aPos) {
         for (auto item: windows) {
             if (item->getRect().isInside(aPos)) {
-                Point2d relativePos = aPos;
+                Vector2d relativePos = aPos;
                 relativePos.x -= item->getRect().p1.x;
                 relativePos.y -= item->getRect().p1.y;
                 item->click(relativePos);
@@ -92,13 +92,13 @@ public:
         return false;
     }
 
-    bool moveMouse(Point2d aPos)  {
+    bool moveMouse(Vector2d aPos)  {
         bool result = false;
         for (auto item: windows) {
             if (item->getRect().isInside(aPos)) {
                 result = true;
             }
-            Point2d relativePos = aPos;
+            Vector2d relativePos = aPos;
             relativePos.x -= item->getRect().p1.x;
             relativePos.y -= item->getRect().p1.y;
             item->moveMouse(relativePos);
@@ -107,11 +107,11 @@ public:
         return result;
     }
 
-    bool releaseMouse(Point2d aPos) {
+    bool releaseMouse(Vector2d aPos) {
         bool result = false;
         for (auto item: windows) {
             if (item->getRect().isInside(aPos)) {
-                Point2d relativePos = aPos;
+                Vector2d relativePos = aPos;
                 relativePos.x -= item->getRect().p1.x;
                 relativePos.y -= item->getRect().p1.y;
                 item->releaseMouse(relativePos);

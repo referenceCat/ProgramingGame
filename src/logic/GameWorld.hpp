@@ -23,8 +23,8 @@ class GameWorld {
     std::vector<Machine*> machines{};
 
 public:
-    ManipulatorArm *addManipulatorArm(int aJointsNumber, Point2d aRootJointPosition);
-    Controller *addController(Point2d aPos);
+    ManipulatorArm *addManipulatorArm(int aJointsNumber, Vector2d aRootJointPosition);
+    Controller *addController(Vector2d aPos);
     Box *addBox(Rect2d aRect);
     void addMachine(Machine* machine);
 
@@ -33,7 +33,7 @@ public:
     ManipulatorArm *getManipulatorArm(int id);
     Controller *getController(int id);
     Box *getBox(int id);
-    Box *getBox(Point2d aPos);
+    Box *getBox(Vector2d aPos);
     std::vector<Box*> getBoxes();
     Machine *getMachine(int id);
 
