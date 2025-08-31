@@ -60,6 +60,11 @@ std::vector<Box *> GameWorld::getBoxes() {
     return result;
 }
 
+std::vector<Module *> GameWorld::getModules() {
+    std::vector<Module *> result = modules;
+    return result;
+}
+
 Box* GameWorld::getBox(int id) {
     for (auto item: boxes) {
         if (item->getId() == id) return item;

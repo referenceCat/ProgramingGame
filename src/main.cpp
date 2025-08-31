@@ -224,6 +224,19 @@ void onKeyDown(int keycode)
     }
 }
 
+void onMouseClick(double x, double y) {
+    std::cout << "mouse click" << std::endl;
+    for (auto module: gameWorld->getModules()) {
+        std::vector<ModuleNode*> nodes = module->getNodes();
+        auto node0 = nodes.at(0);
+        for (auto node: nodes) {
+            if ((GraphicsEngine::transformPoint(module->getPosition() + node->position, 0, GraphicsEngine::instance()->getCameraParameters()) - Vector2d(x, y)).lenght() < 10) {
+                std::cout << "node click" << std::endl;
+            }
+        }
+    }
+}
+
 void mainLoop(ALLEGRO_EVENT_QUEUE *event_queue)
 {
     bool running = true;
@@ -249,7 +262,10 @@ void mainLoop(ALLEGRO_EVENT_QUEUE *event_queue)
             onKeyDown(event.keyboard.keycode);
             break;
         case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-            GuiEngine::instance()->click(Vector2d(event.mouse.x, event.mouse.y));
+            if (!GuiEngine::instance()->click(Vector2d(event.mouse.x, event.mouse.y))) {
+                onMouseClick(event.mouse.x, event.mouse.y);
+            }
+            
             break;
         case ALLEGRO_EVENT_DISPLAY_RESIZE:
             al_acknowledge_resize(event.display.source);

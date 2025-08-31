@@ -57,6 +57,10 @@ struct Vector2d {
         result.y = x * std::sin(rotation.radians) + y * std::cos(rotation.radians);
         return result;
     }
+
+    double lenght() {
+        return sqrt(x * x + y * y);
+    }
 };
 
 struct Rect2d {

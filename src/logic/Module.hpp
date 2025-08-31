@@ -16,7 +16,7 @@ class Module;
 struct ModuleNode {
     Vector2d position;
     Rotation rotation;
-    ModuleNode* attachedNode;
+    ModuleNode* attachedNode = nullptr;
     Module* parentModule;
 };
 
@@ -53,6 +53,19 @@ public:
         }
         return nullptr;
     }
+
+    std::vector<ModuleNode *> getNodes() {
+        std::vector<ModuleNode *> result;
+        for (int i = 0; i < nodes.size(); i++) {
+            result.push_back(&nodes.at(i));
+        }
+
+        return result;
+    }
+
+    Vector2d getPosition() {
+        return position;
+    }
 };
 
 // TODO
@@ -69,6 +82,7 @@ public:
 class CorridorModule: public Module {
 public:
     CorridorModule(GameWorld* aWorld): Module(aWorld) {
+        nodes.reserve(2);
         ModuleNode leftNode;
         leftNode.position = Vector2d(-160, 0);
         leftNode.rotation = Rotation(M_PI);
@@ -93,6 +107,7 @@ public:
 class XCorridorModule: public Module {
 public:
     XCorridorModule(GameWorld* aWorld): Module(aWorld) {
+        nodes.reserve(4);
         ModuleNode leftNode;
         leftNode.position = Vector2d(-160, 0);
         leftNode.rotation = Rotation(M_PI);

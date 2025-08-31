@@ -45,6 +45,7 @@ public:
     std::vector<Box*> getBoxes();
     Machine *getMachine(int id);
     Module *getModule(int id);
+    std::vector<Module*> getModules();
 
     void drawAll();
     void run();
