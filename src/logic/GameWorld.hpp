@@ -15,12 +15,14 @@
 #include "Controller.hpp"
 #include "GameObject.hpp"
 #include "Machine.hpp"
+#include "Module.hpp"
 
 class GameWorld {
     std::vector<ManipulatorArm*> arms{};
     std::vector<Box*> boxes{};
     std::vector<Controller*> controllers{};
     std::vector<Machine*> machines{};
+    std::vector<Module*> modules{};
 
 public:
     static GameWorld* instance() {
@@ -32,6 +34,7 @@ public:
     Controller *addController(Vector2d aPos);
     Box *addBox(Rect2d aRect);
     void addMachine(Machine* machine);
+    void addModule(Module* module);
 
     void removeBox(int id);
 
@@ -41,6 +44,7 @@ public:
     Box *getBox(Vector2d aPos);
     std::vector<Box*> getBoxes();
     Machine *getMachine(int id);
+    Module *getModule(int id);
 
     void drawAll();
     void run();

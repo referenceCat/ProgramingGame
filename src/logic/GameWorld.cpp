@@ -20,6 +20,10 @@ void GameWorld::addMachine(Machine *machine) {
     machines.push_back(machine);
 }
 
+void GameWorld::addModule(Module *module) {
+    modules.push_back(module);
+}
+
 void GameWorld::removeBox(int id) {
     Box* boxToRemove = getBox(id);
     for (auto item: arms) {
@@ -38,6 +42,14 @@ ManipulatorArm* GameWorld::getManipulatorArm(int id) {
 
 Machine* GameWorld::getMachine(int id) {
     for (auto item: machines) {
+        if (item->getId() == id) return item;
+    }
+    return nullptr;
+}
+
+Module *GameWorld::getModule(int id)
+{
+    for (auto item: modules) {
         if (item->getId() == id) return item;
     }
     return nullptr;
@@ -87,16 +99,20 @@ void GameWorld::drawAll() {
         item->draw();
     }
 
+    for (auto item: modules) {
+        item->draw();
+    }
+
     GraphicsEngine::instance()->drawBitmap(Vector2d(0, 0), GraphicsEngine::instance()->worldLayer0, 20);
     GraphicsEngine::instance()->drawBitmap(Vector2d(0, 0), GraphicsEngine::instance()->worldLayer1, 10);
     GraphicsEngine::instance()->drawBitmap(Vector2d(0, 0), GraphicsEngine::instance()->worldLayer2, -2);
 
-    GraphicsEngine::instance()->drawBitmap(Vector2d(0, 1000), GraphicsEngine::instance()->moduleLayer0, 5);
-    GraphicsEngine::instance()->drawBitmap(Vector2d(0, 1000), GraphicsEngine::instance()->moduleLayer1, -2);
-    GraphicsEngine::instance()->drawBitmap(Vector2d(-320, 1000), GraphicsEngine::instance()->moduleLayer0, 5);
-    GraphicsEngine::instance()->drawBitmap(Vector2d(-320, 1000), GraphicsEngine::instance()->moduleLayer1, -2);
-    GraphicsEngine::instance()->drawBitmap(Vector2d(-640, 1000), GraphicsEngine::instance()->xmoduleLayer0, 5);
-    GraphicsEngine::instance()->drawBitmap(Vector2d(-640, 1000), GraphicsEngine::instance()->xmoduleLayer1, -2);
+    GraphicsEngine::instance()->drawBitmap(Vector2d(0, 1000), GraphicsEngine::instance()->corridorModuleLayer0, 5);
+    GraphicsEngine::instance()->drawBitmap(Vector2d(0, 1000), GraphicsEngine::instance()->corridorModuleLayer1, -2);
+    GraphicsEngine::instance()->drawBitmap(Vector2d(-320, 1000), GraphicsEngine::instance()->corridorModuleLayer0, 5);
+    GraphicsEngine::instance()->drawBitmap(Vector2d(-320, 1000), GraphicsEngine::instance()->corridorModuleLayer1, -2);
+    GraphicsEngine::instance()->drawBitmap(Vector2d(-640, 1000), GraphicsEngine::instance()->xModuleLayer0, 5);
+    GraphicsEngine::instance()->drawBitmap(Vector2d(-640, 1000), GraphicsEngine::instance()->xModuleLayer1, -2);
 
     GraphicsEngine::instance()->drawBitmap(Vector2d(500, 1000), GraphicsEngine::instance()->beamLayer0, -2);
     GraphicsEngine::instance()->drawBitmap(Vector2d(500, 1000), GraphicsEngine::instance()->beamLayer1, 10);

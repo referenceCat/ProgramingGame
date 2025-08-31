@@ -84,11 +84,11 @@ public:
     ALLEGRO_BITMAP* worldLayer1 = nullptr;
     ALLEGRO_BITMAP* worldLayer2 = nullptr;
 
-    ALLEGRO_BITMAP* xmoduleLayer0 = nullptr;
-    ALLEGRO_BITMAP* xmoduleLayer1 = nullptr;
+    ALLEGRO_BITMAP* xModuleLayer0 = nullptr;
+    ALLEGRO_BITMAP* xModuleLayer1 = nullptr;
 
-    ALLEGRO_BITMAP* moduleLayer0 = nullptr;
-    ALLEGRO_BITMAP* moduleLayer1 = nullptr;
+    ALLEGRO_BITMAP* corridorModuleLayer0 = nullptr;
+    ALLEGRO_BITMAP* corridorModuleLayer1 = nullptr;
 
     ALLEGRO_BITMAP* beamLayer0 = nullptr;
     ALLEGRO_BITMAP* beamLayer1 = nullptr;
@@ -124,11 +124,11 @@ public:
         worldLayer1 = al_load_bitmap("resources/assets/background1_no_shadow.png");
         worldLayer2 = al_load_bitmap("resources/assets/background2.png");
 
-        xmoduleLayer0 = al_load_bitmap("resources/assets/modules/xcorridor_background.png");
-        xmoduleLayer1 = al_load_bitmap("resources/assets/modules/xcorridor_walls.png");
+        xModuleLayer0 = al_load_bitmap("resources/assets/modules/xcorridor_background.png");
+        xModuleLayer1 = al_load_bitmap("resources/assets/modules/xcorridor_walls.png");
 
-        moduleLayer0 = al_load_bitmap("resources/assets/modules/corridor_background.png");
-        moduleLayer1 = al_load_bitmap("resources/assets/modules/corridor_walls.png");
+        corridorModuleLayer0 = al_load_bitmap("resources/assets/modules/corridor_background.png");
+        corridorModuleLayer1 = al_load_bitmap("resources/assets/modules/corridor_walls.png");
 
         beamLayer0 = al_load_bitmap("resources/assets/modules/beam1.png");
         beamLayer1 = al_load_bitmap("resources/assets/modules/beam3.png");

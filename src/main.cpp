@@ -18,10 +18,11 @@
 long long tick = 0;
 long long eventCounter = 0;
 
-GameWorld* gameWorld = GameWorld::instance(); // should be singleton? maybe not?
-ALLEGRO_FONT* debug_font = nullptr;
+GameWorld *gameWorld = GameWorld::instance(); // should be singleton? maybe not?
+ALLEGRO_FONT *debug_font = nullptr;
 
-void init() {
+void init()
+{
     GuiEngine::instance()->init();
 
     CameraParameters parameters;
@@ -32,7 +33,7 @@ void init() {
 
     GraphicsEngine::instance()->setCameraParameters(parameters);
 
-    // TEST 
+    // TEST
     auto arm1 = gameWorld->addManipulatorArm(3, Vector2d(200, 510));
     auto arm2 = gameWorld->addManipulatorArm(3, Vector2d(600, 510));
     auto creator3 = new BoxGenerator(Vector2d(100, 505), gameWorld);
@@ -121,10 +122,25 @@ void init() {
     // flags.background = true;
     // window->addLabel(Point2d(20, 90), false, "Highlighted", 3)->setFlags(flags);
     controller7->createWindow();
-    
+
+    XCorridorModule *xModule = new XCorridorModule(gameWorld);
+    xModule->setTransforms(Vector2d(-500, -500), Rotation(0));
+
+    CorridorModule *corridor0 = new CorridorModule(gameWorld);
+    corridor0->setTransforms(xModule->getNode(0), corridor0->getNode(0));
+
+    CorridorModule* corridor1 = new CorridorModule(gameWorld);
+    corridor1->setTransforms(xModule->getNode(1), corridor1->getNode(0));
+
+    CorridorModule *corridor2 = new CorridorModule(gameWorld);
+    corridor2->setTransforms(xModule->getNode(2), corridor2->getNode(1));
+
+    CorridorModule* corridor3 = new CorridorModule(gameWorld);
+    corridor3->setTransforms(xModule->getNode(3), corridor3->getNode(0));
 }
 
-void redraw() {
+void redraw()
+{
     // auto start = std::chrono::system_clock::now();
     gameWorld->drawAll();
     al_set_target_bitmap(al_get_backbuffer(al_get_current_display()));
@@ -133,7 +149,6 @@ void redraw() {
     al_hold_bitmap_drawing(true);
     GraphicsEngine::instance()->draw();
     al_hold_bitmap_drawing(false);
-
 
     // gameWorld.getController(6)->drawInstructions();
 
@@ -158,21 +173,28 @@ void redraw() {
     // std::cout << elapsed_ms << std::endl;
 }
 
-void update() {
+void update()
+{
     tick++;
     ALLEGRO_KEYBOARD_STATE keyboardState;
     al_get_keyboard_state(&keyboardState);
 
     CameraParameters camera = GraphicsEngine::instance()->getCameraParameters();
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_W)) camera.position.y -= 7;
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_S)) camera.position.y += 7;
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_A)) camera.position.x -= 7;
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_D)) camera.position.x += 7;
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_EQUALS)) {
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_W))
+        camera.position.y -= 7;
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_S))
+        camera.position.y += 7;
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_A))
+        camera.position.x -= 7;
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_D))
+        camera.position.x += 7;
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_EQUALS))
+    {
         camera.z /= 1.01;
         camera.fov /= 1.01;
     }
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_MINUS)) {
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_MINUS))
+    {
         camera.z *= 1.01;
         camera.fov *= 1.01;
     }
@@ -181,97 +203,108 @@ void update() {
     gameWorld->run();
 }
 
-
-void onKeyDown(int keycode) {
-    switch (keycode) {
-        case ALLEGRO_KEY_0:
-            gameWorld->getController(6)->pause();
-            break;
-        case ALLEGRO_KEY_1:
-            gameWorld->getController(6)->next();
-            break;
-        case ALLEGRO_KEY_2:
-            gameWorld->getController(6)->unpause();
-            break;
-        case ALLEGRO_KEY_R:
-            GraphicsEngine::instance()->loadImages();
-            break;
-        default:
-            break;
-        }
+void onKeyDown(int keycode)
+{
+    switch (keycode)
+    {
+    case ALLEGRO_KEY_0:
+        gameWorld->getController(6)->pause();
+        break;
+    case ALLEGRO_KEY_1:
+        gameWorld->getController(6)->next();
+        break;
+    case ALLEGRO_KEY_2:
+        gameWorld->getController(6)->unpause();
+        break;
+    case ALLEGRO_KEY_R:
+        GraphicsEngine::instance()->loadImages();
+        break;
+    default:
+        break;
+    }
 }
 
-void mainLoop(ALLEGRO_EVENT_QUEUE* event_queue) {
+void mainLoop(ALLEGRO_EVENT_QUEUE *event_queue)
+{
     bool running = true;
-    while (running) {
+    while (running)
+    {
         ALLEGRO_EVENT event;
         // ALLEGRO_TIMEOUT timeout;
         // al_init_timeout(&timeout, 0.06);
         // bool get_event = al_wait_for_event_until(event_queue, &event, &timeout);
         al_wait_for_event(event_queue, &event);
         eventCounter++;
-        switch (event.type) {
-            case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                running = false;
-                break;
-            case ALLEGRO_EVENT_TIMER:
-                update();
-                redraw();
-                break;
-            case ALLEGRO_EVENT_KEY_DOWN:
-                std::cout << event.keyboard.keycode << std::endl;
-                onKeyDown(event.keyboard.keycode);
-                break;
-            case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-                GuiEngine::instance()->click(Vector2d(event.mouse.x, event.mouse.y));
-                break;
-            case ALLEGRO_EVENT_DISPLAY_RESIZE:
-                al_acknowledge_resize(event.display.source);
-                break;
-            case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
-                GuiEngine::instance()->releaseMouse(Vector2d(event.mouse.x, event.mouse.y));
-                break;
-            case ALLEGRO_EVENT_MOUSE_AXES: case ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY: case ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY:
-                GuiEngine::instance()->moveMouse(Vector2d(event.mouse.x, event.mouse.y));
-                break;
+        switch (event.type)
+        {
+        case ALLEGRO_EVENT_DISPLAY_CLOSE:
+            running = false;
+            break;
+        case ALLEGRO_EVENT_TIMER:
+            update();
+            redraw();
+            break;
+        case ALLEGRO_EVENT_KEY_DOWN:
+            std::cout << event.keyboard.keycode << std::endl;
+            onKeyDown(event.keyboard.keycode);
+            break;
+        case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+            GuiEngine::instance()->click(Vector2d(event.mouse.x, event.mouse.y));
+            break;
+        case ALLEGRO_EVENT_DISPLAY_RESIZE:
+            al_acknowledge_resize(event.display.source);
+            break;
+        case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
+            GuiEngine::instance()->releaseMouse(Vector2d(event.mouse.x, event.mouse.y));
+            break;
+        case ALLEGRO_EVENT_MOUSE_AXES:
+        case ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY:
+        case ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY:
+            GuiEngine::instance()->moveMouse(Vector2d(event.mouse.x, event.mouse.y));
+            break;
 
-            default:
-                // fprintf(stderr, "Unsupported event received: %d\n", event.type);
-                break;
+        default:
+            // fprintf(stderr, "Unsupported event received: %d\n", event.type);
+            break;
         }
     }
-
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
     const int UPS = 60;
 
     // Initialize allegro
-    if (!al_init()) {
+    if (!al_init())
+    {
         fprintf(stderr, "Failed to initialize allegro.\n");
         return 1;
     }
 
     // Initialize allegro font addon
-    if (!al_init_font_addon()) {
+    if (!al_init_font_addon())
+    {
         fprintf(stderr, "Failed to initialize allegro font addon.\n");
         return 1;
     }
 
     // Initialize allegro ttf addon
-    if (!al_init_ttf_addon()) {
+    if (!al_init_ttf_addon())
+    {
         fprintf(stderr, "Failed to initialize allegro ttf addon.\n");
         return 1;
     }
 
     // Initialize allegro image addon
-    if (!al_init_image_addon()) {
+    if (!al_init_image_addon())
+    {
         fprintf(stderr, "Failed to initialize allegro image addon.\n");
         return 1;
     }
 
     // Initialize allegro primitives addon
-    if (!al_init_primitives_addon()) {
+    if (!al_init_primitives_addon())
+    {
         fprintf(stderr, "Failed to primitives allegro ttf addon.\n");
         return 1;
     }
@@ -279,7 +312,8 @@ int main(int argc, char **argv) {
     // Create the event queue
     ALLEGRO_EVENT_QUEUE *event_queue = nullptr;
     event_queue = al_create_event_queue();
-    if (!event_queue) {
+    if (!event_queue)
+    {
         fprintf(stderr, "Failed to create event queue.");
         return 1;
     }
@@ -289,7 +323,7 @@ int main(int argc, char **argv) {
     GuiEngine::debug_font = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
     GraphicsEngine::instance()->loadImages();
 
-    //Initialize user inputs
+    // Initialize user inputs
     al_install_keyboard();
     al_register_event_source(event_queue, al_get_keyboard_event_source());
 

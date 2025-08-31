@@ -50,6 +50,13 @@ struct Vector2d {
     Rotation getDirection() {
         return Rotation(std::atan2(y, x));
     }
+
+    Vector2d rotate(Rotation rotation) {
+        Vector2d result;
+        result.x = x * std::cos(rotation.radians) - y * std::sin(rotation.radians);
+        result.y = x * std::sin(rotation.radians) + y * std::cos(rotation.radians);
+        return result;
+    }
 };
 
 struct Rect2d {
