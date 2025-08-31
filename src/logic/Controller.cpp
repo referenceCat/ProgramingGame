@@ -2,7 +2,7 @@
 #include "GameWorld.hpp"
 
 void Controller::createWindow() {
-    window = GuiEngine::getInstance()->addWindow(Rect2d(Vector2d(400, 400), 750, 400), true, true);
+    window = GuiEngine::instance()->addWindow(Rect2d(Vector2d(400, 400), 750, 400), true, true);
     int line = 0;
     for (auto item: instructions) {
         InstructionLine instructionLine;

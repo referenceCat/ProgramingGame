@@ -18,11 +18,11 @@
 long long tick = 0;
 long long eventCounter = 0;
 
-GameWorld gameWorld{}; // should be singleton? maybe not?
+GameWorld* gameWorld = GameWorld::instance(); // should be singleton? maybe not?
 ALLEGRO_FONT* debug_font = nullptr;
 
 void init() {
-    GuiEngine::getInstance()->init();
+    GuiEngine::instance()->init();
 
     CameraParameters parameters;
     parameters.fov = 900;
@@ -33,18 +33,18 @@ void init() {
     GraphicsEngine::instance()->setCameraParameters(parameters);
 
     // TEST 
-    auto arm1 = gameWorld.addManipulatorArm(3, Vector2d(200, 510));
-    auto arm2 = gameWorld.addManipulatorArm(3, Vector2d(600, 510));
-    auto creator3 = new BoxGenerator(Vector2d(100, 505), &gameWorld);
+    auto arm1 = gameWorld->addManipulatorArm(3, Vector2d(200, 510));
+    auto arm2 = gameWorld->addManipulatorArm(3, Vector2d(600, 510));
+    auto creator3 = new BoxGenerator(Vector2d(100, 505), gameWorld);
     creator3->setPeriod(300);
     creator3->setType(BoxContent::IronPlate);
-    auto furnace4 = new Furnace(Vector2d(280, 460), &gameWorld);
-    auto destoyer5 = new BoxDestroyer(Vector2d(700, 505), &gameWorld);
-    auto assembler6 = new PlateCombiner(Vector2d(440, 505), &gameWorld);
+    auto furnace4 = new Furnace(Vector2d(280, 460), gameWorld);
+    auto destoyer5 = new BoxDestroyer(Vector2d(700, 505), gameWorld);
+    auto assembler6 = new PlateCombiner(Vector2d(440, 505), gameWorld);
     // auto furnace4 = gameWorld.addMachine(Point2d(300, 400));
     // auto destoyer5 = gameWorld.addMachine(Point2d(300, 400));
 
-    auto controller7 = gameWorld.addController(Vector2d(900, 370));
+    auto controller7 = gameWorld->addController(Vector2d(900, 370));
     controller7->addInstruction("delay 50");
     controller7->addInstruction("delay 100");
     controller7->addInstruction("angle 1 0 180");
@@ -93,7 +93,7 @@ void init() {
 
     controller7->addInstruction("goto 1");
 
-    auto controller8 = gameWorld.addController(Vector2d(1000, 370));
+    auto controller8 = gameWorld->addController(Vector2d(1000, 370));
 
     controller8->addInstruction("delay 50");
     controller8->addInstruction("delay 100");
@@ -110,7 +110,7 @@ void init() {
 
     controller8->addInstruction("goto 1");
 
-    // auto window = GuiEngine::getInstance()->addWindow(Rect2d(Point2d(300, 300), 400, 200), true, true);
+    // auto window = GuiEngine::instance()->addWindow(Rect2d(Point2d(300, 300), 400, 200), true, true);
     // auto button = window->addButton(Rect2d(Point2d(20, 40), Point2d(120.5, 80.5)));
     // button->setOnClickCallback([](){std::cout << "Hello!" << std::endl;});
     // window->addLabel(button->getRect().center(), true, "Some text", 0);
@@ -126,7 +126,7 @@ void init() {
 
 void redraw() {
     // auto start = std::chrono::system_clock::now();
-    gameWorld.drawAll();
+    gameWorld->drawAll();
     al_set_target_bitmap(al_get_backbuffer(al_get_current_display()));
     al_clear_to_color(al_map_rgb(0, 0, 5));
 
@@ -138,7 +138,7 @@ void redraw() {
     // gameWorld.getController(6)->drawInstructions();
 
     al_hold_bitmap_drawing(true);
-    GuiEngine::getInstance()->draw();
+    GuiEngine::instance()->draw();
     al_hold_bitmap_drawing(false);
 
     al_hold_bitmap_drawing(true);
@@ -178,20 +178,20 @@ void update() {
     }
     GraphicsEngine::instance()->setCameraParameters(camera);
 
-    gameWorld.run();
+    gameWorld->run();
 }
 
 
 void onKeyDown(int keycode) {
     switch (keycode) {
         case ALLEGRO_KEY_0:
-            gameWorld.getController(6)->pause();
+            gameWorld->getController(6)->pause();
             break;
         case ALLEGRO_KEY_1:
-            gameWorld.getController(6)->next();
+            gameWorld->getController(6)->next();
             break;
         case ALLEGRO_KEY_2:
-            gameWorld.getController(6)->unpause();
+            gameWorld->getController(6)->unpause();
             break;
         case ALLEGRO_KEY_R:
             GraphicsEngine::instance()->loadImages();
@@ -223,16 +223,16 @@ void mainLoop(ALLEGRO_EVENT_QUEUE* event_queue) {
                 onKeyDown(event.keyboard.keycode);
                 break;
             case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-                GuiEngine::getInstance()->click(Vector2d(event.mouse.x, event.mouse.y));
+                GuiEngine::instance()->click(Vector2d(event.mouse.x, event.mouse.y));
                 break;
             case ALLEGRO_EVENT_DISPLAY_RESIZE:
                 al_acknowledge_resize(event.display.source);
                 break;
             case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
-                GuiEngine::getInstance()->releaseMouse(Vector2d(event.mouse.x, event.mouse.y));
+                GuiEngine::instance()->releaseMouse(Vector2d(event.mouse.x, event.mouse.y));
                 break;
             case ALLEGRO_EVENT_MOUSE_AXES: case ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY: case ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY:
-                GuiEngine::getInstance()->moveMouse(Vector2d(event.mouse.x, event.mouse.y));
+                GuiEngine::instance()->moveMouse(Vector2d(event.mouse.x, event.mouse.y));
                 break;
 
             default:
@@ -309,7 +309,7 @@ int main(int argc, char **argv) {
     al_register_event_source(event_queue, al_get_display_event_source(display));
 
     init();
-    gameWorld.run();
+    gameWorld->run();
 
     mainLoop(event_queue);
 

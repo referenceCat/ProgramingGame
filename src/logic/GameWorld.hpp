@@ -23,6 +23,11 @@ class GameWorld {
     std::vector<Machine*> machines{};
 
 public:
+    static GameWorld* instance() {
+        static GameWorld instance;
+        return &instance;
+    }
+
     ManipulatorArm *addManipulatorArm(int aJointsNumber, Vector2d aRootJointPosition);
     Controller *addController(Vector2d aPos);
     Box *addBox(Rect2d aRect);

@@ -11,10 +11,14 @@
 
 class GuiEngine {
     std::vector<Window*> windows;
-    static GuiEngine* instance;
     GuiEngine() {};
 
 public:
+    static GuiEngine* instance() {
+        static GuiEngine instance;
+        return &instance;
+    }
+
     inline static ALLEGRO_BITMAP* circleIcon = nullptr; // TODO move to separate guiResources class
     inline static ALLEGRO_BITMAP* pauseIcon = nullptr;
     inline static ALLEGRO_BITMAP* unpauseIcon = nullptr;
@@ -26,8 +30,6 @@ public:
 
     inline static ALLEGRO_FONT* debug_font = nullptr;
     inline static Vector2d drawingIndent{};
-    
-    static GuiEngine* getInstance();
 
     void draw() {
         for (auto item: windows) {
