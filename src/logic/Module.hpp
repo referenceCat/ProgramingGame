@@ -97,6 +97,45 @@ public:
 //     }
 // };
 
+class BasicModule: public Module {
+    int nodesNumber = 0;
+    struct ModuleSprite {
+        Vector2d pivot;
+        double z;
+        ALLEGRO_BITMAP* bitmap;
+    };
+    std::vector<ModuleSprite> sprites;
+
+public:
+    BasicModule(GameWorld *aWorld, int nodesNumber) : Module(aWorld), nodesNumber(nodesNumber) {
+        assert(nodesNumber > 0);
+        nodes.reserve(nodesNumber);
+    }
+
+    void addNode(Vector2d pos, Rotation rot) {
+        assert(nodes.size() < nodesNumber);
+        ModuleNode newNode;
+        newNode.position = pos;
+        newNode.rotation = rot;
+        newNode.parentModule = this;
+        nodes.push_back(newNode);
+    }
+
+    void addBitmap(ALLEGRO_BITMAP* bitmap, Vector2d pivot, double z) {
+        sprites.push_back(ModuleSprite{});
+        sprites.back().bitmap = bitmap;
+        sprites.back().pivot = pivot;
+        sprites.back().z = z;
+    }
+
+    void draw() {
+        Module::draw();
+        for (auto sprite: sprites) {
+            GraphicsEngine::instance()->drawBitmap(position, sprite.bitmap, sprite.z, sprite.pivot, rotation);
+        }
+    }
+};
+
 class CorridorModule : public Module
 {
 public:
@@ -170,7 +209,7 @@ enum ModuleType
     Corridor,
     JunctionX,
     Junction3,
-    EndModule
+    DeadendModule
 };
 
 class ModuleBuilder
@@ -258,13 +297,19 @@ public:
 
         Button *corridorButton = window->addButton(Rect2d(Vector2d(20, 60), Vector2d(200, 80)));
         window->addLabel(corridorButton->getRect().center(), true, "Corridor", 0);
-        corridorButton->setOnClickCallback([this]()
-                                           { selectModuleType(Corridor); });
+        corridorButton->setOnClickCallback([this](){selectModuleType(Corridor); });
 
         Button *xCorridorButton = window->addButton(Rect2d(Vector2d(20, 85), Vector2d(200, 105)));
         window->addLabel(xCorridorButton->getRect().center(), true, "X Corridor", 0);
-        xCorridorButton->setOnClickCallback([this]()
-                                            { selectModuleType(JunctionX); });
+        xCorridorButton->setOnClickCallback([this](){selectModuleType(JunctionX); });
+
+        Button *junction3Button = window->addButton(Rect2d(Vector2d(20, 110), Vector2d(200, 130)));
+        window->addLabel(junction3Button->getRect().center(), true, "3 way junction", 0);
+        junction3Button->setOnClickCallback([this](){selectModuleType(Junction3); });
+
+        Button *deadendButton = window->addButton(Rect2d(Vector2d(20, 135), Vector2d(200, 155)));
+        window->addLabel(deadendButton->getRect().center(), true, "Deadend", 0);
+        deadendButton->setOnClickCallback([this](){selectModuleType(DeadendModule); });
 
         selectModuleType(Corridor);
     }
