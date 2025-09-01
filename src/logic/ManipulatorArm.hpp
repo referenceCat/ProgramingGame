@@ -135,9 +135,9 @@ public:
 
      void draw() {
         if (jointsNumber == 3) {
-            GraphicsEngine::instance()->drawBitmap(jointsPosition[0],  GraphicsEngine::instance()->baseSpite, 0.1, Vector2d(40, 20), Rotation(0), 10);
+            GraphicsEngine::instance()->drawBitmap(jointsPosition[0],  GraphicsEngine::instance()->baseSpite, 0.1, Vector2d(80, 40), Rotation(0), 20);
             GraphicsEngine::instance()->drawBitmap(jointsPosition[0],  GraphicsEngine::instance()->segment0Sprite, 0.05, Vector2d(20, 40), (jointsPosition[1] - jointsPosition[0]).getDirection(), 20);
-            GraphicsEngine::instance()->drawBitmap(jointsPosition[1],  GraphicsEngine::instance()->segment1Sprite, 0.1, Vector2d(10, 20), (jointsPosition[2] - jointsPosition[1]).getDirection(), 10);
+            GraphicsEngine::instance()->drawBitmap(jointsPosition[1],  GraphicsEngine::instance()->segment1Sprite, 0.1, Vector2d(20, 40), (jointsPosition[2] - jointsPosition[1]).getDirection(), 20);
         } else {
             drawDebug();
         }
