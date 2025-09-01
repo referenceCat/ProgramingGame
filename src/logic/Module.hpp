@@ -9,7 +9,9 @@
 #include  <algorithm>
 #include "../common/common.hpp"
 #include "GameObject.hpp"
+#include "GuiEngine.hpp"
 
+class GuiEngine;
 class GameWorld;
 class Module;
 
@@ -65,6 +67,10 @@ public:
 
     Vector2d getPosition() {
         return position;
+    }
+
+    Rotation getRotation() {
+        return rotation;
     }
 };
 
@@ -138,6 +144,43 @@ public:
         GraphicsEngine* graphicsEngine = GraphicsEngine::instance();
         graphicsEngine->drawBitmap(position, graphicsEngine->xModuleLayer0, 5, Vector2d(160, 160), rotation);
         graphicsEngine->drawBitmap(position, graphicsEngine->xModuleLayer1, -2, Vector2d(160, 160), rotation);
+    }
+};
+
+class ModuleBuilder {
+    ModuleNode* parentModuleNode;
+    int newModuleNodeNumber;
+
+    Window* window;
+
+public:
+    static ModuleBuilder* instance() {
+        static ModuleBuilder instance;
+        return &instance;
+    }
+
+    void setParentNode(ModuleNode* node) {
+        parentModuleNode = node;
+    }
+
+    // true - if success
+    bool buildModule();
+
+    void createWindow() {
+        if (parentModuleNode->attachedNode != nullptr) return;
+        window = GuiEngine::instance()->addWindow(Rect2d(Vector2d(400, 400), 400, 400), true, true);
+
+        Button* createButton = window->addButton(Rect2d(Vector2d(10, 340), Vector2d(210, 390)));
+        window->addLabel(createButton->getRect().center(), true, "Create module", 0);
+        createButton->setOnClickCallback([this, &window=window](){
+            bool result = this->buildModule();
+            if (result) GuiEngine::instance()->closeWindow(window);
+        });
+
+        // window->addLabel(Vector2d(10, 10), true, "Module type:", 0);
+        // window->addButton(Rect2d(Vector2d(30, 10), 20, 100));
+        // window->addLabel(Vector2d(35, 15), true, "Corridor", 0);
+        // window->addLabel(Vector2d(210, 10), true, "Node number:", 0);
     }
 };
 

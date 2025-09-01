@@ -125,18 +125,6 @@ void init()
 
     XCorridorModule *xModule = new XCorridorModule(gameWorld);
     xModule->setTransforms(Vector2d(-500, -500), Rotation(0));
-
-    CorridorModule *corridor0 = new CorridorModule(gameWorld);
-    corridor0->setTransforms(xModule->getNode(0), corridor0->getNode(0));
-
-    CorridorModule* corridor1 = new CorridorModule(gameWorld);
-    corridor1->setTransforms(xModule->getNode(1), corridor1->getNode(0));
-
-    CorridorModule *corridor2 = new CorridorModule(gameWorld);
-    corridor2->setTransforms(xModule->getNode(2), corridor2->getNode(1));
-
-    CorridorModule* corridor3 = new CorridorModule(gameWorld);
-    corridor3->setTransforms(xModule->getNode(3), corridor3->getNode(0));
 }
 
 void redraw()
@@ -224,14 +212,18 @@ void onKeyDown(int keycode)
     }
 }
 
+void onNodeClick(ModuleNode* node) {
+    ModuleBuilder::instance()->setParentNode(node);
+    ModuleBuilder::instance()->createWindow();
+}
+
 void onMouseClick(double x, double y) {
     std::cout << "mouse click" << std::endl;
     for (auto module: gameWorld->getModules()) {
         std::vector<ModuleNode*> nodes = module->getNodes();
-        auto node0 = nodes.at(0);
         for (auto node: nodes) {
-            if ((GraphicsEngine::transformPoint(module->getPosition() + node->position, 0, GraphicsEngine::instance()->getCameraParameters()) - Vector2d(x, y)).lenght() < 10) {
-                std::cout << "node click" << std::endl;
+            if ((GraphicsEngine::transformPoint(module->getPosition() + node->position.rotate(module->getRotation()), 0, GraphicsEngine::instance()->getCameraParameters()) - Vector2d(x, y)).lenght() < 10) {
+                onNodeClick(node);
             }
         }
     }
