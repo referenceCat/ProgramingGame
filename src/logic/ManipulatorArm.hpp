@@ -36,11 +36,15 @@ class ManipulatorArm : public GameObject { // TODO now supports rendering of 2 s
 
     void defaultInit() {
         for (int i = 0; i < jointsNumber; i++) {
-            setSegmentLength(i, 100);
+            setSegmentLength(i, 10);
             setJointRotation(i, Rotation(0.1));
-            setSegmentTargetLength(i, 100);
+            setSegmentTargetLength(i, 10);
             setJointTargetRotation(i, Rotation(0.1));
         }
+        setSegmentLength(0, 8);
+        setSegmentTargetLength(0, 8);
+        setSegmentLength(1, 6);
+        setSegmentTargetLength(1, 6);
         recalculate();
     }
 
@@ -131,9 +135,9 @@ public:
 
      void draw() {
         if (jointsNumber == 3) {
-            GraphicsEngine::instance()->drawBitmap(jointsPosition[0],  GraphicsEngine::instance()->baseSpite, 1, Vector2d(25, 25));
-            GraphicsEngine::instance()->drawBitmap(jointsPosition[0],  GraphicsEngine::instance()->segment0Sprite, 0.5, Vector2d(25, 25), (jointsPosition[1] - jointsPosition[0]).getDirection());
-            GraphicsEngine::instance()->drawBitmap(jointsPosition[1],  GraphicsEngine::instance()->segment1Sprite, 1, Vector2d(25, 50), (jointsPosition[2] - jointsPosition[1]).getDirection());
+            GraphicsEngine::instance()->drawBitmap(jointsPosition[0],  GraphicsEngine::instance()->baseSpite, 0.1, Vector2d(40, 20), Rotation(0), 10);
+            GraphicsEngine::instance()->drawBitmap(jointsPosition[0],  GraphicsEngine::instance()->segment0Sprite, 0.05, Vector2d(20, 40), (jointsPosition[1] - jointsPosition[0]).getDirection(), 20);
+            GraphicsEngine::instance()->drawBitmap(jointsPosition[1],  GraphicsEngine::instance()->segment1Sprite, 0.1, Vector2d(10, 20), (jointsPosition[2] - jointsPosition[1]).getDirection(), 10);
         } else {
             drawDebug();
         }

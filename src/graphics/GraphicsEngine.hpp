@@ -105,7 +105,7 @@ public:
     ALLEGRO_BITMAP* endLayer1 = nullptr;
     
 
-    void loadImages() {
+    void loadImages() { // TODO memory leak then reloading bitmaps
         backhroundTile100x100 = al_create_bitmap(100, 100);
         al_set_target_bitmap(backhroundTile100x100);
         al_draw_filled_rectangle(0, 0, 100, 100, al_map_rgb(50, 50, 50));
@@ -118,9 +118,9 @@ public:
 
         furnaceSprite = al_load_bitmap("resources/assets/heater.png");
 
-        baseSpite = al_load_bitmap("resources/assets/base.png");
-        segment0Sprite = al_load_bitmap("resources/assets/segment0.png");
-        segment1Sprite = al_load_bitmap("resources/assets/segment1.png");
+        baseSpite = al_load_bitmap("resources/assets/new_manipulator_base.png");
+        segment0Sprite = al_load_bitmap("resources/assets/new_manipulator_segment0.png");
+        segment1Sprite = al_load_bitmap("resources/assets/new_manipulator_segment1.png");
 
         assemblerBaseSprite = al_load_bitmap("resources/assets/assembler0.png");
         assemblerCyllindersSprite = al_load_bitmap("resources/assets/assembler1.png");
