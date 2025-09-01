@@ -32,11 +32,17 @@ class Window { // TODO add close event handler + write callbacks for each thing,
     std::vector<Button*> buttons;
     std::vector<Label*> labels;
     std::vector<Icon*> icons;
+    std::function<void()> onCloseCallback = nullptr;
 
 public:
     Window(Rect2d rect, bool movable, bool closable);
 
     void draw();
+
+    void setOnCloseCallback(std::function<void()> aCallback) {
+        onCloseCallback = aCallback;
+    }
+
 
     // returns true if clicked on some gui element
     bool click(Vector2d aPos) {
@@ -87,6 +93,16 @@ public:
         return buttons.back();
     };
 
+    void deleteButton(Button* buttonToRemove) {
+        delete buttonToRemove;
+        buttons.erase(std::remove(buttons.begin(), buttons.end(), buttonToRemove), buttons.end());
+    };
+
+    void deleteLabel(Label* labelToRemove) {
+        delete labelToRemove;
+        labels.erase(std::remove(labels.begin(), labels.end(), labelToRemove), labels.end());
+    };
+
     Label* addLabel(Vector2d aPos, bool centered, std::string text, int line = 0) {
         aPos.y += line * 14;
         labels.push_back(new Label(aPos, centered, text));
@@ -103,6 +119,7 @@ public:
     }
 
     ~Window() {
+        if(onCloseCallback) onCloseCallback();
         for (auto item: buttons) {
             delete item;
         }

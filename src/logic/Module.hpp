@@ -6,7 +6,7 @@
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
-#include  <algorithm>
+#include <algorithm>
 #include "../common/common.hpp"
 #include "GameObject.hpp"
 #include "GuiEngine.hpp"
@@ -15,61 +15,73 @@ class GuiEngine;
 class GameWorld;
 class Module;
 
-struct ModuleNode {
+struct ModuleNode
+{
     Vector2d position;
     Rotation rotation;
-    ModuleNode* attachedNode = nullptr;
-    Module* parentModule;
+    ModuleNode *attachedNode = nullptr;
+    Module *parentModule;
 };
 
-class Module : public GameObject {
+class Module : public GameObject
+{
 protected:
     std::vector<ModuleNode> nodes;
     Vector2d position;
     Rotation rotation;
-    Module (GameWorld* gameWorld);
+    Module(GameWorld *gameWorld);
 
 public:
-    virtual void draw() {
+    virtual void draw()
+    {
         GraphicsEngine::instance()->drawPoint(position, 0, al_map_rgb(255, 255, 255));
-        for (auto node: nodes) {
+        for (auto node : nodes)
+        {
             GraphicsEngine::instance()->drawPoint(node.position.rotate(rotation) + position, 0, al_map_rgb(0, 0, 255));
             GraphicsEngine::instance()->drawLine(node.position.rotate(rotation) + position, node.position.rotate(rotation) + position + Vector2d(rotation + node.rotation, 15), 0, al_map_rgb(0, 0, 255));
         }
     };
 
-    void setTransforms(Vector2d aPos, Rotation aRot) {
+    void setTransforms(Vector2d aPos, Rotation aRot)
+    {
         position = aPos;
         rotation = aRot;
     }
 
-    void setTransforms(ModuleNode* parentNode, ModuleNode* ownNode) {
-        Module* parentModule = parentNode->parentModule;
-        rotation = parentModule->rotation + parentNode->rotation + ownNode->rotation + M_PI;
-        position = parentModule->position + parentNode->position.rotate(parentModule->rotation) + ownNode->position.rotate(ownNode->rotation + parentModule->rotation + parentNode->rotation);
+    void setTransforms(ModuleNode *parentNode, ModuleNode *ownNode)
+    {
+        Module *parentModule = parentNode->parentModule;
+        rotation = parentModule->rotation + parentNode->rotation - ownNode->rotation + M_PI;
+        position = parentModule->position + parentNode->position.rotate(parentModule->rotation) + ownNode->position.rotate(parentModule->rotation + parentNode->rotation - ownNode->rotation);
     }
 
-    ModuleNode* getNode(int number) {
-        if (number < nodes.size()) { // TODO should be ok since nodes size wont change
+    ModuleNode *getNode(int number)
+    {
+        if (number < nodes.size())
+        { // TODO should be ok since nodes size wont change
             return &nodes.at(number);
         }
         return nullptr;
     }
 
-    std::vector<ModuleNode *> getNodes() {
+    std::vector<ModuleNode *> getNodes()
+    {
         std::vector<ModuleNode *> result;
-        for (int i = 0; i < nodes.size(); i++) {
+        for (int i = 0; i < nodes.size(); i++)
+        {
             result.push_back(&nodes.at(i));
         }
 
         return result;
     }
 
-    Vector2d getPosition() {
+    Vector2d getPosition()
+    {
         return position;
     }
 
-    Rotation getRotation() {
+    Rotation getRotation()
+    {
         return rotation;
     }
 };
@@ -85,9 +97,11 @@ public:
 //     }
 // };
 
-class CorridorModule: public Module {
+class CorridorModule : public Module
+{
 public:
-    CorridorModule(GameWorld* aWorld): Module(aWorld) {
+    CorridorModule(GameWorld *aWorld) : Module(aWorld)
+    {
         nodes.reserve(2);
         ModuleNode leftNode;
         leftNode.position = Vector2d(-160, 0);
@@ -102,17 +116,20 @@ public:
         nodes.push_back(rightNode);
     }
 
-    void draw() override {
+    void draw() override
+    {
         Module::draw();
-        GraphicsEngine* graphicsEngine = GraphicsEngine::instance();
+        GraphicsEngine *graphicsEngine = GraphicsEngine::instance();
         graphicsEngine->drawBitmap(position, graphicsEngine->corridorModuleLayer0, 5, Vector2d(160, 160), rotation);
         graphicsEngine->drawBitmap(position, graphicsEngine->corridorModuleLayer1, -2, Vector2d(160, 160), rotation);
     }
 };
 
-class XCorridorModule: public Module {
+class XCorridorModule : public Module
+{
 public:
-    XCorridorModule(GameWorld* aWorld): Module(aWorld) {
+    XCorridorModule(GameWorld *aWorld) : Module(aWorld)
+    {
         nodes.reserve(4);
         ModuleNode leftNode;
         leftNode.position = Vector2d(-160, 0);
@@ -134,53 +151,122 @@ public:
 
         ModuleNode upNode;
         upNode.position = Vector2d(0, -160);
-        upNode.rotation = Rotation(M_PI * 3 / 2);
+        upNode.rotation = Rotation(M_PI + M_PI / 2);
         upNode.parentModule = this;
         nodes.push_back(upNode);
     }
 
-    void draw() override {
+    void draw() override
+    {
         Module::draw();
-        GraphicsEngine* graphicsEngine = GraphicsEngine::instance();
+        GraphicsEngine *graphicsEngine = GraphicsEngine::instance();
         graphicsEngine->drawBitmap(position, graphicsEngine->xModuleLayer0, 5, Vector2d(160, 160), rotation);
         graphicsEngine->drawBitmap(position, graphicsEngine->xModuleLayer1, -2, Vector2d(160, 160), rotation);
     }
 };
 
-class ModuleBuilder {
-    ModuleNode* parentModuleNode;
-    int newModuleNodeNumber;
+enum ModuleType
+{
+    Corridor,
+    JunctionX,
+    Junction3,
+    EndModule
+};
 
-    Window* window;
+class ModuleBuilder
+{
+    ModuleNode *parentModuleNode;
+    int newModuleNodeNumber;
+    Module *newModule = nullptr;
+
+    Window *window;
+    std::vector<Button *> nodeNumberButtons;
+    std::vector<Label *> nodeNumberLabels;
+
+    void updateNodeNumberSelection()
+    {
+        for (auto button : nodeNumberButtons)
+        {
+            window->deleteButton(button);
+        }
+        nodeNumberButtons.clear();
+
+        for (auto label : nodeNumberLabels)
+        {
+            window->deleteLabel(label);
+        }
+        nodeNumberLabels.clear();
+
+        int i = 0;
+        for (auto node : newModule->getNodes())
+        {
+            Button *newButton = window->addButton(Rect2d(Vector2d(220, 60 + i * 25), Vector2d(420, 80 + i * 25)));
+            Label *newLabel = window->addLabel(newButton->getRect().center(), true, std::to_string(i), 0);
+            newButton->setOnClickCallback([this, n = i]()
+                                          { this->selectNewNodeNumber(n); });
+            nodeNumberButtons.push_back(newButton);
+            nodeNumberLabels.push_back(newLabel);
+            i++;
+        }
+    }
+
+    void onWindowClose()
+    {
+        window = nullptr;
+        nodeNumberButtons.clear();
+        nodeNumberLabels.clear();
+    }
 
 public:
-    static ModuleBuilder* instance() {
+    static ModuleBuilder *instance()
+    {
         static ModuleBuilder instance;
         return &instance;
     }
 
-    void setParentNode(ModuleNode* node) {
+    void setParentNode(ModuleNode *node)
+    {
         parentModuleNode = node;
     }
 
     // true - if success
     bool buildModule();
 
-    void createWindow() {
-        if (parentModuleNode->attachedNode != nullptr) return;
-        window = GuiEngine::instance()->addWindow(Rect2d(Vector2d(400, 400), 400, 400), true, true);
+    bool selectModuleType(ModuleType);
 
-        Button* createButton = window->addButton(Rect2d(Vector2d(10, 340), Vector2d(210, 390)));
+    bool selectNewNodeNumber(int number);
+
+    void createWindow()
+    {
+        if (window)
+            GuiEngine::instance()->closeWindow(window);
+        if (parentModuleNode->attachedNode != nullptr)
+            return;
+        window = GuiEngine::instance()->addWindow(Rect2d(Vector2d(400, 400), 400, 440), true, true);
+        window->setOnCloseCallback([this]()
+                                   { onWindowClose(); });
+
+        Button *createButton = window->addButton(Rect2d(Vector2d(10, 340), Vector2d(210, 390)));
         window->addLabel(createButton->getRect().center(), true, "Create module", 0);
-        createButton->setOnClickCallback([this, &window=window](){
+        createButton->setOnClickCallback([this, &window = window]()
+                                         {
             bool result = this->buildModule();
-            if (result) GuiEngine::instance()->closeWindow(window);
-        });
+            if (result) GuiEngine::instance()->closeWindow(window); });
 
-        // window->addLabel(Vector2d(10, 10), true, "Module type:", 0);
-        // window->addButton(Rect2d(Vector2d(30, 10), 20, 100));
-        // window->addLabel(Vector2d(35, 15), true, "Corridor", 0);
-        // window->addLabel(Vector2d(210, 10), true, "Node number:", 0);
+        window->addLabel(Vector2d(20, 40), false, "Module type:", 0);
+        window->addLabel(Vector2d(220, 40), false, "Node number:", 0);
+
+        Button *corridorButton = window->addButton(Rect2d(Vector2d(20, 60), Vector2d(200, 80)));
+        window->addLabel(corridorButton->getRect().center(), true, "Corridor", 0);
+        corridorButton->setOnClickCallback([this]()
+                                           { selectModuleType(Corridor); });
+
+        Button *xCorridorButton = window->addButton(Rect2d(Vector2d(20, 85), Vector2d(200, 105)));
+        window->addLabel(xCorridorButton->getRect().center(), true, "X Corridor", 0);
+        xCorridorButton->setOnClickCallback([this]()
+                                            { selectModuleType(JunctionX); });
+
+        selectModuleType(Corridor);
     }
 };
 

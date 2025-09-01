@@ -123,8 +123,9 @@ void init()
     // window->addLabel(Point2d(20, 90), false, "Highlighted", 3)->setFlags(flags);
     controller7->createWindow();
 
-    XCorridorModule *xModule = new XCorridorModule(gameWorld);
-    xModule->setTransforms(Vector2d(-500, -500), Rotation(0));
+    XCorridorModule *rootModule = new XCorridorModule(gameWorld);
+    rootModule->setTransforms(Vector2d(-500, -500), Rotation(0));
+    gameWorld->addModule(rootModule);
 }
 
 void redraw()
@@ -222,7 +223,7 @@ void onMouseClick(double x, double y) {
     for (auto module: gameWorld->getModules()) {
         std::vector<ModuleNode*> nodes = module->getNodes();
         for (auto node: nodes) {
-            if ((GraphicsEngine::transformPoint(module->getPosition() + node->position.rotate(module->getRotation()), 0, GraphicsEngine::instance()->getCameraParameters()) - Vector2d(x, y)).lenght() < 10) {
+            if ((GraphicsEngine::transformPoint(module->getPosition() + node->position.rotate(module->getRotation()), 0, GraphicsEngine::instance()->getCameraParameters()) - Vector2d(x, y)).lenght() < 20) {
                 onNodeClick(node);
             }
         }
