@@ -18,11 +18,27 @@ bool ModuleBuilder::selectModuleType(ModuleType type) {
     delete newModule;
     switch (type) {
     case ModuleType::Corridor:
-        newModule = new CorridorModule(GameWorld::instance());
+    {
+        BasicModule* moduleSetup = new BasicModule(GameWorld::instance(), 2);
+        moduleSetup->addNode(Vector2d(Rotation(0), 160), Rotation(0));
+        moduleSetup->addNode(Vector2d(Rotation(M_PI), 160), Rotation(M_PI));
+        moduleSetup->addBitmap(GraphicsEngine::instance()->corridorModuleLayer0, Vector2d(160, 160), 5);
+        moduleSetup->addBitmap(GraphicsEngine::instance()->corridorModuleLayer1, Vector2d(160, 160), -2);
+        newModule = moduleSetup;
         break;
+    }
     case ModuleType::JunctionX:
-        newModule = new XCorridorModule(GameWorld::instance());
+    {
+        BasicModule* moduleSetup = new BasicModule(GameWorld::instance(), 4);
+        moduleSetup->addNode(Vector2d(Rotation(0), 160), Rotation(0));
+        moduleSetup->addNode(Vector2d(Rotation(M_PI / 2), 160), Rotation(M_PI / 2));
+        moduleSetup->addNode(Vector2d(Rotation(M_PI), 160), Rotation(M_PI));
+        moduleSetup->addNode(Vector2d(Rotation(M_PI / 2 * 3), 160), Rotation(M_PI / 2 * 3));
+        moduleSetup->addBitmap(GraphicsEngine::instance()->xModuleLayer0, Vector2d(160, 160), 5);
+        moduleSetup->addBitmap(GraphicsEngine::instance()->xModuleLayer1, Vector2d(160, 160), -2);
+        newModule = moduleSetup;
         break;
+    }
     case ModuleType::Junction3:
     {
         BasicModule* moduleSetup = new BasicModule(GameWorld::instance(), 3);
@@ -36,7 +52,7 @@ bool ModuleBuilder::selectModuleType(ModuleType type) {
     }
     case ModuleType::DeadendModule:
     {
-        BasicModule* moduleSetup = new BasicModule(GameWorld::instance(), 3);
+        BasicModule* moduleSetup = new BasicModule(GameWorld::instance(), 1);
         moduleSetup->addNode(Vector2d(Rotation(0), 160), Rotation(0));
         moduleSetup->addBitmap(GraphicsEngine::instance()->endLayer0, Vector2d(160, 160), 5);
         moduleSetup->addBitmap(GraphicsEngine::instance()->endLayer1, Vector2d(160, 160), -2);

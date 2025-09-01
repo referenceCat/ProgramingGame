@@ -123,7 +123,11 @@ void init()
     // window->addLabel(Point2d(20, 90), false, "Highlighted", 3)->setFlags(flags);
     controller7->createWindow();
 
-    XCorridorModule *rootModule = new XCorridorModule(gameWorld);
+    BasicModule* rootModule = new BasicModule(GameWorld::instance(), 2);
+    rootModule->addNode(Vector2d(Rotation(0), 160), Rotation(0));
+    rootModule->addNode(Vector2d(Rotation(M_PI), 160), Rotation(M_PI));
+    rootModule->addBitmap(GraphicsEngine::instance()->corridorModuleLayer0, Vector2d(160, 160), 5);
+    rootModule->addBitmap(GraphicsEngine::instance()->corridorModuleLayer1, Vector2d(160, 160), -2);
     rootModule->setTransforms(Vector2d(-500, -500), Rotation(0));
     gameWorld->addModule(rootModule);
 }
