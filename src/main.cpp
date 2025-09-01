@@ -53,19 +53,21 @@ void init()
     // // auto furnace4 = gameWorld.addMachine(Point2d(300, 400));
     // // auto destoyer5 = gameWorld.addMachine(Point2d(300, 400));
 
-    // auto controller7 = gameWorld->addController(Vector2d(900, 370));
-    // controller7->addInstruction("delay 50");
-    // controller7->addInstruction("delay 100");
-    // controller7->addInstruction("angle 1 0 180");
-    // controller7->addInstruction("angle 1 1 270");
-    // controller7->addInstruction("delay 400");
-    // controller7->addInstruction("grab 1");
-    // controller7->addInstruction("delay 10");
-    // controller7->addInstruction("angle 1 0 190"); // move box 1 to furnace
-    // controller7->addInstruction("angle 1 1 100");
-    // controller7->addInstruction("delay 400");
-    // controller7->addInstruction("release 1");
-    // controller7->addInstruction("delay 10");
+    auto controller7 = gameWorld->addController(Vector2d(-10, 3));
+    controller7->addInstruction("delay 50");
+    controller7->addInstruction("delay 100");
+    controller7->addInstruction("angle 2 0 180");
+    controller7->addInstruction("angle 2 1 270");
+    controller7->addInstruction("delay 400");
+    controller7->addInstruction("grab 2");
+    controller7->addInstruction("delay 10");
+    controller7->addInstruction("angle 2 0 190"); // move box 1 to furnace
+    controller7->addInstruction("angle 2 1 100");
+    controller7->addInstruction("delay 400");
+    controller7->addInstruction("release 2");
+    controller7->addInstruction("delay 10");
+    controller7->addInstruction("goto 2");
+    controller7->createWindow();
 
     // controller7->addInstruction("angle 1 0 180");
     // controller7->addInstruction("angle 1 1 270");

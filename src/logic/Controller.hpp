@@ -39,11 +39,11 @@ class Controller : public GameObject {
     Icon* pauseIcon = nullptr;
 
 public:
-    Controller(Vector2d aPos, GameWorld* aWorld): rect(aPos, 70, 50), GameObject(aWorld) {}
+    Controller(Vector2d aPos, GameWorld* aWorld): rect(aPos, 7, 5), GameObject(aWorld) {}
 
     void draw() {
         // GraphicsEngine::instance()->drawRectangle(rect, 0, al_map_rgb(100, 255, 100));
-        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->controllerSprite, 1);
+        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->controllerSprite, 0.2, Vector2d(), Rotation(), 20);
     }
 
     Rect2d getRect() {
