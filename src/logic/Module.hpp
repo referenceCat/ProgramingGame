@@ -38,7 +38,7 @@ public:
         for (auto node : nodes)
         {
             GraphicsEngine::instance()->drawPoint(node.position.rotate(rotation) + position, 0, al_map_rgb(0, 0, 255));
-            GraphicsEngine::instance()->drawLine(node.position.rotate(rotation) + position, node.position.rotate(rotation) + position + Vector2d(rotation + node.rotation, 15), 0, al_map_rgb(0, 0, 255));
+            GraphicsEngine::instance()->drawLine(node.position.rotate(rotation) + position, node.position.rotate(rotation) + position + Vector2d(rotation + node.rotation, 5), 0, al_map_rgb(0, 0, 255));
         }
     };
 
@@ -131,7 +131,7 @@ public:
     void draw() {
         Module::draw();
         for (auto sprite: sprites) {
-            GraphicsEngine::instance()->drawBitmap(position, sprite.bitmap, sprite.z, sprite.pivot, rotation);
+            GraphicsEngine::instance()->drawBitmap(position, sprite.bitmap, sprite.z, sprite.pivot, rotation, 10);
         }
     }
 };

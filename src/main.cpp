@@ -26,116 +26,117 @@ void init()
     GuiEngine::instance()->init();
 
     CameraParameters parameters;
-    parameters.fov = 900;
+    parameters.fov = 90;
     parameters.displaySize = Vector2d(900, 900);
-    parameters.position = Vector2d(600, 300);
-    parameters.z = -400; // fov = 90 deg
+    parameters.position = Vector2d(0, 0);
+    parameters.z = -40; // fov = 90 deg
 
     GraphicsEngine::instance()->setCameraParameters(parameters);
 
-    // TEST
-    auto arm1 = gameWorld->addManipulatorArm(3, Vector2d(200, 510));
-    auto arm2 = gameWorld->addManipulatorArm(3, Vector2d(600, 510));
-    auto creator3 = new BoxGenerator(Vector2d(100, 505), gameWorld);
-    creator3->setPeriod(300);
-    creator3->setType(BoxContent::IronPlate);
-    auto furnace4 = new Furnace(Vector2d(280, 460), gameWorld);
-    auto destoyer5 = new BoxDestroyer(Vector2d(700, 505), gameWorld);
-    auto assembler6 = new PlateCombiner(Vector2d(440, 505), gameWorld);
-    // auto furnace4 = gameWorld.addMachine(Point2d(300, 400));
-    // auto destoyer5 = gameWorld.addMachine(Point2d(300, 400));
-
-    auto controller7 = gameWorld->addController(Vector2d(900, 370));
-    controller7->addInstruction("delay 50");
-    controller7->addInstruction("delay 100");
-    controller7->addInstruction("angle 1 0 180");
-    controller7->addInstruction("angle 1 1 270");
-    controller7->addInstruction("delay 400");
-    controller7->addInstruction("grab 1");
-    controller7->addInstruction("delay 10");
-    controller7->addInstruction("angle 1 0 190"); // move box 1 to furnace
-    controller7->addInstruction("angle 1 1 100");
-    controller7->addInstruction("delay 400");
-    controller7->addInstruction("release 1");
-    controller7->addInstruction("delay 10");
-
-    controller7->addInstruction("angle 1 0 180");
-    controller7->addInstruction("angle 1 1 270");
-    controller7->addInstruction("delay 400");
-    controller7->addInstruction("grab 1");
-    controller7->addInstruction("delay 10");
-    controller7->addInstruction("angle 1 0 180"); // move box 2 to furnace
-    controller7->addInstruction("angle 1 1 125");
-    controller7->addInstruction("delay 400");
-    controller7->addInstruction("release 1");
-    controller7->addInstruction("delay 10");
-
-    controller7->addInstruction("angle 1 0 190"); // grab box 1 from furnace
-    controller7->addInstruction("angle 1 1 100");
-    controller7->addInstruction("delay 200");
-    controller7->addInstruction("grab 1");
-    controller7->addInstruction("delay 10");
-    controller7->addInstruction("angle 1 0 232"); // move box 1 to assembler
-    controller7->addInstruction("angle 1 1 125");
-    controller7->addInstruction("delay 200");
-    controller7->addInstruction("release 1");
-    controller7->addInstruction("delay 10");
-
-    controller7->addInstruction("angle 1 0 180"); // grab box 2 from furnace
-    controller7->addInstruction("angle 1 1 125");
-    controller7->addInstruction("delay 200");
-    controller7->addInstruction("grab 1");
-    controller7->addInstruction("delay 10");
-    controller7->addInstruction("angle 1 0 238"); // move box 2 to assembler
-    controller7->addInstruction("angle 1 1 102");
-    controller7->addInstruction("delay 200");
-    controller7->addInstruction("release 1");
-    controller7->addInstruction("delay 10");
-
-    controller7->addInstruction("goto 1");
-
-    auto controller8 = gameWorld->addController(Vector2d(1000, 370));
-
-    controller8->addInstruction("delay 50");
-    controller8->addInstruction("delay 100");
-    controller8->addInstruction("angle 2 0 200");
-    controller8->addInstruction("angle 2 1 103");
-    controller8->addInstruction("delay 400");
-    controller8->addInstruction("grab 2");
-    controller8->addInstruction("delay 10");
-    controller8->addInstruction("angle 2 0 0");
-    controller8->addInstruction("angle 2 1 90");
-    controller8->addInstruction("delay 400");
-    controller8->addInstruction("release 2");
-    controller8->addInstruction("delay 10");
-
-    controller8->addInstruction("goto 1");
-
-    // auto window = GuiEngine::instance()->addWindow(Rect2d(Point2d(300, 300), 400, 200), true, true);
-    // auto button = window->addButton(Rect2d(Point2d(20, 40), Point2d(120.5, 80.5)));
-    // button->setOnClickCallback([](){std::cout << "Hello!" << std::endl;});
-    // window->addLabel(button->getRect().center(), true, "Some text", 0);
-    // window->addLabel(Point2d(20, 90), false, "Some text", 0);
-    // window->addLabel(Point2d(20, 90), false, "More text", 1);
-    // window->addLabel(Point2d(20, 90), false, "Hello, World!!!", 2);
-    // LabelFlags flags;
-    // flags.background = true;
-    // window->addLabel(Point2d(20, 90), false, "Highlighted", 3)->setFlags(flags);
-    controller7->createWindow();
-
     BasicModule* rootModule = new BasicModule(GameWorld::instance(), 2);
-    rootModule->addNode(Vector2d(Rotation(0), 160), Rotation(0));
-    rootModule->addNode(Vector2d(Rotation(M_PI), 160), Rotation(M_PI));
-    rootModule->addBitmap(GraphicsEngine::instance()->corridorModuleLayer0, Vector2d(160, 160), 5);
-    rootModule->addBitmap(GraphicsEngine::instance()->corridorModuleLayer1, Vector2d(160, 160), -2);
-    rootModule->setTransforms(Vector2d(-500, -500), Rotation(0));
+    rootModule->addNode(Vector2d(Rotation(0), 16), Rotation(0));
+    rootModule->addNode(Vector2d(Rotation(M_PI), 16), Rotation(M_PI));
+    rootModule->addBitmap(GraphicsEngine::instance()->corridorModuleLayer0, Vector2d(160, 160), CommonValues::zModuleWalls);
+    rootModule->addBitmap(GraphicsEngine::instance()->corridorModuleLayer1, Vector2d(160, 160), CommonValues::zModuleMainBackgroung);
+    rootModule->setTransforms(Vector2d(0, 0), Rotation(0));
     gameWorld->addModule(rootModule);
+
+    // TEST
+    // auto arm1 = gameWorld->addManipulatorArm(3, Vector2d(200, 510));
+    // auto arm2 = gameWorld->addManipulatorArm(3, Vector2d(600, 510));
+    // auto creator3 = new BoxGenerator(Vector2d(100, 505), gameWorld);
+    // creator3->setPeriod(300);
+    // creator3->setType(BoxContent::IronPlate);
+    // auto furnace4 = new Furnace(Vector2d(280, 460), gameWorld);
+    // auto destoyer5 = new BoxDestroyer(Vector2d(700, 505), gameWorld);
+    // auto assembler6 = new PlateCombiner(Vector2d(440, 505), gameWorld);
+    // // auto furnace4 = gameWorld.addMachine(Point2d(300, 400));
+    // // auto destoyer5 = gameWorld.addMachine(Point2d(300, 400));
+
+    // auto controller7 = gameWorld->addController(Vector2d(900, 370));
+    // controller7->addInstruction("delay 50");
+    // controller7->addInstruction("delay 100");
+    // controller7->addInstruction("angle 1 0 180");
+    // controller7->addInstruction("angle 1 1 270");
+    // controller7->addInstruction("delay 400");
+    // controller7->addInstruction("grab 1");
+    // controller7->addInstruction("delay 10");
+    // controller7->addInstruction("angle 1 0 190"); // move box 1 to furnace
+    // controller7->addInstruction("angle 1 1 100");
+    // controller7->addInstruction("delay 400");
+    // controller7->addInstruction("release 1");
+    // controller7->addInstruction("delay 10");
+
+    // controller7->addInstruction("angle 1 0 180");
+    // controller7->addInstruction("angle 1 1 270");
+    // controller7->addInstruction("delay 400");
+    // controller7->addInstruction("grab 1");
+    // controller7->addInstruction("delay 10");
+    // controller7->addInstruction("angle 1 0 180"); // move box 2 to furnace
+    // controller7->addInstruction("angle 1 1 125");
+    // controller7->addInstruction("delay 400");
+    // controller7->addInstruction("release 1");
+    // controller7->addInstruction("delay 10");
+
+    // controller7->addInstruction("angle 1 0 190"); // grab box 1 from furnace
+    // controller7->addInstruction("angle 1 1 100");
+    // controller7->addInstruction("delay 200");
+    // controller7->addInstruction("grab 1");
+    // controller7->addInstruction("delay 10");
+    // controller7->addInstruction("angle 1 0 232"); // move box 1 to assembler
+    // controller7->addInstruction("angle 1 1 125");
+    // controller7->addInstruction("delay 200");
+    // controller7->addInstruction("release 1");
+    // controller7->addInstruction("delay 10");
+
+    // controller7->addInstruction("angle 1 0 180"); // grab box 2 from furnace
+    // controller7->addInstruction("angle 1 1 125");
+    // controller7->addInstruction("delay 200");
+    // controller7->addInstruction("grab 1");
+    // controller7->addInstruction("delay 10");
+    // controller7->addInstruction("angle 1 0 238"); // move box 2 to assembler
+    // controller7->addInstruction("angle 1 1 102");
+    // controller7->addInstruction("delay 200");
+    // controller7->addInstruction("release 1");
+    // controller7->addInstruction("delay 10");
+
+    // controller7->addInstruction("goto 1");
+
+    // auto controller8 = gameWorld->addController(Vector2d(1000, 370));
+
+    // controller8->addInstruction("delay 50");
+    // controller8->addInstruction("delay 100");
+    // controller8->addInstruction("angle 2 0 200");
+    // controller8->addInstruction("angle 2 1 103");
+    // controller8->addInstruction("delay 400");
+    // controller8->addInstruction("grab 2");
+    // controller8->addInstruction("delay 10");
+    // controller8->addInstruction("angle 2 0 0");
+    // controller8->addInstruction("angle 2 1 90");
+    // controller8->addInstruction("delay 400");
+    // controller8->addInstruction("release 2");
+    // controller8->addInstruction("delay 10");
+
+    // controller8->addInstruction("goto 1");
+
+    // // auto window = GuiEngine::instance()->addWindow(Rect2d(Point2d(300, 300), 400, 200), true, true);
+    // // auto button = window->addButton(Rect2d(Point2d(20, 40), Point2d(120.5, 80.5)));
+    // // button->setOnClickCallback([](){std::cout << "Hello!" << std::endl;});
+    // // window->addLabel(button->getRect().center(), true, "Some text", 0);
+    // // window->addLabel(Point2d(20, 90), false, "Some text", 0);
+    // // window->addLabel(Point2d(20, 90), false, "More text", 1);
+    // // window->addLabel(Point2d(20, 90), false, "Hello, World!!!", 2);
+    // // LabelFlags flags;
+    // // flags.background = true;
+    // // window->addLabel(Point2d(20, 90), false, "Highlighted", 3)->setFlags(flags);
+    // controller7->createWindow();
 }
 
 void redraw()
 {
     // auto start = std::chrono::system_clock::now();
     gameWorld->drawAll();
+    GraphicsEngine::instance()->drawDebugBackgroung2();
     al_set_target_bitmap(al_get_backbuffer(al_get_current_display()));
     al_clear_to_color(al_map_rgb(0, 0, 5));
 
@@ -174,13 +175,13 @@ void update()
 
     CameraParameters camera = GraphicsEngine::instance()->getCameraParameters();
     if (al_key_down(&keyboardState, ALLEGRO_KEY_W))
-        camera.position.y -= 7;
+        camera.position.y -= 2;
     if (al_key_down(&keyboardState, ALLEGRO_KEY_S))
-        camera.position.y += 7;
+        camera.position.y += 2;
     if (al_key_down(&keyboardState, ALLEGRO_KEY_A))
-        camera.position.x -= 7;
+        camera.position.x -= 2;
     if (al_key_down(&keyboardState, ALLEGRO_KEY_D))
-        camera.position.x += 7;
+        camera.position.x += 2;
     if (al_key_down(&keyboardState, ALLEGRO_KEY_EQUALS))
     {
         camera.z /= 1.01;

@@ -16,6 +16,11 @@ struct CameraParameters {
     Vector2d displaySize;
 };
 
+namespace CommonValues {
+    constexpr double zModuleWalls = 0.5;
+    constexpr double zModuleMainBackgroung = -0.5;
+};
+
 class GraphicsEngine {
     CameraParameters camera;
 
@@ -154,6 +159,14 @@ public:
         }
     }
 
+    void drawDebugBackgroung2() { // TODO very slow way to draw tiles
+        for (int x = -50; x < 50; x++) {
+            for (int y = -50; y < 50; y++) {
+                GraphicsEngine::instance()->drawPoint(Vector2d(x + 0.5, y + 0.5), 0, al_map_rgb(200, 200, 200), 1.5);
+            }
+        }
+    }
+
     void drawStarsBackgroung() {
         static std::vector<BackgroundStar> stars;
         if (!stars.size()) initStars(stars, 1000);
@@ -201,10 +214,10 @@ public:
         return camera;
     }
 
-    void drawPoint(Vector2d aPoint, double z, ALLEGRO_COLOR color) {
+    void drawPoint(Vector2d aPoint, double z, ALLEGRO_COLOR color, double r = 3) {
         setLayerAsTargetBitmap(z);
         Vector2d displayPoint = transformPoint(aPoint, z, camera);
-        al_draw_filled_circle(displayPoint.x, displayPoint.y, 3, color);
+        al_draw_filled_circle(displayPoint.x, displayPoint.y, r, color);
     }
 
     void drawRectangle(Rect2d aRect, double z, ALLEGRO_COLOR color, int thickness = 0) {
@@ -231,14 +244,14 @@ public:
         else al_draw_circle(displayPoint.x, displayPoint.y, r, color, thickness);
     }
 
-    void drawBitmap(Vector2d aPoint, ALLEGRO_BITMAP* bitmap, double z, Vector2d bitmapPivot = Vector2d(), Rotation bitmapRotation = Rotation()) {
+    void drawBitmap(Vector2d aPoint, ALLEGRO_BITMAP* bitmap, double z, Vector2d bitmapPivot = Vector2d(), Rotation bitmapRotation = Rotation(), double pixelsPerUnit = 1) {
         setLayerAsTargetBitmap(z);
         Vector2d displayPoint = transformPoint(aPoint, z, camera);
         // double displayW = transformScalar(al_get_bitmap_width(bitmap), z, camera);
         // double displayH = transformScalar(al_get_bitmap_height(bitmap), z, camera);
         // al_draw_scaled_bitmap(bitmap, 0, 0, al_get_bitmap_width(bitmap), al_get_bitmap_height(bitmap), displayPoint.x, displayPoint.y, displayW, displayH, 0);
 
-        double sizeMultiplayer = transformScalar(1, z, camera);
+        double sizeMultiplayer = transformScalar(1, z, camera) / pixelsPerUnit;
         al_draw_scaled_rotated_bitmap(bitmap, bitmapPivot.x, bitmapPivot.y, displayPoint.x, displayPoint.y, sizeMultiplayer, sizeMultiplayer, bitmapRotation.radians, 0);
     }
 
