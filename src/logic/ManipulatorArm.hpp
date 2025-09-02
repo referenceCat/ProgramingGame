@@ -41,10 +41,6 @@ class ManipulatorArm : public GameObject { // TODO now supports rendering of 2 s
             setSegmentTargetLength(i, 10);
             setJointTargetRotation(i, Rotation(0.1));
         }
-        setSegmentLength(0, 8);
-        setSegmentTargetLength(0, 8);
-        setSegmentLength(1, 6);
-        setSegmentTargetLength(1, 6);
         recalculate();
     }
 
@@ -52,6 +48,16 @@ public:
     ManipulatorArm(int aJointsNumber, GameWorld* aWorld):  jointsNumber(aJointsNumber), GameObject(aWorld) {
         assert(("incorrect number of joints", 1 <= aJointsNumber <= maxJointsNumber));
         defaultInit();
+    }
+
+    Vector2d getJointPosition(int n) {
+        assert(("incorrect bone number", n < jointsNumber));
+        return jointsPosition[n];
+    }
+
+    Rotation getJointRotation(int n) {
+        assert(("incorrect bone number", n < jointsNumber));
+        return jointsRotation[n];
     }
 
     void setSegmentLength(int aSegment, double aLenght){
@@ -134,15 +140,8 @@ public:
     }
 
      void draw() {
-        if (jointsNumber == 3) {
-            GraphicsEngine::instance()->drawBitmap(jointsPosition[0],  GraphicsEngine::instance()->baseSpite, 0.1, Vector2d(80, 40), Rotation(0), 20);
-            GraphicsEngine::instance()->drawBitmap(jointsPosition[0],  GraphicsEngine::instance()->segment0Sprite, 0.05, Vector2d(20, 40), (jointsPosition[1] - jointsPosition[0]).getDirection(), 20);
-            GraphicsEngine::instance()->drawBitmap(jointsPosition[1],  GraphicsEngine::instance()->segment1Sprite, 0.1, Vector2d(20, 40), (jointsPosition[2] - jointsPosition[1]).getDirection(), 20);
-        } else {
-            drawDebug();
-        }
-        
-     }
+        drawDebug();
+    }
 
     void rotateJointToTarget(int i) { // TODO stop after reacing target rotation
         double dRotation = std::fmod(jointsTargetRotation[i].radians - jointsRotation[i].radians, M_PI * 2);

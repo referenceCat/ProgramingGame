@@ -42,7 +42,7 @@ void init()
     gameWorld->addModule(rootModule);
 
     // TEST
-    gameWorld->addManipulatorArm(3, Vector2d(0, 0));
+    auto manipulator = new ManipulatorTier1(Vector2d(0, 0), gameWorld);
     // auto arm2 = gameWorld->addManipulatorArm(3, Vector2d(600, 510));
     // auto creator3 = new BoxGenerator(Vector2d(100, 505), gameWorld);
     // creator3->setPeriod(300);

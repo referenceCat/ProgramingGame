@@ -1,9 +1,7 @@
 #include "GameWorld.hpp"
 
-ManipulatorArm* GameWorld::addManipulatorArm(int aJointsNumber, Vector2d aRootJointPosition) {
-    arms.push_back(new ManipulatorArm(aJointsNumber, this));
-    arms.back()->setRootJointPosition(aRootJointPosition);
-    return arms.back();
+void GameWorld::addManipulatorArm(ManipulatorArm* arm) {
+    arms.push_back(arm);
 }
 
 Controller* GameWorld::addController(Vector2d aPos) {

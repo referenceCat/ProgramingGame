@@ -30,7 +30,7 @@ public:
         return &instance;
     }
 
-    ManipulatorArm *addManipulatorArm(int aJointsNumber, Vector2d aRootJointPosition);
+    void addManipulatorArm(ManipulatorArm *arm);
     Controller *addController(Vector2d aPos);
     Box *addBox(Rect2d aRect);
     void addMachine(Machine* machine);

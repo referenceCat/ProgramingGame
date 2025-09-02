@@ -21,6 +21,31 @@ public:
     }
 };
 
+class ManipulatorTier1: public Machine {
+    ManipulatorArm* arm;
+public:
+    ManipulatorTier1(Vector2d aPos, GameWorld* aWorld): Machine(Rect2d(aPos, 3, 5), aWorld) {
+        arm = new ManipulatorArm(3, aWorld);
+        arm->setRootJointPosition(Vector2d(4, 2) + rect.p1);
+        arm->setSegmentLength(0, 8);
+        arm->setSegmentTargetLength(0, 8);
+        arm->setSegmentLength(1, 6);
+        arm->setSegmentTargetLength(1, 6);
+        arm->recalculate();
+        aWorld->addManipulatorArm(arm);
+    }
+
+    void run() override {
+        // TODO manipulator update here
+    }
+
+    void draw() override {
+        GraphicsEngine::instance()->drawBitmap(arm->getJointPosition(0),  GraphicsEngine::instance()->baseSpite, 0.1, Vector2d(80, 40), Rotation(0), 20);
+        GraphicsEngine::instance()->drawBitmap(arm->getJointPosition(0),  GraphicsEngine::instance()->segment0Sprite, 0.05, Vector2d(20, 40), arm->getJointRotation(0), 20);
+        GraphicsEngine::instance()->drawBitmap(arm->getJointPosition(1),  GraphicsEngine::instance()->segment1Sprite, 0.1, Vector2d(20, 40), arm->getJointRotation(0) + arm->getJointRotation(1), 20);
+    }
+};
+
 class BoxGenerator: public Machine {
     ProductionArea creatingArea;
     int period = 200;
