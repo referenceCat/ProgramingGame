@@ -41,5 +41,5 @@ std::vector<Box *> Machinery::getBoxesTouching(ProductionArea area) {
 }
 
 Machinery::Machinery(Rect2d rect, GameWorld *aWorld): rect(rect), GameObject(aWorld) {
-    parentWorld->addMachine(this);
+    parentWorld->addMachinery(this);
 }

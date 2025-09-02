@@ -12,7 +12,6 @@
 #include "../common/common.hpp"
 #include "ManipulatorArm.hpp"
 #include "Box.hpp"
-#include "Controller.hpp"
 #include "GameObject.hpp"
 #include "Machinery.hpp"
 #include "Module.hpp"
@@ -20,7 +19,6 @@
 class GameWorld {
     std::vector<ManipulatorArm*> arms{};
     std::vector<Box*> boxes{};
-    std::vector<Controller*> controllers{};
     std::vector<Machinery*> machines{};
     std::vector<Module*> modules{};
 
@@ -31,15 +29,13 @@ public:
     }
 
     void addManipulatorArm(ManipulatorArm *arm);
-    Controller *addController(Vector2d aPos);
     Box *addBox(Rect2d aRect);
-    void addMachine(Machinery* machine);
+    void addMachinery(Machinery* machine);
     void addModule(Module* module);
 
     void removeBox(int id);
 
     ManipulatorArm *getManipulatorArm(int id);
-    Controller *getController(int id);
     Box *getBox(int id);
     Box *getBox(Vector2d aPos);
     std::vector<Box*> getBoxes();

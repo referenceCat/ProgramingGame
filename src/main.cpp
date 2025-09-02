@@ -50,10 +50,10 @@ void init()
     // auto furnace4 = new Furnace(Vector2d(280, 460), gameWorld);
     // auto destoyer5 = new BoxDestroyer(Vector2d(700, 505), gameWorld);
     // auto assembler6 = new PlateCombiner(Vector2d(440, 505), gameWorld);
-    // // auto furnace4 = gameWorld.addMachine(Point2d(300, 400));
-    // // auto destoyer5 = gameWorld.addMachine(Point2d(300, 400));
+    // // auto furnace4 = gameWorld.addMachinery(Point2d(300, 400));
+    // // auto destoyer5 = gameWorld.addMachinery(Point2d(300, 400));
 
-    auto controller7 = gameWorld->addController(Vector2d(-10, 3));
+    auto controller7 = new Controller(Vector2d(-10, 3), gameWorld);
     controller7->addInstruction("delay 50");
     controller7->addInstruction("delay 100");
     controller7->addInstruction("angle 2 0 180");
@@ -67,7 +67,8 @@ void init()
     controller7->addInstruction("release 2");
     controller7->addInstruction("delay 10");
     controller7->addInstruction("goto 2");
-    controller7->createWindow();
+    // controller7->createWindow();
+    gameWorld->addMachinery(controller7);
 
     // controller7->addInstruction("angle 1 0 180");
     // controller7->addInstruction("angle 1 1 270");
@@ -203,15 +204,6 @@ void onKeyDown(int keycode)
 {
     switch (keycode)
     {
-    case ALLEGRO_KEY_0:
-        gameWorld->getController(6)->pause();
-        break;
-    case ALLEGRO_KEY_1:
-        gameWorld->getController(6)->next();
-        break;
-    case ALLEGRO_KEY_2:
-        gameWorld->getController(6)->unpause();
-        break;
     case ALLEGRO_KEY_R:
         GraphicsEngine::instance()->loadImages();
         break;

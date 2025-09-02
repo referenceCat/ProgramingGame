@@ -1,12 +1,8 @@
 #include "GameWorld.hpp"
+#include "Controller.hpp"
 
 void GameWorld::addManipulatorArm(ManipulatorArm* arm) {
     arms.push_back(arm);
-}
-
-Controller* GameWorld::addController(Vector2d aPos) {
-    controllers.push_back(new Controller(aPos, this));
-    return controllers.back();
 }
 
 Box* GameWorld::addBox(Rect2d aRect) {
@@ -14,8 +10,8 @@ Box* GameWorld::addBox(Rect2d aRect) {
     return boxes.back();
 }
 
-void GameWorld::addMachine(Machinery *machine) {
-    machines.push_back(machine);
+void GameWorld::addMachinery(Machinery *machinery) {
+    machines.push_back(machinery);
 }
 
 void GameWorld::addModule(Module *module) {
@@ -77,13 +73,6 @@ Box* GameWorld::getBox(Vector2d aPos) {
     return nullptr;
 }
 
-Controller* GameWorld::getController(int id) {
-    for (auto item: controllers) {
-        if (item->getId() == id) return item;
-    }
-    return nullptr;
-}
-
 void GameWorld::drawAll() {
     for (auto item: arms) {
         item->draw();
@@ -91,11 +80,6 @@ void GameWorld::drawAll() {
 
     for (auto item: boxes) {
         item->draw();
-    }
-
-    for (auto item: controllers) {
-        item->draw();
-        item->drawRegisters();
     }
 
     for (auto item: machines) {
@@ -113,14 +97,10 @@ void GameWorld::run() {
         arm->moveToTarget();
         arm->recalculate();
     }
-    // run controllers
-    for (auto controller: controllers) {
-        controller->run();
-    }
 
-    // run arms
-    for (auto machine: machines) {
-        machine->run();
+    // run machinery
+    for (auto machinery: machines) {
+        machinery->run();
     }
 
     // run boxes

@@ -13,10 +13,9 @@
 #include "Box.hpp"
 #include "GameObject.hpp"
 #include "../ui/GuiEngine.hpp"
+#include "Machinery.hpp"
 
-class Controller : public GameObject {
-    Rect2d rect;
-
+class Controller : public Machinery {
     struct InstructionLine {
         Label* label;
         Button* breakpointButton;
@@ -39,15 +38,11 @@ class Controller : public GameObject {
     Icon* pauseIcon = nullptr;
 
 public:
-    Controller(Vector2d aPos, GameWorld* aWorld): rect(aPos, 7, 5), GameObject(aWorld) {}
+    Controller(Vector2d aPos, GameWorld* aWorld): Machinery(Rect2d(aPos, 7, 5), aWorld) {}
 
-    void draw() {
+    void draw() override {
         // GraphicsEngine::instance()->drawRectangle(rect, 0, al_map_rgb(100, 255, 100));
         GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->controllerSprite, 0.2, Vector2d(), Rotation(), 20);
-    }
-
-    Rect2d getRect() {
-        return rect;
     }
 
     void addInstruction(std::string instr) {
@@ -93,7 +88,7 @@ public:
         // al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 40, 0, std::to_string(rDelay).c_str());
     }
 
-    void run() {
+    void run() override {
         if (paused) {
             return;
         }
