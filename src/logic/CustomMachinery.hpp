@@ -4,8 +4,8 @@
 class Furnace: public Machinery {
     ProductionArea heatingArea;
 public:
-    Furnace(Vector2d aPos, GameWorld* aWorld): Machinery(Rect2d(aPos, 100, 100), aWorld) {
-        heatingArea.rect = Rect2d(Vector2d(10, 10), Vector2d(rect.dimensions().x - 10, rect.dimensions().y - 10));
+    Furnace(Vector2d aPos, GameWorld* aWorld): Machinery(Rect2d(aPos, 10, 10), aWorld) {
+        heatingArea.rect = Rect2d(Vector2d(5, 5), 8, 8);
         areas.push_back(&heatingArea);
     }
 
@@ -16,7 +16,7 @@ public:
     }
 
     void draw() override {
-        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->furnaceSprite, 5);
+        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->furnaceSprite, CommonValues::zMachinery, Vector2d(), Rotation(), 10);
         // Machinery::draw();
     }
 };
@@ -73,8 +73,8 @@ class BoxGenerator: public Machinery {
     
 
 public:
-    BoxGenerator(Vector2d aPos, GameWorld* aWorld): Machinery(Rect2d(aPos, 50, 50), aWorld) {
-        creatingArea.rect = Rect2d(Vector2d(10, 10), Vector2d(rect.dimensions().x - 10, rect.dimensions().y - 10));
+    BoxGenerator(Vector2d aPos, GameWorld* aWorld): Machinery(Rect2d(aPos, 5, 5), aWorld) {
+        creatingArea.rect = Rect2d(Vector2d(2.5, 2.5), 4, 4);
         areas.push_back(&creatingArea);
     }
 
@@ -97,9 +97,8 @@ public:
 
     void draw() override {
         // Machinery::draw();
-        GraphicsEngine::instance()->drawLine(Vector2d(rect.p1.x, rect.p2.y + 10), Vector2d(rect.p1.x + (period - cooldown) / 4, rect.p2.y + 10), 0, al_map_rgb(100, 100, 100), 2);
-        GraphicsEngine::instance()->drawLine(Vector2d(rect.p1.x, rect.p2.y + 10), Vector2d(rect.p1.x + (period - cooldown) / 4, rect.p2.y + 10), -5, al_map_rgb(255, 255, 255), 2);
-        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->boxCreatorDestroyerBaseSprite, 2);
+        GraphicsEngine::instance()->drawLine(Vector2d(rect.p1.x, rect.p2.y + 1), Vector2d(rect.p1.x + (period - cooldown) / 40, rect.p2.y + 1), 0, al_map_rgb(100, 100, 100), 2);
+        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->boxCreatorDestroyerBaseSprite, CommonValues::zMachinery, Vector2d(), Rotation(), 10);
     }
 
 };
@@ -109,8 +108,8 @@ class BoxDestroyer: public Machinery {
     int cooldown = 200;
 
 public:
-    BoxDestroyer(Vector2d aPos, GameWorld* aWorld): Machinery(Rect2d(aPos, 50, 50), aWorld) {
-        destroyingArea.rect = Rect2d(Vector2d(10, 10), Vector2d(rect.dimensions().x - 10, rect.dimensions().y - 10));
+    BoxDestroyer(Vector2d aPos, GameWorld* aWorld): Machinery(Rect2d(aPos, 5, 5), aWorld) {
+        destroyingArea.rect = Rect2d(Vector2d(2.5, 2.5), 4, 4);
         areas.push_back(&destroyingArea);
     }
 
@@ -122,11 +121,11 @@ public:
 
     void draw() override {
         // Machinery::draw();
-        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->boxCreatorDestroyerBaseSprite, 2);
+        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->boxCreatorDestroyerBaseSprite, CommonValues::zMachinery, Vector2d(), Rotation(), 10);
     }
 };
 
-class PlateCombiner: public Machinery {
+class AssemblerTier1: public Machinery {
     ProductionArea ingridientArea0;
     ProductionArea ingridientArea1;
     ProductionArea resultArea;
@@ -143,10 +142,10 @@ class PlateCombiner: public Machinery {
     
 
 public:
-    PlateCombiner(Vector2d aPos, GameWorld* aWorld): Machinery(Rect2d(aPos, 75, 160), aWorld) {
-        ingridientArea0.rect = Rect2d(Vector2d(5, 5), Vector2d(35, 35)); // TODO process class for this kind of behavior
-        ingridientArea1.rect = Rect2d(Vector2d(5, 40), Vector2d(35, 70));
-        resultArea.rect = Rect2d(Vector2d(125, 5), Vector2d(155, 35));
+    AssemblerTier1(Vector2d aPos, GameWorld* aWorld): Machinery(Rect2d(aPos, 8, 16), aWorld) {
+        ingridientArea0.rect = Rect2d(Vector2d(2, 2), 3.5, 3.5); // TODO process class for this kind of behavior
+        ingridientArea1.rect = Rect2d(Vector2d(2, 6), 3.5, 3.5);
+        resultArea.rect = Rect2d(Vector2d(14, 2), 3.5, 3.5);
         areas.push_back(&ingridientArea0);
         areas.push_back(&ingridientArea1);
         areas.push_back(&resultArea);
@@ -184,12 +183,11 @@ public:
 
     void draw() override {
         // Machinery::draw();
-        GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerBaseSprite, 2, Vector2d(165, 165));
-        GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerCyllindersSprite, 8, Vector2d(165, 165));
-        GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerPressSprite, 2, Vector2d(165, 165 - pressShiftByProcessTime() + 4));
-        GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerPlateSprite, 5, Vector2d(165, 165));
-        GraphicsEngine::instance()->drawLine(Vector2d(rect.p1.x, rect.p2.y + 10), Vector2d(rect.p1.x + processTime, rect.p2.y + 10), 0, al_map_rgb(100, 100, 100), 2);
-        GraphicsEngine::instance()->drawLine(Vector2d(rect.p1.x, rect.p2.y + 10), Vector2d(rect.p1.x + processTime, rect.p2.y + 10), -5, al_map_rgb(255, 255, 255), 2);
+        GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerBaseSprite, CommonValues::zMachineryFront, Vector2d(165, 165), Rotation(), 10);
+        GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerCyllindersSprite, CommonValues::zMachineryBack, Vector2d(165, 165), Rotation(), 10);
+        GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerPressSprite, CommonValues::zMachinery, Vector2d(165, 165 - pressShiftByProcessTime() + 4), Rotation(), 10);
+        GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerPlateSprite, CommonValues::zMachinery, Vector2d(165, 165), Rotation(), 10);
+        GraphicsEngine::instance()->drawLine(Vector2d(rect.p1.x, rect.p2.y + 1), Vector2d(rect.p1.x + processTime / 10, rect.p2.y + 1), CommonValues::zMachinery, al_map_rgb(100, 100, 100), 2);
     }
 };
 

@@ -36,22 +36,17 @@ void init()
     BasicModule* rootModule = new BasicModule(GameWorld::instance(), 2);
     rootModule->addNode(Vector2d(Rotation(0), 16), Rotation(0));
     rootModule->addNode(Vector2d(Rotation(M_PI), 16), Rotation(M_PI));
-    rootModule->addBitmap(GraphicsEngine::instance()->corridorModuleLayer0, Vector2d(160, 160), CommonValues::zModuleWalls);
-    rootModule->addBitmap(GraphicsEngine::instance()->corridorModuleLayer1, Vector2d(160, 160), CommonValues::zModuleMainBackgroung);
+    rootModule->addBitmap(GraphicsEngine::instance()->corridorModuleLayer0, Vector2d(160, 160), CommonValues::zModuleMainBackgroung);
+    rootModule->addBitmap(GraphicsEngine::instance()->corridorModuleLayer1, Vector2d(160, 160), CommonValues::zModuleWalls);
     rootModule->setTransforms(Vector2d(0, 0), Rotation(0));
     gameWorld->addModule(rootModule);
 
     // TEST
     auto manipulator = new ManipulatorTier1(Vector2d(0, 0), gameWorld);
-    // auto arm2 = gameWorld->addManipulatorArm(3, Vector2d(600, 510));
-    // auto creator3 = new BoxGenerator(Vector2d(100, 505), gameWorld);
-    // creator3->setPeriod(300);
-    // creator3->setType(BoxContent::IronPlate);
-    // auto furnace4 = new Furnace(Vector2d(280, 460), gameWorld);
-    // auto destoyer5 = new BoxDestroyer(Vector2d(700, 505), gameWorld);
-    // auto assembler6 = new PlateCombiner(Vector2d(440, 505), gameWorld);
-    // // auto furnace4 = gameWorld.addMachinery(Point2d(300, 400));
-    // // auto destoyer5 = gameWorld.addMachinery(Point2d(300, 400));
+    auto machinery0 = new Furnace(Vector2d(10, 0), gameWorld);
+    auto machinery1 = new BoxGenerator(Vector2d(20, 0), gameWorld);
+    auto machinery2 = new BoxDestroyer(Vector2d(26, 0), gameWorld);
+    auto machinery3 = new AssemblerTier1(Vector2d(40, 0), gameWorld);
 
     auto controller7 = new Controller(Vector2d(-10, 3), gameWorld);
     controller7->addInstruction("delay 50");
@@ -114,13 +109,13 @@ void update()
 
     CameraParameters camera = GraphicsEngine::instance()->getCameraParameters();
     if (al_key_down(&keyboardState, ALLEGRO_KEY_W))
-        camera.position.y -= 2;
+        camera.position.y -= 1;
     if (al_key_down(&keyboardState, ALLEGRO_KEY_S))
-        camera.position.y += 2;
+        camera.position.y += 1;
     if (al_key_down(&keyboardState, ALLEGRO_KEY_A))
-        camera.position.x -= 2;
+        camera.position.x -= 1;
     if (al_key_down(&keyboardState, ALLEGRO_KEY_D))
-        camera.position.x += 2;
+        camera.position.x += 1;
     if (al_key_down(&keyboardState, ALLEGRO_KEY_EQUALS))
     {
         camera.z /= 1.01;

@@ -22,8 +22,8 @@ bool ModuleBuilder::selectModuleType(ModuleType type) {
         BasicModule* moduleSetup = new BasicModule(GameWorld::instance(), 2);
         moduleSetup->addNode(Vector2d(Rotation(0), 16), Rotation(0));
         moduleSetup->addNode(Vector2d(Rotation(M_PI), 16), Rotation(M_PI));
-        moduleSetup->addBitmap(GraphicsEngine::instance()->corridorModuleLayer0, Vector2d(160, 160), CommonValues::zModuleWalls);
-        moduleSetup->addBitmap(GraphicsEngine::instance()->corridorModuleLayer1, Vector2d(160, 160), CommonValues::zModuleMainBackgroung);
+        moduleSetup->addBitmap(GraphicsEngine::instance()->corridorModuleLayer0, Vector2d(160, 160), CommonValues::zModuleMainBackgroung);
+        moduleSetup->addBitmap(GraphicsEngine::instance()->corridorModuleLayer1, Vector2d(160, 160), CommonValues::zModuleWalls);
         newModule = moduleSetup;
         break;
     }
@@ -34,8 +34,8 @@ bool ModuleBuilder::selectModuleType(ModuleType type) {
         moduleSetup->addNode(Vector2d(Rotation(M_PI / 2), 16), Rotation(M_PI / 2));
         moduleSetup->addNode(Vector2d(Rotation(M_PI), 16), Rotation(M_PI));
         moduleSetup->addNode(Vector2d(Rotation(M_PI / 2 * 3), 16), Rotation(M_PI / 2 * 3));
-        moduleSetup->addBitmap(GraphicsEngine::instance()->xModuleLayer0, Vector2d(160, 160), CommonValues::zModuleWalls);
-        moduleSetup->addBitmap(GraphicsEngine::instance()->xModuleLayer1, Vector2d(160, 160), CommonValues::zModuleMainBackgroung);
+        moduleSetup->addBitmap(GraphicsEngine::instance()->xModuleLayer0, Vector2d(160, 160), CommonValues::zModuleMainBackgroung);
+        moduleSetup->addBitmap(GraphicsEngine::instance()->xModuleLayer1, Vector2d(160, 160), CommonValues::zModuleWalls);
         newModule = moduleSetup;
         break;
     }
@@ -45,8 +45,8 @@ bool ModuleBuilder::selectModuleType(ModuleType type) {
         moduleSetup->addNode(Vector2d(Rotation(M_PI), 16), Rotation(M_PI));
         moduleSetup->addNode(Vector2d(Rotation(M_PI / 3), 16), Rotation(M_PI / 3));
         moduleSetup->addNode(Vector2d(Rotation(-M_PI / 3), 16), Rotation(-M_PI / 3));
-        moduleSetup->addBitmap(GraphicsEngine::instance()->junction3Layer0, Vector2d(240, 240), CommonValues::zModuleWalls);
-        moduleSetup->addBitmap(GraphicsEngine::instance()->junction3Layer1, Vector2d(240, 240), CommonValues::zModuleMainBackgroung);
+        moduleSetup->addBitmap(GraphicsEngine::instance()->junction3Layer0, Vector2d(240, 240), CommonValues::zModuleMainBackgroung);
+        moduleSetup->addBitmap(GraphicsEngine::instance()->junction3Layer1, Vector2d(240, 240), CommonValues::zModuleWalls);
         newModule = moduleSetup;
         break;
     }
@@ -54,8 +54,8 @@ bool ModuleBuilder::selectModuleType(ModuleType type) {
     {
         BasicModule* moduleSetup = new BasicModule(GameWorld::instance(), 1);
         moduleSetup->addNode(Vector2d(Rotation(0), 16), Rotation(0));
-        moduleSetup->addBitmap(GraphicsEngine::instance()->endLayer0, Vector2d(160, 160), CommonValues::zModuleWalls);
-        moduleSetup->addBitmap(GraphicsEngine::instance()->endLayer1, Vector2d(160, 160), CommonValues::zModuleMainBackgroung);
+        moduleSetup->addBitmap(GraphicsEngine::instance()->endLayer0, Vector2d(160, 160), CommonValues::zModuleMainBackgroung);
+        moduleSetup->addBitmap(GraphicsEngine::instance()->endLayer1, Vector2d(160, 160), CommonValues::zModuleWalls);
         newModule = moduleSetup;
         break;
     }

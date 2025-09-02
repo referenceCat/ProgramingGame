@@ -7,7 +7,7 @@ void Machinery::destroyBox(Box *box) {
 
 Box* Machinery::createBox(ProductionArea area)
 {
-    return parentWorld->addBox(Rect2d(area.rect.center() + rect.p1, 24, 24));
+    return parentWorld->addBox(Rect2d(area.rect.center() + rect.p1, 2, 2));
 }
 
 std::vector<Box *> Machinery::getBoxesInside(ProductionArea area) {
