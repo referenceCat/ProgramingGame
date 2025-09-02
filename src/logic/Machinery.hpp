@@ -46,7 +46,9 @@ public:
         return rect;
     }
 
-    virtual void run() = 0;
+    virtual void run() {};
+    virtual void onCommandRecive(int command, int argument) {}
+    virtual void onClick() {};
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_MACHINERY_HPP_

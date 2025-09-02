@@ -56,83 +56,19 @@ void init()
     auto controller7 = new Controller(Vector2d(-10, 3), gameWorld);
     controller7->addInstruction("delay 50");
     controller7->addInstruction("delay 100");
-    controller7->addInstruction("angle 2 0 180");
-    controller7->addInstruction("angle 2 1 270");
+    controller7->addInstruction("send 2 0 180");
+    controller7->addInstruction("send 2 1 270");
     controller7->addInstruction("delay 400");
-    controller7->addInstruction("grab 2");
+    controller7->addInstruction("send 2 200 0");
     controller7->addInstruction("delay 10");
-    controller7->addInstruction("angle 2 0 190"); // move box 1 to furnace
-    controller7->addInstruction("angle 2 1 100");
+    controller7->addInstruction("send 2 0 190"); // move box 1 to furnace
+    controller7->addInstruction("send 2 1 100");
     controller7->addInstruction("delay 400");
-    controller7->addInstruction("release 2");
+    controller7->addInstruction("send 2 100 0");
     controller7->addInstruction("delay 10");
     controller7->addInstruction("goto 2");
-    // controller7->createWindow();
     gameWorld->addMachinery(controller7);
 
-    // controller7->addInstruction("angle 1 0 180");
-    // controller7->addInstruction("angle 1 1 270");
-    // controller7->addInstruction("delay 400");
-    // controller7->addInstruction("grab 1");
-    // controller7->addInstruction("delay 10");
-    // controller7->addInstruction("angle 1 0 180"); // move box 2 to furnace
-    // controller7->addInstruction("angle 1 1 125");
-    // controller7->addInstruction("delay 400");
-    // controller7->addInstruction("release 1");
-    // controller7->addInstruction("delay 10");
-
-    // controller7->addInstruction("angle 1 0 190"); // grab box 1 from furnace
-    // controller7->addInstruction("angle 1 1 100");
-    // controller7->addInstruction("delay 200");
-    // controller7->addInstruction("grab 1");
-    // controller7->addInstruction("delay 10");
-    // controller7->addInstruction("angle 1 0 232"); // move box 1 to assembler
-    // controller7->addInstruction("angle 1 1 125");
-    // controller7->addInstruction("delay 200");
-    // controller7->addInstruction("release 1");
-    // controller7->addInstruction("delay 10");
-
-    // controller7->addInstruction("angle 1 0 180"); // grab box 2 from furnace
-    // controller7->addInstruction("angle 1 1 125");
-    // controller7->addInstruction("delay 200");
-    // controller7->addInstruction("grab 1");
-    // controller7->addInstruction("delay 10");
-    // controller7->addInstruction("angle 1 0 238"); // move box 2 to assembler
-    // controller7->addInstruction("angle 1 1 102");
-    // controller7->addInstruction("delay 200");
-    // controller7->addInstruction("release 1");
-    // controller7->addInstruction("delay 10");
-
-    // controller7->addInstruction("goto 1");
-
-    // auto controller8 = gameWorld->addController(Vector2d(1000, 370));
-
-    // controller8->addInstruction("delay 50");
-    // controller8->addInstruction("delay 100");
-    // controller8->addInstruction("angle 2 0 200");
-    // controller8->addInstruction("angle 2 1 103");
-    // controller8->addInstruction("delay 400");
-    // controller8->addInstruction("grab 2");
-    // controller8->addInstruction("delay 10");
-    // controller8->addInstruction("angle 2 0 0");
-    // controller8->addInstruction("angle 2 1 90");
-    // controller8->addInstruction("delay 400");
-    // controller8->addInstruction("release 2");
-    // controller8->addInstruction("delay 10");
-
-    // controller8->addInstruction("goto 1");
-
-    // // auto window = GuiEngine::instance()->addWindow(Rect2d(Point2d(300, 300), 400, 200), true, true);
-    // // auto button = window->addButton(Rect2d(Point2d(20, 40), Point2d(120.5, 80.5)));
-    // // button->setOnClickCallback([](){std::cout << "Hello!" << std::endl;});
-    // // window->addLabel(button->getRect().center(), true, "Some text", 0);
-    // // window->addLabel(Point2d(20, 90), false, "Some text", 0);
-    // // window->addLabel(Point2d(20, 90), false, "More text", 1);
-    // // window->addLabel(Point2d(20, 90), false, "Hello, World!!!", 2);
-    // // LabelFlags flags;
-    // // flags.background = true;
-    // // window->addLabel(Point2d(20, 90), false, "Highlighted", 3)->setFlags(flags);
-    // controller7->createWindow();
 }
 
 void redraw()
@@ -219,14 +155,22 @@ void onNodeClick(ModuleNode* node) {
 
 void onMouseClick(double x, double y) {
     std::cout << "mouse click" << std::endl;
+    if (GuiEngine::instance()->click(Vector2d(x, y))) {
+        return;
+    }
+
     for (auto module: gameWorld->getModules()) {
         std::vector<ModuleNode*> nodes = module->getNodes();
         for (auto node: nodes) {
             if ((GraphicsEngine::transformPoint(module->getPosition() + node->position.rotate(module->getRotation()), 0, GraphicsEngine::instance()->getCameraParameters()) - Vector2d(x, y)).lenght() < 20) {
                 onNodeClick(node);
+                return;
             }
         }
     }
+
+    Vector2d gameWorldClickPos = GraphicsEngine::instance()->transformPointInverse(Vector2d(x, y), GraphicsEngine::instance()->getCameraParameters());
+    gameWorld->click(gameWorldClickPos);
 }
 
 void mainLoop(ALLEGRO_EVENT_QUEUE *event_queue)
@@ -254,9 +198,7 @@ void mainLoop(ALLEGRO_EVENT_QUEUE *event_queue)
             onKeyDown(event.keyboard.keycode);
             break;
         case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-            if (!GuiEngine::instance()->click(Vector2d(event.mouse.x, event.mouse.y))) {
-                onMouseClick(event.mouse.x, event.mouse.y);
-            }
+            onMouseClick(event.mouse.x, event.mouse.y);
             
             break;
         case ALLEGRO_EVENT_DISPLAY_RESIZE:

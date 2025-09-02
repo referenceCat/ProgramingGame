@@ -87,61 +87,24 @@ int Controller::execNextInstr() {
     if (command == "delay") {
         rDelay = std::atoi(instr.at(1).c_str());
         return 0;
-    }
-
-    if (command == "angle") {
-        int id = std::atoi(instr.at(1).c_str()); 
-        ManipulatorArm* arm = parentWorld->getManipulatorArm(id);
-        if (!arm) return 2;
-        int joint = std::atoi(instr.at(2).c_str()); 
-        int angle = std::atoi(instr.at(3).c_str()); 
-        arm->setJointTargetRotation(joint, degreesToRadians(angle));
-        rInstr++;
-        return 0;
-    } else if (command == "grab") {
-        int id = std::atoi(instr.at(1).c_str()); 
-        ManipulatorArm* arm = parentWorld->getManipulatorArm(id);
-        if (!arm) return 2;
-        arm->grab();
-        rInstr++;
-        return 0;
-    } else if (command == "release") {
-        int id = std::atoi(instr.at(1).c_str()); 
-        ManipulatorArm* arm = parentWorld->getManipulatorArm(id);
-        if (!arm) return 2;
-        arm->release();
-        rInstr++;
-        return 0;
     } else if (command == "goto") {
         rInstr = std::atoi(instr.at(1).c_str()); 
         return 0;
-    // } else if (command == "grill") {
-    //     int id = std::atoi(instr.at(1).c_str()); 
-    //     Machinery* item = parentWorld->getMachine(id);
-    //     if (!item) return 2; // incorrect slave address
-    //     item->grillBoxes();
-    //     rInstr++;
-    //     return 0;
-    // } else if (command == "create") {
-    //     int id = std::atoi(instr.at(1).c_str()); 
-    //     Machinery* item = parentWorld->getMachine(id);
-    //     if (!item) return 2; // incorrect slave address
-    //     item->createBox();
-    //     rInstr++;
-    //     return 0;
-    // } else if (command == "destroy") {
-    //     int id = std::atoi(instr.at(1).c_str()); 
-    //     Machinery* item = parentWorld->getMachine(id);
-    //     if (!item) return 2; // incorrect slave address
-    //     item->destroyBoxes();
-    //     rInstr++;
-    //     return 0;
     } else if (command == "error") {
         int error = std::atoi(instr.at(1).c_str());
         return error;
+    } else if (command == "send") {
+        int id = std::atoi(instr.at(1).c_str()); 
+        Machinery* machinery = parentWorld->getMachinery(id);
+        if (!machinery) return 2;
+        int command = std::atoi(instr.at(2).c_str());
+        int argument = std::atoi(instr.at(3).c_str());
+        machinery->onCommandRecive(command, argument);
+        rInstr++;
+        return 0;
     } else {
         return 1; // invalid instruction
-    }
+    } 
 
     return 0;
 }

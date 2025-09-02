@@ -44,6 +44,25 @@ public:
         GraphicsEngine::instance()->drawBitmap(arm->getJointPosition(0),  GraphicsEngine::instance()->segment0Sprite, 0.05, Vector2d(20, 40), arm->getJointRotation(0), 20);
         GraphicsEngine::instance()->drawBitmap(arm->getJointPosition(1),  GraphicsEngine::instance()->segment1Sprite, 0.1, Vector2d(20, 40), arm->getJointRotation(0) + arm->getJointRotation(1), 20);
     }
+
+    void onCommandRecive(int cmd, int arg) override {
+        switch (cmd) {
+        case 0:
+            arm->setJointTargetRotation(0, Rotation(degreesToRadians(arg)));
+            break;
+        case 1:
+            arm->setJointTargetRotation(1, Rotation(degreesToRadians(arg)));
+            break;
+        case 100:
+            arm->release();
+            break;
+        case 200:
+            arm->grab();
+            break;
+        default:
+            break;
+        }
+    }
 };
 
 class BoxGenerator: public Machinery {
@@ -115,7 +134,7 @@ class PlateCombiner: public Machinery {
     int processTime = 0;
     bool processRunning = false;
 
-    int pressShiftByProcessTime() {
+    int pressShiftByProcessTime() { // TODO bad function name xd
         if (processTime < 20 || processTime > 140) return 0;
         if (processTime > 60 && processTime < 100) return 20;
         if (processTime < 80) return (processTime - 20) / 2;

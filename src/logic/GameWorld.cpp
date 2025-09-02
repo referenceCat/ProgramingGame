@@ -34,7 +34,7 @@ ManipulatorArm* GameWorld::getManipulatorArm(int id) {
     return nullptr;
 }
 
-Machinery* GameWorld::getMachine(int id) {
+Machinery* GameWorld::getMachinery(int id) {
     for (auto item: machines) {
         if (item->getId() == id) return item;
     }

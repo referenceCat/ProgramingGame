@@ -195,9 +195,9 @@ public:
     }
 
     // TODO
-    // static Vector2d transformPointInverse(Vector2d originalPoint, const CameraParameters& cameraParameter, double z) {
-    //     
-    // }
+    static Vector2d transformPointInverse(Vector2d originalPoint, const CameraParameters& cameraParameter) {
+        return Vector2d(-10, 3);
+    }
 
     static double transformScalar(double value, double z, const CameraParameters& cameraParameters) {
         value /= (z - cameraParameters.z) / -cameraParameters.z;

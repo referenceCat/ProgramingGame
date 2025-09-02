@@ -39,12 +39,20 @@ public:
     Box *getBox(int id);
     Box *getBox(Vector2d aPos);
     std::vector<Box*> getBoxes();
-    Machinery *getMachine(int id);
+    Machinery *getMachinery(int id);
     Module *getModule(int id);
     std::vector<Module*> getModules();
 
     void drawAll();
     void run();
+    void click(Vector2d point) {
+        for (auto machinery: machines) {
+            if (machinery->getRect().isInside(point)) {
+                machinery->onClick();
+                return;
+            }
+        }
+    }
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_GAMEWORLD_HPP_

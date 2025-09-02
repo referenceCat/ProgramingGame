@@ -162,6 +162,12 @@ public:
     }
 
     void toggle(int line);
+
+    void onClick() override {
+        if (window == nullptr) {
+            createWindow();
+        }
+    }
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_CONTROLLER_HPP_
