@@ -14,6 +14,7 @@
 #include <chrono>
 #include "logic/CustomMachinery.hpp"
 #include "graphics/GraphicsEngine.hpp"
+#include "logic/MachineryBuilder.hpp"
 
 long long tick = 0;
 long long eventCounter = 0;
@@ -32,6 +33,7 @@ void init()
     parameters.z = -40; // fov = 90 deg
 
     GraphicsEngine::instance()->setCameraParameters(parameters);
+    MachineryBuilder::instance()->createWindow();
 
     BasicModule* rootModule = new BasicModule(GameWorld::instance(), 2);
     rootModule->addNode(Vector2d(Rotation(0), 16), Rotation(0));
