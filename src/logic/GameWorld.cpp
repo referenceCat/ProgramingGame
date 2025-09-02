@@ -14,7 +14,7 @@ Box* GameWorld::addBox(Rect2d aRect) {
     return boxes.back();
 }
 
-void GameWorld::addMachine(Machine *machine) {
+void GameWorld::addMachine(Machinery *machine) {
     machines.push_back(machine);
 }
 
@@ -38,7 +38,7 @@ ManipulatorArm* GameWorld::getManipulatorArm(int id) {
     return nullptr;
 }
 
-Machine* GameWorld::getMachine(int id) {
+Machinery* GameWorld::getMachine(int id) {
     for (auto item: machines) {
         if (item->getId() == id) return item;
     }

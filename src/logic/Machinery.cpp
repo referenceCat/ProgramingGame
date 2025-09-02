@@ -1,16 +1,16 @@
-#include "Machine.hpp"
+#include "Machinery.hpp"
 #include "GameWorld.hpp"
 
-void Machine::destroyBox(Box *box) {
+void Machinery::destroyBox(Box *box) {
     parentWorld->removeBox(box->getId());
 }
 
-Box* Machine::createBox(ProductionArea area)
+Box* Machinery::createBox(ProductionArea area)
 {
     return parentWorld->addBox(Rect2d(area.rect.center() + rect.p1, 24, 24));
 }
 
-std::vector<Box *> Machine::getBoxesInside(ProductionArea area) {
+std::vector<Box *> Machinery::getBoxesInside(ProductionArea area) {
     std::vector<Box *> result;
     Rect2d areaGlobalRect = area.rect;
     areaGlobalRect.p1.x += rect.p1.x;
@@ -25,7 +25,7 @@ std::vector<Box *> Machine::getBoxesInside(ProductionArea area) {
     return result;
 }
 
-std::vector<Box *> Machine::getBoxesTouching(ProductionArea area) {
+std::vector<Box *> Machinery::getBoxesTouching(ProductionArea area) {
     std::vector<Box *> result;
     Rect2d areaGlobalRect = area.rect;
     areaGlobalRect.p1.x += rect.p1.x;
@@ -40,6 +40,6 @@ std::vector<Box *> Machine::getBoxesTouching(ProductionArea area) {
     return result;
 }
 
-Machine::Machine(Rect2d rect, GameWorld *aWorld): rect(rect), GameObject(aWorld) {
+Machinery::Machinery(Rect2d rect, GameWorld *aWorld): rect(rect), GameObject(aWorld) {
     parentWorld->addMachine(this);
 }

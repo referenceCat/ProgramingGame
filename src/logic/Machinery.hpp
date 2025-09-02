@@ -1,5 +1,5 @@
-#ifndef __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_MACHINE_HPP_
-#define __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_MACHINE_HPP_
+#ifndef __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_MACHINERY_HPP_
+#define __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_MACHINERY_HPP_
 
 #include <assert.h>
 #include <allegro5/allegro5.h>
@@ -13,7 +13,7 @@
 #include "Box.hpp"
 #include "GameObject.hpp"
 
-class Machine : public GameObject {
+class Machinery : public GameObject {
 protected:
     Rect2d rect;
 
@@ -29,7 +29,7 @@ protected:
     std::vector<Box*> getBoxesTouching(ProductionArea area);
 
 public:
-    Machine(Rect2d rect, GameWorld* aWorld);
+    Machinery(Rect2d rect, GameWorld* aWorld);
 
     virtual void draw() {
         GraphicsEngine::instance()->drawRectangle(rect, 0,  al_map_rgb(100, 255, 100), 1);
@@ -49,4 +49,4 @@ public:
     virtual void run() = 0;
 };
 
-#endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_MACHINE_HPP_
+#endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_MACHINERY_HPP_

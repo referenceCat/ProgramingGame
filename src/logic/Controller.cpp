@@ -117,21 +117,21 @@ int Controller::execNextInstr() {
         return 0;
     // } else if (command == "grill") {
     //     int id = std::atoi(instr.at(1).c_str()); 
-    //     Machine* item = parentWorld->getMachine(id);
+    //     Machinery* item = parentWorld->getMachine(id);
     //     if (!item) return 2; // incorrect slave address
     //     item->grillBoxes();
     //     rInstr++;
     //     return 0;
     // } else if (command == "create") {
     //     int id = std::atoi(instr.at(1).c_str()); 
-    //     Machine* item = parentWorld->getMachine(id);
+    //     Machinery* item = parentWorld->getMachine(id);
     //     if (!item) return 2; // incorrect slave address
     //     item->createBox();
     //     rInstr++;
     //     return 0;
     // } else if (command == "destroy") {
     //     int id = std::atoi(instr.at(1).c_str()); 
-    //     Machine* item = parentWorld->getMachine(id);
+    //     Machinery* item = parentWorld->getMachine(id);
     //     if (!item) return 2; // incorrect slave address
     //     item->destroyBoxes();
     //     rInstr++;

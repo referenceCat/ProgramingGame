@@ -14,14 +14,14 @@
 #include "Box.hpp"
 #include "Controller.hpp"
 #include "GameObject.hpp"
-#include "Machine.hpp"
+#include "Machinery.hpp"
 #include "Module.hpp"
 
 class GameWorld {
     std::vector<ManipulatorArm*> arms{};
     std::vector<Box*> boxes{};
     std::vector<Controller*> controllers{};
-    std::vector<Machine*> machines{};
+    std::vector<Machinery*> machines{};
     std::vector<Module*> modules{};
 
 public:
@@ -33,7 +33,7 @@ public:
     void addManipulatorArm(ManipulatorArm *arm);
     Controller *addController(Vector2d aPos);
     Box *addBox(Rect2d aRect);
-    void addMachine(Machine* machine);
+    void addMachine(Machinery* machine);
     void addModule(Module* module);
 
     void removeBox(int id);
@@ -43,7 +43,7 @@ public:
     Box *getBox(int id);
     Box *getBox(Vector2d aPos);
     std::vector<Box*> getBoxes();
-    Machine *getMachine(int id);
+    Machinery *getMachine(int id);
     Module *getModule(int id);
     std::vector<Module*> getModules();
 

@@ -1,10 +1,10 @@
-#ifndef __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_CUSTOMMACHINES_HPP_
-#define __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_CUSTOMMACHINES_HPP_
+#ifndef __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_CUSTOMMACHINERY_HPP_
+#define __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_CUSTOMMACHINERY_HPP_
 
-class Furnace: public Machine {
+class Furnace: public Machinery {
     ProductionArea heatingArea;
 public:
-    Furnace(Vector2d aPos, GameWorld* aWorld): Machine(Rect2d(aPos, 100, 100), aWorld) {
+    Furnace(Vector2d aPos, GameWorld* aWorld): Machinery(Rect2d(aPos, 100, 100), aWorld) {
         heatingArea.rect = Rect2d(Vector2d(10, 10), Vector2d(rect.dimensions().x - 10, rect.dimensions().y - 10));
         areas.push_back(&heatingArea);
     }
@@ -17,14 +17,14 @@ public:
 
     void draw() override {
         GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->furnaceSprite, 5);
-        // Machine::draw();
+        // Machinery::draw();
     }
 };
 
-class ManipulatorTier1: public Machine {
+class ManipulatorTier1: public Machinery {
     ManipulatorArm* arm;
 public:
-    ManipulatorTier1(Vector2d aPos, GameWorld* aWorld): Machine(Rect2d(aPos, 3, 5), aWorld) {
+    ManipulatorTier1(Vector2d aPos, GameWorld* aWorld): Machinery(Rect2d(aPos, 3, 5), aWorld) {
         arm = new ManipulatorArm(3, aWorld);
         arm->setRootJointPosition(Vector2d(4, 2) + rect.p1);
         arm->setSegmentLength(0, 8);
@@ -46,7 +46,7 @@ public:
     }
 };
 
-class BoxGenerator: public Machine {
+class BoxGenerator: public Machinery {
     ProductionArea creatingArea;
     int period = 200;
     int cooldown = period;
@@ -54,7 +54,7 @@ class BoxGenerator: public Machine {
     
 
 public:
-    BoxGenerator(Vector2d aPos, GameWorld* aWorld): Machine(Rect2d(aPos, 50, 50), aWorld) {
+    BoxGenerator(Vector2d aPos, GameWorld* aWorld): Machinery(Rect2d(aPos, 50, 50), aWorld) {
         creatingArea.rect = Rect2d(Vector2d(10, 10), Vector2d(rect.dimensions().x - 10, rect.dimensions().y - 10));
         areas.push_back(&creatingArea);
     }
@@ -77,7 +77,7 @@ public:
     }
 
     void draw() override {
-        // Machine::draw();
+        // Machinery::draw();
         GraphicsEngine::instance()->drawLine(Vector2d(rect.p1.x, rect.p2.y + 10), Vector2d(rect.p1.x + (period - cooldown) / 4, rect.p2.y + 10), 0, al_map_rgb(100, 100, 100), 2);
         GraphicsEngine::instance()->drawLine(Vector2d(rect.p1.x, rect.p2.y + 10), Vector2d(rect.p1.x + (period - cooldown) / 4, rect.p2.y + 10), -5, al_map_rgb(255, 255, 255), 2);
         GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->boxCreatorDestroyerBaseSprite, 2);
@@ -85,12 +85,12 @@ public:
 
 };
 
-class BoxDestroyer: public Machine {
+class BoxDestroyer: public Machinery {
     ProductionArea destroyingArea;
     int cooldown = 200;
 
 public:
-    BoxDestroyer(Vector2d aPos, GameWorld* aWorld): Machine(Rect2d(aPos, 50, 50), aWorld) {
+    BoxDestroyer(Vector2d aPos, GameWorld* aWorld): Machinery(Rect2d(aPos, 50, 50), aWorld) {
         destroyingArea.rect = Rect2d(Vector2d(10, 10), Vector2d(rect.dimensions().x - 10, rect.dimensions().y - 10));
         areas.push_back(&destroyingArea);
     }
@@ -102,12 +102,12 @@ public:
     }
 
     void draw() override {
-        // Machine::draw();
+        // Machinery::draw();
         GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->boxCreatorDestroyerBaseSprite, 2);
     }
 };
 
-class PlateCombiner: public Machine {
+class PlateCombiner: public Machinery {
     ProductionArea ingridientArea0;
     ProductionArea ingridientArea1;
     ProductionArea resultArea;
@@ -124,7 +124,7 @@ class PlateCombiner: public Machine {
     
 
 public:
-    PlateCombiner(Vector2d aPos, GameWorld* aWorld): Machine(Rect2d(aPos, 75, 160), aWorld) {
+    PlateCombiner(Vector2d aPos, GameWorld* aWorld): Machinery(Rect2d(aPos, 75, 160), aWorld) {
         ingridientArea0.rect = Rect2d(Vector2d(5, 5), Vector2d(35, 35)); // TODO process class for this kind of behavior
         ingridientArea1.rect = Rect2d(Vector2d(5, 40), Vector2d(35, 70));
         resultArea.rect = Rect2d(Vector2d(125, 5), Vector2d(155, 35));
@@ -164,7 +164,7 @@ public:
     }
 
     void draw() override {
-        // Machine::draw();
+        // Machinery::draw();
         GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerBaseSprite, 2, Vector2d(165, 165));
         GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerCyllindersSprite, 8, Vector2d(165, 165));
         GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerPressSprite, 2, Vector2d(165, 165 - pressShiftByProcessTime() + 4));
@@ -174,4 +174,4 @@ public:
     }
 };
 
-#endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_CUSTOMMACHINES_HPP_
+#endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_CUSTOMMACHINERY_HPP_

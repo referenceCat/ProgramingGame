@@ -12,7 +12,7 @@
 #include "ui/GuiEngine.hpp"
 #include <iostream>
 #include <chrono>
-#include "logic/CustomMachines.hpp"
+#include "logic/CustomMachinery.hpp"
 #include "graphics/GraphicsEngine.hpp"
 
 long long tick = 0;
