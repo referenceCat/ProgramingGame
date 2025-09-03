@@ -72,7 +72,8 @@ void redraw()
 {
     // auto start = std::chrono::system_clock::now();
     gameWorld->drawAll();
-    // GraphicsEngine::instance()->drawDebugBackgroung2();
+    MachineryBuilder::instance()->drawGhost();
+    GraphicsEngine::instance()->drawDebugBackgroung2();
     al_set_target_bitmap(al_get_backbuffer(al_get_current_display()));
     al_clear_to_color(al_map_rgb(0, 0, 5));
 
@@ -103,6 +104,12 @@ void redraw()
     // std::cout << elapsed_ms << std::endl;
 }
 
+void updateMouse() {
+    ALLEGRO_MOUSE_STATE mouseState;
+    al_get_mouse_state(&mouseState);
+    MachineryBuilder::instance()->mousePos(GraphicsEngine::instance()->transformPointInverse(Vector2d(mouseState.x, mouseState.y)));
+}
+
 void update()
 {
     tick++;
@@ -129,7 +136,7 @@ void update()
         camera.fov *= 1.01;
     }
     GraphicsEngine::instance()->setCameraParameters(camera);
-
+    updateMouse();
     gameWorld->run();
 }
 
@@ -139,6 +146,9 @@ void onKeyDown(int keycode)
     {
     case ALLEGRO_KEY_R:
         GraphicsEngine::instance()->loadImages();
+        break;
+    case ALLEGRO_KEY_ESCAPE:
+        MachineryBuilder::instance()->clearItem();
         break;
     default:
         break;
@@ -152,7 +162,7 @@ void onNodeClick(ModuleNode* node) {
 
 void onMouseClick(double x, double y) {
     std::cout << "mouse click" << std::endl;
-    if (GuiEngine::instance()->click(Vector2d(x, y))) {
+    if (GuiEngine::instance()->click(Vector2d(x, y))) { // check if clicking on windows, buttons, etc
         return;
     }
 
@@ -168,6 +178,7 @@ void onMouseClick(double x, double y) {
 
     Vector2d gameWorldClickPos = GraphicsEngine::instance()->transformPointInverse(Vector2d(x, y));
     gameWorld->click(gameWorldClickPos);
+    MachineryBuilder::instance()->onClick();
 }
 
 void mainLoop(ALLEGRO_EVENT_QUEUE *event_queue)
