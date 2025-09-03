@@ -26,7 +26,7 @@ class Box : public GameObject {
     BoxContent content;
 
 public:
-    Box(Rect2d aRect, GameWorld* aWorld): rect(aRect), GameObject(aWorld) {}
+    Box(Rect2d aRect): rect(aRect) {}
 
     void move(Vector2d position) {
         Vector2d dPosition = rect.center() - position;
@@ -81,6 +81,8 @@ public:
     void setTemperature(double aTemperature) {
         temperature = aTemperature;
     }
+    
+    void addToGameWorld() override;
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_BOX_HPP_

@@ -19,7 +19,7 @@ enum MachineryType {
 
 class MachineryBuilder {
     Window* window;
-    Rect2d ghost = Rect2d(Vector2d(0, 0), 0, 0);
+    Rect2d ghost = Rect2d();
     MachineryType selectedType = TypeNone;
     bool stickToGrid = true;
 
@@ -51,7 +51,7 @@ class MachineryBuilder {
         default:
             break;
         }
-        ghost = Rect2d(Vector2d(0, 0), ghostDimensions);
+        ghost = Rect2d::fromCenterAndDimensions(Vector2d(0, 0), ghostDimensions);
     }
 
 public:
@@ -76,17 +76,18 @@ public:
         switch (selectedType)
         {
         case TypeArm:
-            newMachinery = new ManipulatorTier1(ghost.center(), GameWorld::instance());
+            newMachinery = new ManipulatorTier1(ghost.center());
             break;
         case TypeController:
-            newMachinery = new Controller(ghost.center(), GameWorld::instance());
+            newMachinery = new Controller(ghost.center());
             break;
         case TypeFurnace:
-            newMachinery = new Furnace(ghost.center(), GameWorld::instance());
+            newMachinery = new Furnace(ghost.center());
             break;
         default:
             break;
         }
+        newMachinery->addToGameWorld();
         clearItem();
     };
 
@@ -95,9 +96,9 @@ public:
             Vector2d roundedPos;
             roundedPos.x = std::round(pos.x - ghost.dimensions().x / 2) + ghost.dimensions().x / 2;
             roundedPos.y = std::round(pos.y - ghost.dimensions().y / 2) + ghost.dimensions().y / 2;
-            ghost = Rect2d(roundedPos, ghost.dimensions().y, ghost.dimensions().x);
+            ghost = Rect2d::fromCenterAndDimensions(roundedPos, ghost.dimensions());
         } else {
-            ghost = Rect2d(pos, ghost.dimensions().y, ghost.dimensions().x);
+            ghost = Rect2d::fromCenterAndDimensions(pos, ghost.dimensions());
         }
         
     };

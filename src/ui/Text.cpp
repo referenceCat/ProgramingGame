@@ -6,13 +6,13 @@ void Label::draw() {
     if (flags.background) {
         al_draw_filled_rectangle(globalRect.p1.x - 4, globalRect.p1.y - 2, globalRect.p2.x + 2, globalRect.p2.y + 1, backgroundColor);
     }
-    al_draw_text(GuiEngine::debug_font, al_map_rgb(255, 255, 255), globalRect.p1.x, globalRect.p1.y, 0, text.c_str());
+    al_draw_text(GuiEngine::debugFont, al_map_rgb(255, 255, 255), globalRect.p1.x, globalRect.p1.y, 0, text.c_str());
 };
 
 void Label::setText(std::string aText) {
     text = aText;
-    double h = al_get_font_line_height(GuiEngine::debug_font) + 2;
-    double w = al_get_text_width(GuiEngine::debug_font, text.c_str());
+    double h = al_get_font_line_height(GuiEngine::debugFont) + 2;
+    double w = al_get_text_width(GuiEngine::debugFont, text.c_str());
     if (isCentered) {
         rect = Rect2d(rect.center(), h, w);
     } else {
@@ -21,8 +21,8 @@ void Label::setText(std::string aText) {
 };
 
 Label::Label(Vector2d aPos, bool isCentered, std::string text): text(text), isCentered(isCentered), flags(LabelFlags()) {
-    double h = al_get_font_line_height(GuiEngine::debug_font) + 2;
-    double w = al_get_text_width(GuiEngine::debug_font, text.c_str());
+    double h = al_get_font_line_height(GuiEngine::debugFont) + 2;
+    double w = al_get_text_width(GuiEngine::debugFont, text.c_str());
     if (isCentered) {
         rect = Rect2d(aPos, h, w);
     } else {

@@ -2,15 +2,19 @@
 #define __PROJECTS_PROGRAMINGGAME_SRC_COMMON_HPP_
 
 #include <math.h>
-
-// TODO remove global/local and vector/point 
-
-double degreesToRadians(double degrees);
-
-double radiansToDegrees(double radians);
+#include <algorithm>
 
 struct Rotation {
     double radians = 0;
+
+    static double degreesToRadians(double degrees) {
+        return degrees * (M_PI / 180);
+    }
+
+    static double radiansToDegrees(double radians) {
+        return radians * (180 / M_PI);
+    }
+
 
     Rotation(): radians(0) {}
 
@@ -31,6 +35,10 @@ struct Rotation {
     double degress() {
         return degreesToRadians(radians);
     }
+
+    static Rotation fromDegrees(double degrees) {
+        return Rotation(degreesToRadians(degrees));
+    }
 };
 
 struct Vector2d {
@@ -44,10 +52,25 @@ struct Vector2d {
         y = sin(rotation.radians) * length;
     }
 
-    Vector2d operator+ (Vector2d other);
-    Vector2d operator- (Vector2d other);
-    Vector2d operator* (double other);
-    Vector2d operator/ (double other);
+    Vector2d operator+(Vector2d other)
+    {
+        return Vector2d(x + other.x, y + other.y);
+    }
+
+    Vector2d operator-(Vector2d other)
+    {
+        return Vector2d(x - other.x, y - other.y);
+    }
+
+    Vector2d operator*(double other)
+    {
+        return Vector2d(x * other, y * other);
+    }
+
+    Vector2d operator/ (double other)
+    {
+        return Vector2d(x / other, y / other);
+    }
 
     Rotation getDirection() {
         return Rotation(std::atan2(y, x));
@@ -69,8 +92,10 @@ struct Rect2d {
     Vector2d p1;
     Vector2d p2;
 
+    // do not use
     Rect2d(): p1(Vector2d()), p2(Vector2d()) {};
 
+    // do not use
     Rect2d(Vector2d center, double height, double width) {
         p1.x = center.x - width / 2;
         p1.y = center.y - height / 2;
@@ -78,6 +103,7 @@ struct Rect2d {
         p2.y = center.y + height / 2;
     }
 
+    // do not use
     Rect2d(Vector2d p1, Vector2d p2): p1(p1), p2(p2) {}
 
     bool isInside(Vector2d point) {
@@ -100,6 +126,14 @@ struct Rect2d {
 
     Vector2d dimensions() {
         return p2 - p1;
+    }
+
+    static Rect2d fromCenterAndDimensions(Vector2d center, Vector2d dimensions) {
+        return Rect2d(center, dimensions.y, dimensions.x);
+    }
+
+    static Rect2d fromTwoCorners(Vector2d ap1, Vector2d ap2) {
+        return Rect2d(Vector2d(std::min(ap1.x, ap2.x), std::min(ap1.y, ap2.y)),Vector2d(std::max(ap1.x, ap2.x), std::max(ap1.y, ap2.y)));
     }
 };
 

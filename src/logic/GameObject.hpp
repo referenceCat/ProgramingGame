@@ -11,15 +11,14 @@ private:
     inline static int lastId = 0;
     const int id;
 
-protected:
-    GameWorld* parentWorld;
-
 public:
-    inline static ALLEGRO_FONT* debug_font = nullptr; // TODO wrong way to do it
-    GameObject(GameWorld* aWorld):id(++lastId), parentWorld(aWorld) {};
+    GameObject(): id(++lastId) {};
+
     int getId() {
         return id;
     }
+
+    virtual void addToGameWorld() = 0;
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_GAMEOBJECT_HPP_

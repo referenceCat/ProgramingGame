@@ -79,6 +79,8 @@ class GraphicsEngine {
     }
 
 public:
+    ALLEGRO_FONT* debugFont = nullptr;
+
     ALLEGRO_BITMAP* furnaceSprite = nullptr;
     ALLEGRO_BITMAP* baseSpite = nullptr;
     ALLEGRO_BITMAP* segment0Sprite = nullptr;
@@ -232,43 +234,38 @@ public:
 
     void drawPoint(Vector2d aPoint, double z, ALLEGRO_COLOR color, double r = 3) {
         setLayerAsTargetBitmap(z);
-        Vector2d displayPoint = transformPoint(aPoint, z);
-        al_draw_filled_circle(displayPoint.x, displayPoint.y, r, color);
+        aPoint = transformPoint(aPoint, z);
+        al_draw_filled_circle(aPoint.x, aPoint.y, r, color);
     }
 
     void drawRectangle(Rect2d aRect, double z, ALLEGRO_COLOR color, int thickness = 0) {
         setLayerAsTargetBitmap(z);
-        Rect2d displayRect;
-        displayRect.p1 = transformPoint(aRect.p1, z);
-        displayRect.p2 = transformPoint(aRect.p2, z);
-        if (thickness <= 0) al_draw_filled_rectangle(displayRect.p1.x, displayRect.p1.y, displayRect.p2.x, displayRect.p2.y, color);
-        else al_draw_rectangle(displayRect.p1.x, displayRect.p1.y, displayRect.p2.x, displayRect.p2.y, color, thickness);
+        aRect.p1 = transformPoint(aRect.p1, z);
+        aRect.p2 = transformPoint(aRect.p2, z);
+        if (thickness <= 0) al_draw_filled_rectangle(aRect.p1.x, aRect.p1.y, aRect.p2.x, aRect.p2.y, color);
+        else al_draw_rectangle(aRect.p1.x, aRect.p1.y, aRect.p2.x, aRect.p2.y, color, thickness);
     }
 
     void drawLine(Vector2d aPoint0, Vector2d aPoint1, double z, ALLEGRO_COLOR color, int thickness = 0) {
         setLayerAsTargetBitmap(z);
-        Vector2d displayPoint0 = transformPoint(aPoint0, z);
-        Vector2d displayPoint1 = transformPoint(aPoint1, z);
-        al_draw_line(displayPoint0.x, displayPoint0.y, displayPoint1.x, displayPoint1.y, color, thickness);
+        aPoint0 = transformPoint(aPoint0, z);
+        aPoint1 = transformPoint(aPoint1, z);
+        al_draw_line(aPoint0.x, aPoint0.y, aPoint1.x, aPoint1.y, color, thickness);
     }
 
     void drawCircle(Vector2d aPoint, double r, double z, ALLEGRO_COLOR color, int thickness = 0) {
         setLayerAsTargetBitmap(z);
-        Vector2d displayPoint = transformPoint(aPoint, z);
-        double displayR = transformScalar(r, z);
-        if (thickness <= 0) al_draw_filled_circle(displayPoint.x, displayPoint.y, r, color);
-        else al_draw_circle(displayPoint.x, displayPoint.y, r, color, thickness);
+        aPoint = transformPoint(aPoint, z);
+        r = transformScalar(r, z);
+        if (thickness <= 0) al_draw_filled_circle(aPoint.x, aPoint.y, r, color);
+        else al_draw_circle(aPoint.x, aPoint.y, r, color, thickness);
     }
 
-    void drawBitmap(Vector2d aPoint, ALLEGRO_BITMAP* bitmap, double z, Vector2d bitmapPivot = Vector2d(), Rotation bitmapRotation = Rotation(), double pixelsPerUnit = 1) {
+    void drawBitmap(Vector2d aPoint, ALLEGRO_BITMAP* bitmap, double pixelsPerUnit, double z, Vector2d bitmapPivot = Vector2d(), Rotation bitmapRotation = Rotation()) {
         setLayerAsTargetBitmap(z);
-        Vector2d displayPoint = transformPoint(aPoint, z);
-        // double displayW = transformScalar(al_get_bitmap_width(bitmap), z, camera);
-        // double displayH = transformScalar(al_get_bitmap_height(bitmap), z, camera);
-        // al_draw_scaled_bitmap(bitmap, 0, 0, al_get_bitmap_width(bitmap), al_get_bitmap_height(bitmap), displayPoint.x, displayPoint.y, displayW, displayH, 0);
-
+        aPoint = transformPoint(aPoint, z);
         double sizeMultiplayer = transformScalar(1, z) / pixelsPerUnit;
-        al_draw_scaled_rotated_bitmap(bitmap, bitmapPivot.x, bitmapPivot.y, displayPoint.x, displayPoint.y, sizeMultiplayer, sizeMultiplayer, bitmapRotation.radians, 0);
+        al_draw_scaled_rotated_bitmap(bitmap, bitmapPivot.x, bitmapPivot.y, aPoint.x, aPoint.y, sizeMultiplayer, sizeMultiplayer, bitmapRotation.radians, 0);
     }
 
     static GraphicsEngine* instance() {

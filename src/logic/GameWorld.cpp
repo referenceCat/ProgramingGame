@@ -5,9 +5,8 @@ void GameWorld::addManipulatorArm(ManipulatorArm* arm) {
     arms.push_back(arm);
 }
 
-Box* GameWorld::addBox(Rect2d aRect) {
-    boxes.push_back(new Box(Rect2d(aRect), this));
-    return boxes.back();
+void GameWorld::addBox(Box* box) {
+    boxes.push_back(box);
 }
 
 void GameWorld::addMachinery(Machinery *machinery) {

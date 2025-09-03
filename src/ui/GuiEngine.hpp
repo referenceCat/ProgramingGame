@@ -28,7 +28,7 @@ public:
     inline static ALLEGRO_BITMAP* emptyIcon = nullptr;
     inline static ALLEGRO_BITMAP* breakpointIcon = nullptr;
 
-    inline static ALLEGRO_FONT* debug_font = nullptr;
+    inline static ALLEGRO_FONT* debugFont = nullptr;
     inline static Vector2d drawingIndent{};
 
     void draw() {

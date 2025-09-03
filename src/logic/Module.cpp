@@ -1,7 +1,12 @@
 #include "Module.hpp"
 #include "GameWorld.hpp"
 
-Module::Module(GameWorld* aWorld): GameObject(aWorld) {}
+Module::Module() {}
+
+void Module::addToGameWorld()
+{
+    GameWorld::instance()->addModule(this);
+}
 
 bool ModuleBuilder::buildModule() {
     if (newModule == nullptr) return false;
@@ -10,6 +15,7 @@ bool ModuleBuilder::buildModule() {
     parentModuleNode->attachedNode = newModuleNode;
     newModuleNode->attachedNode = parentModuleNode;
     GameWorld::instance()->addModule(newModule);
+    newModule->addToGameWorld();
     newModule = nullptr;
     return true;
 }
@@ -19,7 +25,7 @@ bool ModuleBuilder::selectModuleType(ModuleType type) {
     switch (type) {
     case ModuleType::Corridor:
     {
-        BasicModule* moduleSetup = new BasicModule(GameWorld::instance(), 2);
+        BasicModule* moduleSetup = new BasicModule(2);
         moduleSetup->addNode(Vector2d(Rotation(0), 16), Rotation(0));
         moduleSetup->addNode(Vector2d(Rotation(M_PI), 16), Rotation(M_PI));
         moduleSetup->addBitmap(GraphicsEngine::instance()->corridorModuleLayer0, Vector2d(160, 160), CommonValues::zModuleMainBackgroung);
@@ -29,7 +35,7 @@ bool ModuleBuilder::selectModuleType(ModuleType type) {
     }
     case ModuleType::JunctionX:
     {
-        BasicModule* moduleSetup = new BasicModule(GameWorld::instance(), 4);
+        BasicModule* moduleSetup = new BasicModule(4);
         moduleSetup->addNode(Vector2d(Rotation(0), 16), Rotation(0));
         moduleSetup->addNode(Vector2d(Rotation(M_PI / 2), 16), Rotation(M_PI / 2));
         moduleSetup->addNode(Vector2d(Rotation(M_PI), 16), Rotation(M_PI));
@@ -41,7 +47,7 @@ bool ModuleBuilder::selectModuleType(ModuleType type) {
     }
     case ModuleType::Junction3:
     {
-        BasicModule* moduleSetup = new BasicModule(GameWorld::instance(), 3);
+        BasicModule* moduleSetup = new BasicModule(3);
         moduleSetup->addNode(Vector2d(Rotation(M_PI), 16), Rotation(M_PI));
         moduleSetup->addNode(Vector2d(Rotation(M_PI / 3), 16), Rotation(M_PI / 3));
         moduleSetup->addNode(Vector2d(Rotation(-M_PI / 3), 16), Rotation(-M_PI / 3));
@@ -52,7 +58,7 @@ bool ModuleBuilder::selectModuleType(ModuleType type) {
     }
     case ModuleType::DeadendModule:
     {
-        BasicModule* moduleSetup = new BasicModule(GameWorld::instance(), 1);
+        BasicModule* moduleSetup = new BasicModule(1);
         moduleSetup->addNode(Vector2d(Rotation(0), 16), Rotation(0));
         moduleSetup->addBitmap(GraphicsEngine::instance()->endLayer0, Vector2d(160, 160), CommonValues::zModuleMainBackgroung);
         moduleSetup->addBitmap(GraphicsEngine::instance()->endLayer1, Vector2d(160, 160), CommonValues::zModuleWalls);

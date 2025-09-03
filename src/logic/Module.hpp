@@ -29,7 +29,7 @@ protected:
     std::vector<ModuleNode> nodes;
     Vector2d position;
     Rotation rotation;
-    Module(GameWorld *gameWorld);
+    Module();
 
 public:
     virtual void draw()
@@ -84,6 +84,8 @@ public:
     {
         return rotation;
     }
+
+    void addToGameWorld() override;
 };
 
 // TODO
@@ -107,7 +109,7 @@ class BasicModule: public Module {
     std::vector<ModuleSprite> sprites;
 
 public:
-    BasicModule(GameWorld *aWorld, int nodesNumber) : Module(aWorld), nodesNumber(nodesNumber) {
+    BasicModule(int nodesNumber) : Module(), nodesNumber(nodesNumber) {
         assert(nodesNumber > 0);
         nodes.reserve(nodesNumber);
     }
@@ -131,7 +133,7 @@ public:
     void draw() {
         Module::draw();
         for (auto sprite: sprites) {
-            GraphicsEngine::instance()->drawBitmap(position, sprite.bitmap, sprite.z, sprite.pivot, rotation, 10);
+            GraphicsEngine::instance()->drawBitmap(position, sprite.bitmap, 10, sprite.z, sprite.pivot, rotation);
         }
     }
 };
@@ -171,7 +173,7 @@ class ModuleBuilder
         int i = 0;
         for (auto node : newModule->getNodes())
         {
-            Button *newButton = window->addButton(Rect2d(Vector2d(220, 60 + i * 25), Vector2d(420, 80 + i * 25)));
+            Button *newButton = window->addButton(Rect2d::fromTwoCorners(Vector2d(220, 60 + i * 25), Vector2d(420, 80 + i * 25)));
             Label *newLabel = window->addLabel(newButton->getRect().center(), true, std::to_string(i), 0);
             newButton->setOnClickCallback([this, n = i]()
                                           { this->selectNewNodeNumber(n); });

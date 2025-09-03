@@ -38,11 +38,11 @@ class Controller : public Machinery {
     Icon* pauseIcon = nullptr;
 
 public:
-    Controller(Vector2d aPos, GameWorld* aWorld): Machinery(Rect2d(aPos, 7, 5), aWorld) {}
+    Controller(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(5, 7))) {}
 
     void draw() override {
         // GraphicsEngine::instance()->drawRectangle(rect, 0, al_map_rgb(100, 255, 100));
-        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->controllerSprite, 0.2, Vector2d(), Rotation(), 20);
+        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->controllerSprite, 20, 0.2);
     }
 
     void addInstruction(std::string instr) {
@@ -74,7 +74,7 @@ public:
 
     void drawInstructions() {
         for (int i = 0; i < instructions.size(); i++) {
-            al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), 30, 40 + i * 10, 0, instructions.at(i).c_str());
+            al_draw_text(GuiEngine::debugFont, al_map_rgb(255, 255, 255), 30, 40 + i * 10, 0, instructions.at(i).c_str());
         }
         al_draw_line(10,  43 + rInstr * 10 + 5, 20, 40 + rInstr * 10 + 5, al_map_rgb(255, 255, 255), 1);
         al_draw_line(10,  37 + rInstr * 10 + 5, 20, 40 + rInstr * 10 + 5, al_map_rgb(255, 255, 255), 1);
@@ -82,10 +82,10 @@ public:
 
     void drawRegisters() {
         // TODO
-        // al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 10, 0, std::to_string(rInstr).c_str());
-        // al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 20, 0, std::to_string(r1).c_str());
-        // al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 30, 0, std::to_string(r2).c_str());
-        // al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 40, 0, std::to_string(rDelay).c_str());
+        // al_draw_text(GameObject::debugFont, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 10, 0, std::to_string(rInstr).c_str());
+        // al_draw_text(GameObject::debugFont, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 20, 0, std::to_string(r1).c_str());
+        // al_draw_text(GameObject::debugFont, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 30, 0, std::to_string(r2).c_str());
+        // al_draw_text(GameObject::debugFont, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 40, 0, std::to_string(rDelay).c_str());
     }
 
     void run() override {

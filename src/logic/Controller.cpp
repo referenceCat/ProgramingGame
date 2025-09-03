@@ -2,12 +2,12 @@
 #include "GameWorld.hpp"
 
 void Controller::createWindow() {
-    window = GuiEngine::instance()->addWindow(Rect2d(Vector2d(400, 400), 750, 400), true, true);
+    window = GuiEngine::instance()->addWindow(Rect2d::fromCenterAndDimensions(Vector2d(400, 400), Vector2d(400, 750)), true, true);
     int line = 0;
     for (auto item: instructions) {
         InstructionLine instructionLine;
         instructionLine.label = window->addLabel(Vector2d(40, 80), false, item, line);
-        instructionLine.breakpointButton = window->addButton(Rect2d(Vector2d(18, 80 + line * 14), Vector2d(32, 94 + line * 14)));
+        instructionLine.breakpointButton = window->addButton(Rect2d::fromTwoCorners(Vector2d(18, 80 + line * 14), Vector2d(32, 94 + line * 14)));
         instructionLine.breakpointIcon = window->addIcon(Vector2d(18 + 7, 80 + line * 14 + 7), GuiEngine::emptyIcon);
         instructionLine.breakpointButton->setOnClickCallback([this, line](){this->toggle(line);});
         instructionsGui.push_back(instructionLine);
@@ -20,13 +20,15 @@ void Controller::createWindow() {
     rDelayLabel = window->addLabel(Vector2d(20, 30), false, "rDelay: " + std::to_string(rDelay), 1);
 
     pauseIcon = window->addIcon(Vector2d(315, 40), GuiEngine::unpauseIcon);
-    window->addButton(Rect2d(Vector2d(315, 40), 18, 18))->setOnClickCallback([this](){this->pauseUnpause();});
+    window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(315, 40), Vector2d(18, 18)))->setOnClickCallback([this](){this->pauseUnpause();});
     window->addIcon(Vector2d(335, 40), GuiEngine::downIcon);
-    window->addButton(Rect2d(Vector2d(335, 40), 18, 18))->setOnClickCallback([this](){this->down();});
+    window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(335, 40), Vector2d(18, 18)))->setOnClickCallback([this](){this->down();});
     window->addIcon(Vector2d(355, 40), GuiEngine::upIcon);
-    window->addButton(Rect2d(Vector2d(355, 40), 18, 18))->setOnClickCallback([this](){this->up();});
+    window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(355, 40), Vector2d(18, 18)))->setOnClickCallback([this](){this->up();});
     window->addIcon(Vector2d(375, 40), GuiEngine::nextIcon);
-    window->addButton(Rect2d(Vector2d(375, 40), 18, 18))->setOnClickCallback([this](){this->next();});
+    window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(375, 40), Vector2d(18, 18)))->setOnClickCallback([this](){this->next();});
+
+    updateWindow();
 }
 
 void Controller::updateWindow() {
@@ -95,7 +97,7 @@ int Controller::execNextInstr() {
         return error;
     } else if (command == "send") {
         int id = std::atoi(instr.at(1).c_str()); 
-        Machinery* machinery = parentWorld->getMachinery(id);
+        Machinery* machinery = GameWorld::instance()->getMachinery(id);
         if (!machinery) return 2;
         int command = std::atoi(instr.at(2).c_str());
         int argument = std::atoi(instr.at(3).c_str());

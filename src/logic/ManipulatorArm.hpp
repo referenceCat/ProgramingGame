@@ -45,7 +45,7 @@ class ManipulatorArm : public GameObject { // TODO now supports rendering of 2 s
     }
 
 public:
-    ManipulatorArm(int aJointsNumber, GameWorld* aWorld):  jointsNumber(aJointsNumber), GameObject(aWorld) {
+    ManipulatorArm(int aJointsNumber):  jointsNumber(aJointsNumber) {
         assert(("incorrect number of joints", 1 <= aJointsNumber <= maxJointsNumber));
         defaultInit();
     }
@@ -116,7 +116,7 @@ public:
     void drawDebug() {
         // draw target state
         for (int i = 0; i < jointsNumber; i++) {
-            GraphicsEngine::instance()->drawCircle(jointsTargetPosition[i], 3, 0, al_map_rgb(0, 100, 100));
+            GraphicsEngine::instance()->drawPoint(jointsTargetPosition[i], 0, al_map_rgb(0, 100, 100));
         }
 
         for (int i = 1; i < jointsNumber; i++) {
@@ -125,8 +125,8 @@ public:
 
         // draw current state
         for (int i = 0; i < jointsNumber; i++) {
-            // TODO al_draw_text(GameObject::debug_font, al_map_rgb(255, 255, 255), jointsPosition[i].x + 5, jointsPosition[i].y + 5, 0, std::to_string(i).c_str());
-            GraphicsEngine::instance()->drawCircle(jointsPosition[i], 3, 0, al_map_rgb(255, 255, 255), 0);
+            // TODO al_draw_text(GameObject::debugFont, al_map_rgb(255, 255, 255), jointsPosition[i].x + 5, jointsPosition[i].y + 5, 0, std::to_string(i).c_str());
+            GraphicsEngine::instance()->drawPoint(jointsPosition[i], 0, al_map_rgb(255, 255, 255));
         }
 
         for (int i = 1; i < jointsNumber; i++) {
@@ -135,7 +135,7 @@ public:
 
         // draw active arm
         if (active) {
-            GraphicsEngine::instance()->drawCircle(jointsPosition[jointsNumber - 1], 4, 0, al_map_rgb(0, 255, 0));
+            GraphicsEngine::instance()->drawPoint(jointsPosition[jointsNumber - 1], 0, al_map_rgb(0, 255, 0), 4);
         }
     }
 
@@ -201,6 +201,8 @@ public:
             removeBox();
         }
     }
+
+    void addToGameWorld() override;
 
 private:
     void takeBox(Box* aBox)  {

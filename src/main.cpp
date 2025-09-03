@@ -19,9 +19,6 @@
 long long tick = 0;
 long long eventCounter = 0;
 
-GameWorld *gameWorld = GameWorld::instance(); // should be singleton? maybe not?
-ALLEGRO_FONT *debug_font = nullptr;
-
 void init()
 {
     GuiEngine::instance()->init();
@@ -35,43 +32,36 @@ void init()
     GraphicsEngine::instance()->setCameraParameters(parameters);
     MachineryBuilder::instance()->createWindow();
 
-    BasicModule* rootModule = new BasicModule(GameWorld::instance(), 2);
+    BasicModule* rootModule = new BasicModule(2);
     rootModule->addNode(Vector2d(Rotation(0), 16), Rotation(0));
     rootModule->addNode(Vector2d(Rotation(M_PI), 16), Rotation(M_PI));
     rootModule->addBitmap(GraphicsEngine::instance()->corridorModuleLayer0, Vector2d(160, 160), CommonValues::zModuleMainBackgroung);
     rootModule->addBitmap(GraphicsEngine::instance()->corridorModuleLayer1, Vector2d(160, 160), CommonValues::zModuleWalls);
     rootModule->setTransforms(Vector2d(0, 0), Rotation(0));
-    gameWorld->addModule(rootModule);
+    rootModule->addToGameWorld();
 
-    // TEST
-    auto manipulator = new ManipulatorTier1(Vector2d(0, 0), gameWorld);
-    auto machinery0 = new Furnace(Vector2d(10, 0), gameWorld);
-    auto machinery1 = new BoxGenerator(Vector2d(20, 0), gameWorld);
-    auto machinery2 = new BoxDestroyer(Vector2d(26, 0), gameWorld);
-    auto machinery3 = new AssemblerTier1(Vector2d(40, 0), gameWorld);
-
-    auto controller7 = new Controller(Vector2d(-10, 3), gameWorld);
+    auto controller7 = new Controller(Vector2d(-10, 3));
     controller7->addInstruction("delay 50");
     controller7->addInstruction("delay 100");
-    controller7->addInstruction("send 2 0 180");
-    controller7->addInstruction("send 2 1 270");
+    controller7->addInstruction("send 3 0 180");
+    controller7->addInstruction("send 3 1 270");
     controller7->addInstruction("delay 400");
-    controller7->addInstruction("send 2 200 0");
+    controller7->addInstruction("send 3 200 0");
     controller7->addInstruction("delay 10");
-    controller7->addInstruction("send 2 0 190"); // move box 1 to furnace
-    controller7->addInstruction("send 2 1 100");
+    controller7->addInstruction("send 3 0 190"); // move box 1 to furnace
+    controller7->addInstruction("send 3 1 100");
     controller7->addInstruction("delay 400");
-    controller7->addInstruction("send 2 100 0");
+    controller7->addInstruction("send 3 100 0");
     controller7->addInstruction("delay 10");
     controller7->addInstruction("goto 2");
-    gameWorld->addMachinery(controller7);
+    controller7->addToGameWorld();
 
 }
 
 void redraw()
 {
     // auto start = std::chrono::system_clock::now();
-    gameWorld->drawAll();
+    GameWorld::instance()->drawAll();
     MachineryBuilder::instance()->drawGhost();
     GraphicsEngine::instance()->drawDebugBackgroung2();
     al_set_target_bitmap(al_get_backbuffer(al_get_current_display()));
@@ -89,11 +79,11 @@ void redraw()
 
     al_hold_bitmap_drawing(true);
 
-    al_draw_text(debug_font, al_map_rgb(255, 255, 255), 10, 10, 0, "Programing game");
-    al_draw_text(debug_font, al_map_rgb(255, 255, 255), 10, 20, 0, "Current tick:");
-    al_draw_text(debug_font, al_map_rgb(255, 255, 255), 110, 20, 0, std::to_string(tick).c_str());
-    al_draw_text(debug_font, al_map_rgb(255, 255, 255), 150, 20, 0, "Events counter:");
-    al_draw_text(debug_font, al_map_rgb(255, 255, 255), 270, 20, 0, std::to_string(eventCounter).c_str());
+    al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 10, 10, 0, "Programing game");
+    al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 10, 20, 0, "Current tick:");
+    al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 110, 20, 0, std::to_string(tick).c_str());
+    al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 150, 20, 0, "Events counter:");
+    al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 270, 20, 0, std::to_string(eventCounter).c_str());
 
     al_hold_bitmap_drawing(false);
     GraphicsEngine::instance()->clearBitmaps();
@@ -137,7 +127,7 @@ void update()
     }
     GraphicsEngine::instance()->setCameraParameters(camera);
     updateMouse();
-    gameWorld->run();
+    GameWorld::instance()->run();
 }
 
 void onKeyDown(int keycode)
@@ -166,7 +156,7 @@ void onMouseClick(double x, double y) {
         return;
     }
 
-    for (auto module: gameWorld->getModules()) {
+    for (auto module: GameWorld::instance()->getModules()) {
         std::vector<ModuleNode*> nodes = module->getNodes();
         for (auto node: nodes) {
             if ((GraphicsEngine::instance()->transformPoint(module->getPosition() + node->position.rotate(module->getRotation()), 0) - Vector2d(x, y)).lenght() < 20) {
@@ -177,7 +167,7 @@ void onMouseClick(double x, double y) {
     }
 
     Vector2d gameWorldClickPos = GraphicsEngine::instance()->transformPointInverse(Vector2d(x, y));
-    gameWorld->click(gameWorldClickPos);
+    GameWorld::instance()->click(gameWorldClickPos);
     MachineryBuilder::instance()->onClick();
 }
 
@@ -276,9 +266,8 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    debug_font = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
-    GameObject::debug_font = debug_font;
-    GuiEngine::debug_font = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
+    GraphicsEngine::instance()->debugFont = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
+    GuiEngine::debugFont = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
     GraphicsEngine::instance()->loadImages();
 
     // Initialize user inputs
@@ -301,13 +290,13 @@ int main(int argc, char **argv)
     al_register_event_source(event_queue, al_get_display_event_source(display));
 
     init();
-    gameWorld->run();
+    GameWorld::instance()->run();
 
     mainLoop(event_queue);
 
     al_destroy_display(display);
     al_destroy_event_queue(event_queue);
-    al_destroy_font(debug_font);
+    al_destroy_font(GraphicsEngine::instance()->debugFont);
 
     return 0;
 }

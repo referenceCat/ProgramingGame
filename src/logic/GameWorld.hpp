@@ -29,7 +29,7 @@ public:
     }
 
     void addManipulatorArm(ManipulatorArm *arm);
-    Box *addBox(Rect2d aRect);
+    void addBox(Box* box);
     void addMachinery(Machinery* machine);
     void addModule(Module* module);
 

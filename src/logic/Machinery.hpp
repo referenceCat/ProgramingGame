@@ -29,7 +29,7 @@ protected:
     std::vector<Box*> getBoxesTouching(ProductionArea area);
 
 public:
-    Machinery(Rect2d rect, GameWorld* aWorld);
+    Machinery(Rect2d rect): rect(rect) {};
 
     virtual void draw() {
         GraphicsEngine::instance()->drawRectangle(rect, 0,  al_map_rgb(100, 255, 100), 1);
@@ -49,6 +49,7 @@ public:
     virtual void run() {};
     virtual void onCommandRecive(int command, int argument) {}
     virtual void onClick() {};
+    void addToGameWorld() override;
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_MACHINERY_HPP_
