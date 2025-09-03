@@ -22,16 +22,9 @@ public:
 };
 
 class ManipulatorTier1: public Machinery {
-    ManipulatorArm* arm;
+    ManipulatorArm* arm = nullptr;
 public:
     ManipulatorTier1(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(5, 3))) {
-        arm = new ManipulatorArm(3);
-        arm->setRootJointPosition(Vector2d(4, 2) + rect.p1);
-        arm->setSegmentLength(0, 8);
-        arm->setSegmentTargetLength(0, 8);
-        arm->setSegmentLength(1, 6);
-        arm->setSegmentTargetLength(1, 6);
-        arm->recalculate();
     }
 
     void run() override {
@@ -39,9 +32,12 @@ public:
     }
 
     void draw() override {
-        GraphicsEngine::instance()->drawBitmap(arm->getJointPosition(0),  GraphicsEngine::instance()->baseSpite, 20, 0.1, Vector2d(80, 40));
-        GraphicsEngine::instance()->drawBitmap(arm->getJointPosition(0),  GraphicsEngine::instance()->segment0Sprite, 20, 0.05, Vector2d(20, 40), arm->getJointRotation(0));
-        GraphicsEngine::instance()->drawBitmap(arm->getJointPosition(1),  GraphicsEngine::instance()->segment1Sprite, 20, 0.1, Vector2d(20, 40), arm->getJointRotation(0) + arm->getJointRotation(1));
+        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->baseSpite, 20, 0.1);
+        if (arm) {
+            GraphicsEngine::instance()->drawBitmap(arm->getJointPosition(0),  GraphicsEngine::instance()->segment0Sprite, 20, 0.05, Vector2d(20, 40), arm->getJointRotation(0));
+            GraphicsEngine::instance()->drawBitmap(arm->getJointPosition(1),  GraphicsEngine::instance()->segment1Sprite, 20, 0.1, Vector2d(20, 40), arm->getJointRotation(0) + arm->getJointRotation(1));
+        }
+
     }
 
     void onCommandRecive(int cmd, int arg) override {
@@ -63,8 +59,15 @@ public:
         }
     }
 
-    void addToGameWorld() override {
+    void addToGameWorld() override {  // TODO 
         Machinery::addToGameWorld();
+        arm = new ManipulatorArm(3);
+        arm->setRootJointPosition(Vector2d(4, 2) + rect.p1);
+        arm->setSegmentLength(0, 8);
+        arm->setSegmentTargetLength(0, 8);
+        arm->setSegmentLength(1, 6);
+        arm->setSegmentTargetLength(1, 6);
+        arm->recalculate();
         arm->addToGameWorld();
     }
 };
@@ -78,7 +81,7 @@ class BoxGenerator: public Machinery {
 
 public:
     BoxGenerator(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(5, 5))) {
-        creatingArea.rect = Rect2d::fromTwoCorners(Vector2d(2.5, 2.5), Vector2d(4, 4));
+        creatingArea.rect = Rect2d::fromCenterAndDimensions(Vector2d(2.5, 2.5), Vector2d(4, 4));
         areas.push_back(&creatingArea);
     }
 

@@ -8,7 +8,6 @@
 #include "Controller.hpp"
 
 enum MachineryType {
-    TypeNone,
     TypeArm,
     TypeController,
     TypeFurnace, 
@@ -19,39 +18,33 @@ enum MachineryType {
 
 class MachineryBuilder {
     Window* window;
-    Rect2d ghost = Rect2d();
-    MachineryType selectedType = TypeNone;
+    Machinery* prototype;
     bool stickToGrid = true;
 
-    void placeMachinery() {
-        // if (nullptr) return;
-        // GameWorld::instance()->addMachinery(prototype);
-    }
-
     void selectType(MachineryType type) {
-        if (type == TypeNone) {
-            clearItem();
-            return;
-        }
-
-        Vector2d ghostDimensions;
-
-        selectedType = type;
-        switch (selectedType)
+        switch (type)
         {
         case TypeArm:
-            ghostDimensions = Vector2d(5, 3);
+            prototype = new ManipulatorTier1(Vector2d());
             break;
         case TypeController:
-            ghostDimensions = Vector2d(5, 7);
+            prototype = new Controller(Vector2d());
             break;
         case TypeFurnace:
-            ghostDimensions = Vector2d(10, 10);
+            prototype = new Furnace(Vector2d());
+            break;
+        case TypeAssembler:
+            prototype = new AssemblerTier1(Vector2d());
+            break;
+        case TypeCreator:
+            prototype = new BoxGenerator(Vector2d());
+            break;
+        case TypeDestroyer:
+            prototype = new BoxDestroyer(Vector2d());
             break;
         default:
             break;
         }
-        ghost = Rect2d::fromCenterAndDimensions(Vector2d(0, 0), ghostDimensions);
     }
 
 public:
@@ -62,50 +55,36 @@ public:
     }
 
     void clearItem() {
-        selectedType = TypeNone;
-        ghost = Rect2d();
+        delete prototype;
+        prototype = nullptr;
     }
 
     void onClick() {
-        if (selectedType == TypeNone) {
-            clearItem();
+        if (prototype == nullptr) {
             return;
         }
 
-        Machinery* newMachinery;
-        switch (selectedType)
-        {
-        case TypeArm:
-            newMachinery = new ManipulatorTier1(ghost.center());
-            break;
-        case TypeController:
-            newMachinery = new Controller(ghost.center());
-            break;
-        case TypeFurnace:
-            newMachinery = new Furnace(ghost.center());
-            break;
-        default:
-            break;
-        }
-        newMachinery->addToGameWorld();
-        clearItem();
+        prototype->addToGameWorld();
+        prototype = nullptr;
     };
 
     void mousePos(Vector2d pos) {
+        if (!prototype) return;
         if (stickToGrid)  {
             Vector2d roundedPos;
-            roundedPos.x = std::round(pos.x - ghost.dimensions().x / 2) + ghost.dimensions().x / 2;
-            roundedPos.y = std::round(pos.y - ghost.dimensions().y / 2) + ghost.dimensions().y / 2;
-            ghost = Rect2d::fromCenterAndDimensions(roundedPos, ghost.dimensions());
+            roundedPos.x = std::round(pos.x - prototype->getRect().dimensions().x / 2) + prototype->getRect().dimensions().x / 2;
+            roundedPos.y = std::round(pos.y - prototype->getRect().dimensions().y / 2) + prototype->getRect().dimensions().y / 2;
+            prototype->setCenter(roundedPos);
         } else {
-            ghost = Rect2d::fromCenterAndDimensions(pos, ghost.dimensions());
+            prototype->setCenter(pos);
         }
         
     };
 
     void drawGhost() {
-        if (selectedType == TypeNone) return;
-        GraphicsEngine::instance()->drawRectangle(ghost, 0, al_map_rgba(50, 100, 100, 30));
+        if (!prototype) return;
+        prototype->draw();
+        GraphicsEngine::instance()->drawRectangle(prototype->getRect(), 0, al_map_rgba(50, 100, 100, 30));
     }
 
     void createWindow()
@@ -113,7 +92,7 @@ public:
         if (window)
             GuiEngine::instance()->closeWindow(window);
         
-        window = GuiEngine::instance()->addWindow(Rect2d(Vector2d(130,800), 200, 250), true, false);
+        window = GuiEngine::instance()->addWindow(Rect2d(Vector2d(150,700), 300, 220), true, false);
 
         window->addLabel(Vector2d(20, 40), false, "Build machinery:", 0);
 
@@ -128,6 +107,18 @@ public:
         Button *furnaceButton = window->addButton(Rect2d(Vector2d(20, 110), Vector2d(200, 130)));
         window->addLabel(furnaceButton->getRect().center(), true, "Furnace", 0);
         furnaceButton->setOnClickCallback([this](){this->selectType(TypeFurnace);});
+
+        Button *creatorButton = window->addButton(Rect2d(Vector2d(20, 135), Vector2d(200, 155)));
+        window->addLabel(creatorButton->getRect().center(), true, "Box Creator", 0);
+        creatorButton->setOnClickCallback([this](){this->selectType(TypeCreator);});
+
+        Button *destroyerButton = window->addButton(Rect2d(Vector2d(20, 160), Vector2d(200, 185)));
+        window->addLabel(destroyerButton->getRect().center(), true, "Box Destroyer", 0);
+        destroyerButton->setOnClickCallback([this](){this->selectType(TypeDestroyer);});
+
+        Button *assemblerButton = window->addButton(Rect2d(Vector2d(20, 190), Vector2d(200, 210)));
+        window->addLabel(assemblerButton->getRect().center(), true, "Assembler Tier 1", 0);
+        assemblerButton->setOnClickCallback([this](){this->selectType(TypeAssembler);});
     }
 };
 

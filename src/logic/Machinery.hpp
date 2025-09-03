@@ -50,6 +50,9 @@ public:
     virtual void onCommandRecive(int command, int argument) {}
     virtual void onClick() {};
     void addToGameWorld() override;
+    void setCenter(Vector2d pos) {
+        rect = Rect2d::fromCenterAndDimensions(pos, rect.dimensions());
+    }
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_MACHINERY_HPP_
