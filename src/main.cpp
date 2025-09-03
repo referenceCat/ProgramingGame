@@ -28,7 +28,7 @@ void init()
 
     CameraParameters parameters;
     parameters.fov = 90;
-    parameters.displaySize = Vector2d(900, 900);
+    parameters.displayDimensions = Vector2d(900, 900);
     parameters.position = Vector2d(0, 0);
     parameters.z = -40; // fov = 90 deg
 
@@ -159,14 +159,14 @@ void onMouseClick(double x, double y) {
     for (auto module: gameWorld->getModules()) {
         std::vector<ModuleNode*> nodes = module->getNodes();
         for (auto node: nodes) {
-            if ((GraphicsEngine::transformPoint(module->getPosition() + node->position.rotate(module->getRotation()), 0, GraphicsEngine::instance()->getCameraParameters()) - Vector2d(x, y)).lenght() < 20) {
+            if ((GraphicsEngine::instance()->transformPoint(module->getPosition() + node->position.rotate(module->getRotation()), 0) - Vector2d(x, y)).lenght() < 20) {
                 onNodeClick(node);
                 return;
             }
         }
     }
 
-    Vector2d gameWorldClickPos = GraphicsEngine::instance()->transformPointInverse(Vector2d(x, y), GraphicsEngine::instance()->getCameraParameters());
+    Vector2d gameWorldClickPos = GraphicsEngine::instance()->transformPointInverse(Vector2d(x, y));
     gameWorld->click(gameWorldClickPos);
 }
 

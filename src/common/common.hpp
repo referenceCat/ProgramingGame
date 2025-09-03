@@ -46,6 +46,8 @@ struct Vector2d {
 
     Vector2d operator+ (Vector2d other);
     Vector2d operator- (Vector2d other);
+    Vector2d operator* (double other);
+    Vector2d operator/ (double other);
 
     Rotation getDirection() {
         return Rotation(std::atan2(y, x));
