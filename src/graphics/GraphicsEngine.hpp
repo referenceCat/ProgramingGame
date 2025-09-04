@@ -261,6 +261,18 @@ public:
         else al_draw_circle(aPoint.x, aPoint.y, r, color, thickness);
     }
 
+    void drawPolygon(std::vector<Vector2d> vertices, double z, ALLEGRO_COLOR color) {
+        setLayerAsTargetBitmap(z);
+
+        float dots [vertices.size() * 2];
+        for (int i = 0; i < vertices.size(); i++) {
+            Vector2d tp = transformPoint(vertices.at(i), z);
+            dots[i * 2] = tp.x;
+            dots[i * 2 + 1] = tp.y;
+        }
+        al_draw_filled_polygon(dots, vertices.size(), color);
+    }
+
     void drawBitmap(Vector2d aPoint, ALLEGRO_BITMAP* bitmap, double pixelsPerUnit, double z, Vector2d bitmapPivot = Vector2d(), Rotation bitmapRotation = Rotation()) {
         setLayerAsTargetBitmap(z);
         aPoint = transformPoint(aPoint, z);

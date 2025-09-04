@@ -23,6 +23,11 @@ struct ModuleNode
     Module *parentModule;
 };
 
+struct PolygonalArea {
+    std::vector<Vector2d> initialVerticies;
+    std::vector<Vector2d> transformedVerticies;
+};
+
 class Module : public GameObject
 {
 protected:
@@ -30,6 +35,8 @@ protected:
     Vector2d position;
     Rotation rotation;
     Module();
+    std::vector<PolygonalArea*> walls;
+    std::vector<PolygonalArea*> buildableArea;
 
 public:
     virtual void draw()
@@ -40,19 +47,30 @@ public:
             GraphicsEngine::instance()->drawPoint(node.position.rotate(rotation) + position, 0, al_map_rgb(0, 0, 255));
             GraphicsEngine::instance()->drawLine(node.position.rotate(rotation) + position, node.position.rotate(rotation) + position + Vector2d(rotation + node.rotation, 5), 0, al_map_rgb(0, 0, 255));
         }
+
+        for (auto wall: walls) {
+            GraphicsEngine::instance()->drawPolygon(wall->transformedVerticies, -1, al_map_rgb(255, 0, 0));
+        }
     };
 
     void setTransforms(Vector2d aPos, Rotation aRot)
     {
         position = aPos;
         rotation = aRot;
+        for (auto wall: walls) {
+            wall->transformedVerticies.clear();
+            for (auto dot: wall->initialVerticies) {
+                wall->transformedVerticies.push_back(position + dot.rotate(rotation));
+            }
+        }
     }
 
     void setTransforms(ModuleNode *parentNode, ModuleNode *ownNode)
     {
         Module *parentModule = parentNode->parentModule;
-        rotation = parentModule->rotation + parentNode->rotation - ownNode->rotation + M_PI;
-        position = parentModule->position + parentNode->position.rotate(parentModule->rotation) + ownNode->position.rotate(parentModule->rotation + parentNode->rotation - ownNode->rotation);
+        Rotation newRot = parentModule->rotation + parentNode->rotation - ownNode->rotation + M_PI;
+        Vector2d newPos = parentModule->position + parentNode->position.rotate(parentModule->rotation) + ownNode->position.rotate(parentModule->rotation + parentNode->rotation - ownNode->rotation);
+        setTransforms(newPos, newRot);
     }
 
     ModuleNode *getNode(int number)
@@ -86,6 +104,10 @@ public:
     }
 
     void addToGameWorld() override;
+
+    bool checkWallCollision(Rect2d rect) {
+        return false;
+    }
 };
 
 // TODO
@@ -128,6 +150,21 @@ public:
         sprites.back().bitmap = bitmap;
         sprites.back().pivot = pivot;
         sprites.back().z = z;
+    }
+
+    void addWall(Rect2d rect) {
+        auto wall = new PolygonalArea{};
+        wall->initialVerticies.push_back(Vector2d(rect.p1.x, rect.p2.y));
+        wall->initialVerticies.push_back(rect.p2);
+        wall->initialVerticies.push_back(Vector2d(rect.p2.x, rect.p1.y));
+        wall->initialVerticies.push_back(rect.p1);
+        
+        wall->transformedVerticies.push_back(Vector2d(rect.p1.x, rect.p2.y));
+        wall->transformedVerticies.push_back(rect.p2);
+        wall->transformedVerticies.push_back(Vector2d(rect.p2.x, rect.p1.y));
+        wall->transformedVerticies.push_back(rect.p1);
+        
+        walls.push_back(wall);
     }
 
     void draw() {
