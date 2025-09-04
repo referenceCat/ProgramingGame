@@ -10,6 +10,7 @@
 #include "../common/common.hpp"
 #include "GameObject.hpp"
 #include "GuiEngine.hpp"
+#include <collision.h>
 
 class GuiEngine;
 class GameWorld;
@@ -106,6 +107,26 @@ public:
     void addToGameWorld() override;
 
     bool checkWallCollision(Rect2d rect) {
+        collision::Polygon rectangle({
+            collision::fvec2(rect.p1.x, rect.p1.y),
+            collision::fvec2(rect.p2.x, rect.p1.y),
+            collision::fvec2(rect.p2.x, rect.p2.y),
+            collision::fvec2(rect.p1.x, rect.p2.y)
+        });
+
+        collision::GJKCollisionDetector detector;
+        std::vector<collision::fvec2> dots; 
+        for (auto wall: walls) {
+
+            dots.clear();
+            for (auto dot: wall->transformedVerticies) {
+                dots.push_back(collision::fvec2(dot.x, dot.y));
+            }
+            
+            collision::Polygon ownPolygon(dots);
+            if (detector.detect(rectangle, ownPolygon)) return true;
+        }
+        
         return false;
     }
 };

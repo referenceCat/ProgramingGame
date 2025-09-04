@@ -12,3 +12,6 @@ target_include_directories(testBuild PUBLIC collision)
 
 target_link_libraries(testBuild ${ALLEGRO5_LIBRARIES})
 target_include_directories(testBuild PUBLIC ${ALLEGRO5_INCLUDE_DIRS})
+
+target_link_libraries(testBuild libcollision)
+target_include_directories(testBuild PUBLIC ../libs/libcollision)

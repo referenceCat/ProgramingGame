@@ -3,7 +3,6 @@
 
 #include <math.h>
 #include <algorithm>
-#include <collision.h>
 
 struct Rotation {
     double radians = 0;

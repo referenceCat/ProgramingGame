@@ -62,6 +62,10 @@ public:
             if (machinery->getRect().isIntersecting(prototype->getRect())) return true;
         }
 
+        for (auto module: GameWorld::instance()->getModules()) {
+            if (module->checkWallCollision(prototype->getRect())) return true;
+        }
+
         return false;
     }
 
