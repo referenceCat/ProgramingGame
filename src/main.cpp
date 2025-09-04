@@ -32,12 +32,14 @@ void init()
     GraphicsEngine::instance()->setCameraParameters(parameters);
     MachineryBuilder::instance()->createWindow();
 
-    BasicModule* rootModule = new BasicModule(2);
+    BasicModulePrototype* rootModule = new BasicModulePrototype(2);
     rootModule->addNode(Vector2d(Rotation(0), 16), Rotation(0));
     rootModule->addNode(Vector2d(Rotation(M_PI), 16), Rotation(M_PI));
     rootModule->addBitmap(GraphicsEngine::instance()->corridorModuleLayer0, Vector2d(160, 160), CommonValues::zModuleMainBackgroung);
     rootModule->addBitmap(GraphicsEngine::instance()->corridorModuleLayer1, Vector2d(160, 160), CommonValues::zModuleWalls);
     rootModule->setTransforms(Vector2d(0, 0), Rotation(0));
+    rootModule->addWall(Rect2d::fromTwoCorners(Vector2d(-16, 8), Vector2d(16, 9)));
+    rootModule->addWall(Rect2d::fromTwoCorners(Vector2d(-16, -9), Vector2d(16, -8)));
     rootModule->addToGameWorld();
 
     auto controller7 = new Controller(Vector2d(-10.5, 3.5));

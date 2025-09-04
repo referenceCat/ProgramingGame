@@ -37,7 +37,8 @@ protected:
     Rotation rotation;
     Module();
     std::vector<PolygonalArea*> walls;
-    std::vector<PolygonalArea*> buildableArea;
+    std::vector<PolygonalArea*> buildableAreas;
+    std::vector<PolygonalArea*> blockingAreas;
 
 public:
     virtual void draw()
@@ -52,6 +53,14 @@ public:
         for (auto wall: walls) {
             GraphicsEngine::instance()->drawPolygon(wall->transformedVerticies, -1, al_map_rgb(255, 0, 0));
         }
+
+        for (auto area: blockingAreas) {
+            GraphicsEngine::instance()->drawPolygon(area->transformedVerticies, -1, al_map_rgba(100, 0, 0, 40));
+        }
+
+        for (auto area: buildableAreas) {
+            GraphicsEngine::instance()->drawPolygon(area->transformedVerticies, -1, al_map_rgba(0, 100, 100, 30));
+        }
     };
 
     void setTransforms(Vector2d aPos, Rotation aRot)
@@ -64,6 +73,22 @@ public:
                 wall->transformedVerticies.push_back(position + dot.rotate(rotation));
             }
         }
+
+        for (auto area: buildableAreas) {
+            area->transformedVerticies.clear();
+            for (auto dot: area->initialVerticies) {
+                area->transformedVerticies.push_back(position + dot.rotate(rotation));
+            }
+        }
+
+        for (auto area: blockingAreas) {
+            area->transformedVerticies.clear();
+            for (auto dot: area->initialVerticies) {
+                area->transformedVerticies.push_back(position + dot.rotate(rotation));
+            }
+        }
+
+        
     }
 
     void setTransforms(ModuleNode *parentNode, ModuleNode *ownNode)
@@ -129,6 +154,54 @@ public:
         
         return false;
     }
+
+    bool checkBlockingAreaCollision(Module* other) {
+        collision::GJKCollisionDetector detector;
+        std::vector<collision::fvec2> dots; 
+        for (auto otherArea: other->blockingAreas) {
+            dots.clear();
+            for (auto dot: otherArea->transformedVerticies) {
+                dots.push_back(collision::fvec2(dot.x, dot.y));
+            }
+            collision::Polygon otherPolygon(dots);
+
+            for (auto ownArea: blockingAreas) {
+
+                dots.clear();
+                for (auto dot: ownArea->transformedVerticies) {
+                    dots.push_back(collision::fvec2(dot.x, dot.y));
+                }
+            
+                collision::Polygon ownPolygon(dots);
+                if (detector.detect(otherPolygon, ownPolygon)) return true;
+            }
+        }
+        return false;
+    }
+
+    bool checkTouchesBuildableArea(Rect2d rect) {
+        collision::Polygon rectangle({
+            collision::fvec2(rect.p1.x, rect.p1.y),
+            collision::fvec2(rect.p2.x, rect.p1.y),
+            collision::fvec2(rect.p2.x, rect.p2.y),
+            collision::fvec2(rect.p1.x, rect.p2.y)
+        });
+
+        collision::GJKCollisionDetector detector;
+        std::vector<collision::fvec2> dots; 
+        for (auto area: buildableAreas) {
+
+            dots.clear();
+            for (auto dot: area->transformedVerticies) {
+                dots.push_back(collision::fvec2(dot.x, dot.y));
+            }
+            
+            collision::Polygon ownPolygon(dots);
+            if (detector.detect(rectangle, ownPolygon)) return true;
+        }
+        
+        return false;
+    }
 };
 
 // TODO
@@ -142,7 +215,7 @@ public:
 //     }
 // };
 
-class BasicModule: public Module {
+class BasicModulePrototype: public Module {
     int nodesNumber = 0;
     struct ModuleSprite {
         Vector2d pivot;
@@ -152,7 +225,7 @@ class BasicModule: public Module {
     std::vector<ModuleSprite> sprites;
 
 public:
-    BasicModule(int nodesNumber) : Module(), nodesNumber(nodesNumber) {
+    BasicModulePrototype(int nodesNumber) : Module(), nodesNumber(nodesNumber) {
         assert(nodesNumber > 0);
         nodes.reserve(nodesNumber);
     }
@@ -186,6 +259,36 @@ public:
         wall->transformedVerticies.push_back(rect.p1);
         
         walls.push_back(wall);
+    }
+
+    void addBuildableArea(Rect2d rect) {
+        auto area = new PolygonalArea{};
+        area->initialVerticies.push_back(Vector2d(rect.p1.x, rect.p2.y));
+        area->initialVerticies.push_back(rect.p2);
+        area->initialVerticies.push_back(Vector2d(rect.p2.x, rect.p1.y));
+        area->initialVerticies.push_back(rect.p1);
+        
+        area->transformedVerticies.push_back(Vector2d(rect.p1.x, rect.p2.y));
+        area->transformedVerticies.push_back(rect.p2);
+        area->transformedVerticies.push_back(Vector2d(rect.p2.x, rect.p1.y));
+        area->transformedVerticies.push_back(rect.p1);
+        
+        buildableAreas.push_back(area);
+    }
+
+    void addBlockingArea(Rect2d rect) {
+        auto area = new PolygonalArea{};
+        area->initialVerticies.push_back(Vector2d(rect.p1.x, rect.p2.y));
+        area->initialVerticies.push_back(rect.p2);
+        area->initialVerticies.push_back(Vector2d(rect.p2.x, rect.p1.y));
+        area->initialVerticies.push_back(rect.p1);
+        
+        area->transformedVerticies.push_back(Vector2d(rect.p1.x, rect.p2.y));
+        area->transformedVerticies.push_back(rect.p2);
+        area->transformedVerticies.push_back(Vector2d(rect.p2.x, rect.p1.y));
+        area->transformedVerticies.push_back(rect.p1);
+        
+        blockingAreas.push_back(area);
     }
 
     void draw() {

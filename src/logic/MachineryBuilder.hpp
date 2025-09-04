@@ -58,6 +58,16 @@ public:
     bool checkBlocked() {
         if (!prototype) return false;
 
+
+        bool touchingBuildableArea = false;
+        for (auto module: GameWorld::instance()->getModules()) {
+            if (module->checkTouchesBuildableArea(prototype->getRect())) {
+                touchingBuildableArea = true;
+                break;
+            }
+        }
+        if (!touchingBuildableArea) return true;
+
         for (auto machinery: GameWorld::instance()->getMachinery()) {
             if (machinery->getRect().isIntersecting(prototype->getRect())) return true;
         }
