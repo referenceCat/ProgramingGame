@@ -40,6 +40,11 @@ Machinery* GameWorld::getMachinery(int id) {
     return nullptr;
 }
 
+std::vector<Machinery*> GameWorld::getMachinery()
+{
+    return machines;
+}
+
 Module *GameWorld::getModule(int id)
 {
     for (auto item: modules) {

@@ -40,7 +40,7 @@ void init()
     rootModule->setTransforms(Vector2d(0, 0), Rotation(0));
     rootModule->addToGameWorld();
 
-    auto controller7 = new Controller(Vector2d(-10, 3));
+    auto controller7 = new Controller(Vector2d(-10.5, 3.5));
     controller7->addInstruction("delay 50");
     controller7->addInstruction("delay 100");
     controller7->addInstruction("send 3 0 180");
@@ -63,7 +63,7 @@ void redraw()
     // auto start = std::chrono::system_clock::now();
     GameWorld::instance()->drawAll();
     MachineryBuilder::instance()->drawGhost();
-    GraphicsEngine::instance()->drawDebugBackgroung2();
+    // GraphicsEngine::instance()->drawDebugBackgroung2();
     al_set_target_bitmap(al_get_backbuffer(al_get_current_display()));
     al_clear_to_color(al_map_rgb(0, 0, 5));
 

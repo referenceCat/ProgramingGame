@@ -40,6 +40,7 @@ public:
     Box *getBox(Vector2d aPos);
     std::vector<Box*> getBoxes();
     Machinery *getMachinery(int id);
+    std::vector<Machinery*> getMachinery();
     Module *getModule(int id);
     std::vector<Module*> getModules();
 

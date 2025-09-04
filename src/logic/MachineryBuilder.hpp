@@ -20,6 +20,7 @@ class MachineryBuilder {
     Window* window;
     Machinery* prototype;
     bool stickToGrid = true;
+    bool blocked = false;
 
     void selectType(MachineryType type) {
         switch (type)
@@ -54,6 +55,16 @@ public:
         return &instance;
     }
 
+    bool checkBlocked() {
+        if (!prototype) return false;
+
+        for (auto machinery: GameWorld::instance()->getMachinery()) {
+            if (machinery->getRect().isIntersecting(prototype->getRect())) return true;
+        }
+
+        return false;
+    }
+
     void clearItem() {
         delete prototype;
         prototype = nullptr;
@@ -64,12 +75,15 @@ public:
             return;
         }
 
+        blocked = checkBlocked();
+        if (blocked) return;
         prototype->addToGameWorld();
         prototype = nullptr;
     };
 
     void mousePos(Vector2d pos) {
         if (!prototype) return;
+        Rect2d lastPos = prototype->getRect();
         if (stickToGrid)  {
             Vector2d roundedPos;
             roundedPos.x = std::round(pos.x - prototype->getRect().dimensions().x / 2) + prototype->getRect().dimensions().x / 2;
@@ -78,13 +92,18 @@ public:
         } else {
             prototype->setCenter(pos);
         }
+
+        if (prototype->getRect() != lastPos) blocked = checkBlocked();
         
     };
 
     void drawGhost() {
         if (!prototype) return;
         prototype->draw();
-        GraphicsEngine::instance()->drawRectangle(prototype->getRect(), 0, al_map_rgba(50, 100, 100, 30));
+        if (!blocked)
+            GraphicsEngine::instance()->drawRectangle(prototype->getRect(), 0, al_map_rgba(50, 100, 100, 30));
+        else
+            GraphicsEngine::instance()->drawRectangle(prototype->getRect(), 0, al_map_rgba(100, 50, 50, 30));
     }
 
     void createWindow()

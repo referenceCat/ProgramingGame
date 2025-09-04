@@ -67,6 +67,14 @@ struct Vector2d {
         return Vector2d(x * other, y * other);
     }
 
+    bool operator==(Vector2d other) {
+        return x == other.x && y == other.y;
+    }
+
+    bool operator!=(Vector2d other) {
+        return x != other.x || y != other.y;
+    }
+
     Vector2d operator/ (double other)
     {
         return Vector2d(x / other, y / other);
@@ -107,21 +115,21 @@ struct Rect2d {
     Rect2d(Vector2d p1, Vector2d p2): p1(p1), p2(p2) {}
 
     bool isInside(Vector2d point) {
-        return p1.x <= point.x && point.x <= p2.x && p1.y <= point.y && point.y <= p2.y;
+        return p1.x < point.x && point.x < p2.x && p1.y <=point.y && point.y < p2.y;
     }
 
     bool isInside(Rect2d rect) {
-        return p1.x <= rect.p1.x && rect.p2.x <= p2.x && p1.y <= rect.p1.y && rect.p2.y <= p2.y;
-    }
-
-    bool isIntersecting(Rect2d rect) {
-        bool horizontalIntersect = (p1.x <= rect.p1.x && rect.p1.x <= p2.x) || (p1.x <= rect.p2.x && rect.p2.x <= p2.x) || (rect.p1.x <= p1.x && p1.x <= rect.p2.x);
-        bool verticalIntersect = (p1.y <= rect.p1.y && rect.p1.y <= p2.y) || (p1.y <= rect.p2.y && rect.p2.y <= p2.y) || (rect.p1.y <= p1.y && p1.y <= rect.p2.y);
-        return verticalIntersect && horizontalIntersect;
+        return p1.x < rect.p1.x && rect.p2.x < p2.x && p1.y < rect.p1.y && rect.p2.y < p2.y;
     }
 
     Vector2d center() {
         return Vector2d(p1.x / 2 + p2.x / 2, p1.y/ 2 + p2.y / 2);
+    }
+
+    bool isIntersecting(Rect2d other) {
+        bool horizontalIntersect = (p1.x < other.p1.x && other.p1.x < p2.x) || (p1.x < other.p2.x && other.p2.x < p2.x) || (other.p1.x < p1.x && p1.x < other.p2.x) || (other.p1.x < center().x && center().x< other.p2.x);
+        bool verticalIntersect = (p1.y < other.p1.y && other.p1.y < p2.y) || (p1.y < other.p2.y && other.p2.y < p2.y) || (other.p1.y < p1.y && p1.y < other.p2.y)|| (other.p1.y < center().y && center().y < other.p2.y);
+        return verticalIntersect && horizontalIntersect;
     }
 
     Vector2d dimensions() {
@@ -134,6 +142,14 @@ struct Rect2d {
 
     static Rect2d fromTwoCorners(Vector2d ap1, Vector2d ap2) {
         return Rect2d(Vector2d(std::min(ap1.x, ap2.x), std::min(ap1.y, ap2.y)),Vector2d(std::max(ap1.x, ap2.x), std::max(ap1.y, ap2.y)));
+    }
+
+    bool operator==(Rect2d other) {
+        return p1 == other.p1 && p2 == other.p2;
+    }
+
+    bool operator!=(Rect2d other) {
+        return p1 != other.p1 || p2 != other.p2;
     }
 };
 
