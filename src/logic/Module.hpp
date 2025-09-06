@@ -50,17 +50,17 @@ public:
             GraphicsEngine::instance()->drawLine(node.position.rotate(rotation) + position, node.position.rotate(rotation) + position + Vector2d(rotation + node.rotation, 5), 0, al_map_rgb(0, 0, 255));
         }
 
-        for (auto wall: walls) {
-            GraphicsEngine::instance()->drawPolygon(wall->transformedVerticies, -1, al_map_rgb(255, 0, 0));
-        }
+        // for (auto wall: walls) {
+        //     GraphicsEngine::instance()->drawPolygon(wall->transformedVerticies, -1, al_map_rgb(255, 0, 0));
+        // }
 
-        for (auto area: blockingAreas) {
-            GraphicsEngine::instance()->drawPolygon(area->transformedVerticies, -1, al_map_rgba(100, 0, 0, 40));
-        }
+        // for (auto area: blockingAreas) {
+        //     GraphicsEngine::instance()->drawPolygon(area->transformedVerticies, -1, al_map_rgba(100, 0, 0, 40));
+        // }
 
-        for (auto area: buildableAreas) {
-            GraphicsEngine::instance()->drawPolygon(area->transformedVerticies, -1, al_map_rgba(0, 100, 100, 30));
-        }
+        // for (auto area: buildableAreas) {
+        //     GraphicsEngine::instance()->drawPolygon(area->transformedVerticies, -1, al_map_rgba(0, 100, 100, 30));
+        // }
     };
 
     void setTransforms(Vector2d aPos, Rotation aRot)
@@ -294,7 +294,7 @@ public:
     void draw() {
         Module::draw();
         for (auto sprite: sprites) {
-            GraphicsEngine::instance()->drawBitmap(position, sprite.bitmap, 10, sprite.z, sprite.pivot, rotation);
+            GraphicsEngine::instance()->drawBitmap(position, sprite.bitmap, 20, sprite.z, sprite.pivot, rotation);
         }
     }
 };

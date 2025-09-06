@@ -137,7 +137,7 @@ void onKeyDown(int keycode)
     switch (keycode)
     {
     case ALLEGRO_KEY_R:
-        GraphicsEngine::instance()->loadImages();
+        GraphicsEngine::instance()->loadBitmaps();
         break;
     case ALLEGRO_KEY_ESCAPE:
         MachineryBuilder::instance()->clearItem();
@@ -270,7 +270,8 @@ int main(int argc, char **argv)
 
     GraphicsEngine::instance()->debugFont = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
     GuiEngine::debugFont = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
-    GraphicsEngine::instance()->loadImages();
+    GraphicsEngine::instance()->loadBitmaps();
+    GraphicsEngine::instance()->loadImagesLegacyTesting();
 
     // Initialize user inputs
     al_install_keyboard();

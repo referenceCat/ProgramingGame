@@ -7,6 +7,8 @@
 #include <allegro5/allegro_color.h>
 #include <vector>
 #include <iostream>
+#include <filesystem>
+#include <map>
 
 
 struct CameraParameters {
@@ -81,6 +83,8 @@ class GraphicsEngine {
 public:
     ALLEGRO_FONT* debugFont = nullptr;
 
+    std::map<std::string, ALLEGRO_BITMAP*> loadedBitmaps;
+    // TODO remove ASAP
     ALLEGRO_BITMAP* furnaceSprite = nullptr;
     ALLEGRO_BITMAP* baseSpite = nullptr;
     ALLEGRO_BITMAP* segment0Sprite = nullptr;
@@ -112,8 +116,8 @@ public:
     ALLEGRO_BITMAP* endLayer0 = nullptr;
     ALLEGRO_BITMAP* endLayer1 = nullptr;
     
-
-    void loadImages() { // TODO memory leak then reloading bitmaps
+    // TODO memory leak then reloading bitmaps
+    void loadImagesLegacyTesting() {
         backhroundTile100x100 = al_create_bitmap(100, 100);
         al_set_target_bitmap(backhroundTile100x100);
         al_draw_filled_rectangle(0, 0, 100, 100, al_map_rgb(50, 50, 50));
@@ -143,20 +147,35 @@ public:
         worldLayer1 = al_load_bitmap("resources/assets/background1_no_shadow.png");
         worldLayer2 = al_load_bitmap("resources/assets/background2.png");
 
-        xModuleLayer0 = al_load_bitmap("resources/assets/modules/xcorridor_background.png");
-        xModuleLayer1 = al_load_bitmap("resources/assets/modules/xcorridor_walls.png");
+        xModuleLayer0 = al_load_bitmap("resources/assets/oldModules/xcorridor_background.png");
+        xModuleLayer1 = al_load_bitmap("resources/assets/oldModules/xcorridor_walls.png");
 
-        corridorModuleLayer0 = al_load_bitmap("resources/assets/modules/corridor_background.png");
-        corridorModuleLayer1 = al_load_bitmap("resources/assets/modules/corridor_walls.png");
+        corridorModuleLayer0 = al_load_bitmap("resources/assets/oldModules/corridor_background.png");
+        corridorModuleLayer1 = al_load_bitmap("resources/assets/oldModules/corridor_walls.png");
 
-        beamLayer0 = al_load_bitmap("resources/assets/modules/beam1.png");
-        beamLayer1 = al_load_bitmap("resources/assets/modules/beam3.png");
+        beamLayer0 = al_load_bitmap("resources/assets/oldModules/beam1.png");
+        beamLayer1 = al_load_bitmap("resources/assets/oldModules/beam3.png");
 
-        junction3Layer0 = al_load_bitmap("resources/assets/modules/junction3_background.png");
-        junction3Layer1 = al_load_bitmap("resources/assets/modules/junction3_walls.png");
+        junction3Layer0 = al_load_bitmap("resources/assets/oldModules/junction3_background.png");
+        junction3Layer1 = al_load_bitmap("resources/assets/oldModules/junction3_walls.png");
 
-        endLayer0 = al_load_bitmap("resources/assets/modules/end_background.png");
-        endLayer1 = al_load_bitmap("resources/assets/modules/end_walls.png");
+        endLayer0 = al_load_bitmap("resources/assets/oldModules/end_background.png");
+        endLayer1 = al_load_bitmap("resources/assets/oldModules/end_walls.png");
+    }
+
+    void loadBitmaps() { 
+
+        for (const auto & [key, value] : loadedBitmaps)
+            al_destroy_bitmap(value);
+
+        for (const auto& dirEntry : std::filesystem::recursive_directory_iterator("resources/assets")) {
+            loadedBitmaps[dirEntry.path().string()] = al_load_bitmap(dirEntry.path().string().c_str());
+            std::cout << dirEntry.path().string() << std::endl;
+        }
+    }
+
+    ALLEGRO_BITMAP* getBitmap(std::string path) {
+        return loadedBitmaps[path];
     }
 
     void drawDebugBackgroung() { // TODO very slow way to draw tiles
