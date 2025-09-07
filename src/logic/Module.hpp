@@ -11,6 +11,8 @@
 #include "GameObject.hpp"
 #include "GuiEngine.hpp"
 #include <collision.h>
+#include <fstream>
+#include <nlohmann/json.hpp>
 
 class GuiEngine;
 class GameWorld;
@@ -51,15 +53,15 @@ public:
         }
 
         // for (auto wall: walls) {
-        //     GraphicsEngine::instance()->drawPolygon(wall->transformedVerticies, -1, al_map_rgb(255, 0, 0));
+        //     GraphicsEngine::instance()->drawPolygon(wall->transformedVerticies, -0.001, al_map_rgb(255, 0, 0));
         // }
 
         // for (auto area: blockingAreas) {
-        //     GraphicsEngine::instance()->drawPolygon(area->transformedVerticies, -1, al_map_rgba(100, 0, 0, 40));
+        //     GraphicsEngine::instance()->drawPolygon(area->transformedVerticies, -0.001, al_map_rgba(100, 0, 0, 40));
         // }
 
         // for (auto area: buildableAreas) {
-        //     GraphicsEngine::instance()->drawPolygon(area->transformedVerticies, -1, al_map_rgba(0, 100, 100, 30));
+        //     GraphicsEngine::instance()->drawPolygon(area->transformedVerticies, -0.001, al_map_rgba(0, 100, 100, 30));
         // }
     };
 
@@ -302,16 +304,21 @@ public:
 enum ModuleType
 {
     Corridor,
-    JunctionX,
-    Junction3,
-    DeadendModule
+    ConnectorCross,
+    Connector3,
+    ConnectorT,
+    Deadend,
+    Frame,
+    FrameCross,
+    Frame3,
+    LargeModule
 };
 
 class ModuleBuilder
 {
     ModuleNode *parentModuleNode;
     int newModuleNodeNumber;
-    Module *newModule = nullptr;
+    Module *modulePrototype = nullptr;
 
     Window *window;
     std::vector<Button *> nodeNumberButtons;
@@ -319,6 +326,7 @@ class ModuleBuilder
 
     void updateNodeNumberSelection()
     {
+        if (!window) return;
         for (auto button : nodeNumberButtons)
         {
             window->deleteButton(button);
@@ -332,7 +340,7 @@ class ModuleBuilder
         nodeNumberLabels.clear();
 
         int i = 0;
-        for (auto node : newModule->getNodes())
+        for (auto node : modulePrototype->getNodes())
         {
             Button *newButton = window->addButton(Rect2d::fromTwoCorners(Vector2d(220, 60 + i * 25), Vector2d(420, 80 + i * 25)));
             Label *newLabel = window->addLabel(newButton->getRect().center(), true, std::to_string(i), 0);
@@ -364,9 +372,9 @@ public:
     }
 
     // true - if success
-    bool buildModule();
+    bool buildModule(bool initial = false);
 
-    bool selectModuleType(ModuleType);
+    bool createModulePrototype(ModuleType);
 
     bool selectNewNodeNumber(int number);
 
@@ -390,23 +398,21 @@ public:
         window->addLabel(Vector2d(20, 40), false, "Module type:", 0);
         window->addLabel(Vector2d(220, 40), false, "Node number:", 0);
 
-        Button *corridorButton = window->addButton(Rect2d(Vector2d(20, 60), Vector2d(200, 80)));
-        window->addLabel(corridorButton->getRect().center(), true, "Corridor", 0);
-        corridorButton->setOnClickCallback([this](){selectModuleType(Corridor); });
+        createModuleSelectionButtons();
 
-        Button *xCorridorButton = window->addButton(Rect2d(Vector2d(20, 85), Vector2d(200, 105)));
-        window->addLabel(xCorridorButton->getRect().center(), true, "X Corridor", 0);
-        xCorridorButton->setOnClickCallback([this](){selectModuleType(JunctionX); });
+        createModulePrototype(Corridor);
+    }
+    void createModuleSelectionButtons()
+    {
+        std::string labels[] = {"Corridor", "Cross Connector", "3 Way Connector", "T Connector", "Deadend", "Frame", "Square Frame", "Triangle Frame", "Utility Module"};
+        ModuleType types[] = {Corridor, ConnectorCross, Connector3, ConnectorT, Deadend, Frame, FrameCross, Frame3, LargeModule};
+        int n = 9;
 
-        Button *junction3Button = window->addButton(Rect2d(Vector2d(20, 110), Vector2d(200, 130)));
-        window->addLabel(junction3Button->getRect().center(), true, "3 way junction", 0);
-        junction3Button->setOnClickCallback([this](){selectModuleType(Junction3); });
-
-        Button *deadendButton = window->addButton(Rect2d(Vector2d(20, 135), Vector2d(200, 155)));
-        window->addLabel(deadendButton->getRect().center(), true, "Deadend", 0);
-        deadendButton->setOnClickCallback([this](){selectModuleType(DeadendModule); });
-
-        selectModuleType(Corridor);
+        for (int i = 0; i < n; i++) {
+            Button *corridorButton = window->addButton(Rect2d(Vector2d(20, 60) + Vector2d(0, i * 25), Vector2d(200, 80) + Vector2d(0, i * 25)));
+            window->addLabel(corridorButton->getRect().center(), true, labels[i], 0);
+            corridorButton->setOnClickCallback([this, type = types[i]](){ createModulePrototype(type); });
+        }
     }
 };
 

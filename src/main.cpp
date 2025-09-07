@@ -15,6 +15,7 @@
 #include "logic/CustomMachinery.hpp"
 #include "graphics/GraphicsEngine.hpp"
 #include "logic/MachineryBuilder.hpp"
+#include <format>
 
 long long tick = 0;
 long long eventCounter = 0;
@@ -32,15 +33,8 @@ void init()
     GraphicsEngine::instance()->setCameraParameters(parameters);
     MachineryBuilder::instance()->createWindow();
 
-    BasicModulePrototype* rootModule = new BasicModulePrototype(2);
-    rootModule->addNode(Vector2d(Rotation(0), 16), Rotation(0));
-    rootModule->addNode(Vector2d(Rotation(M_PI), 16), Rotation(M_PI));
-    rootModule->addBitmap(GraphicsEngine::instance()->corridorModuleLayer0, Vector2d(160, 160), CommonValues::zModuleMainBackgroung);
-    rootModule->addBitmap(GraphicsEngine::instance()->corridorModuleLayer1, Vector2d(160, 160), CommonValues::zModuleWalls);
-    rootModule->setTransforms(Vector2d(0, 0), Rotation(0));
-    rootModule->addWall(Rect2d::fromTwoCorners(Vector2d(-16, 8), Vector2d(16, 9)));
-    rootModule->addWall(Rect2d::fromTwoCorners(Vector2d(-16, -9), Vector2d(16, -8)));
-    rootModule->addToGameWorld();
+    ModuleBuilder::instance()->createModulePrototype(LargeModule);
+    ModuleBuilder::instance()->buildModule(true);
 
     auto controller7 = new Controller(Vector2d(-10.5, 3.5));
     controller7->addInstruction("delay 50");
@@ -86,6 +80,12 @@ void redraw()
     al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 110, 20, 0, std::to_string(tick).c_str());
     al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 150, 20, 0, "Events counter:");
     al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 270, 20, 0, std::to_string(eventCounter).c_str());
+
+    ALLEGRO_MOUSE_STATE mouseState;
+    al_get_mouse_state(&mouseState);
+    auto mousePos = GraphicsEngine::instance()->transformPointInverse(Vector2d(mouseState.x, mouseState.y));
+    al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 10, 40, 0, std::format("{:.2f}", mousePos.x).c_str());
+    al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 60, 40, 0, std::format("{:.2f}", mousePos.y).c_str());
 
     al_hold_bitmap_drawing(false);
     GraphicsEngine::instance()->clearBitmaps();
