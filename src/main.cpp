@@ -202,6 +202,8 @@ void mainLoop(ALLEGRO_EVENT_QUEUE *event_queue)
             
             break;
         case ALLEGRO_EVENT_DISPLAY_RESIZE:
+            GraphicsEngine::instance()->changeDisplayDimensions(Vector2d(event.display.width, event.display.height));
+            redraw();
             al_acknowledge_resize(event.display.source);
             break;
         case ALLEGRO_EVENT_MOUSE_BUTTON_UP:

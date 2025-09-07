@@ -21,7 +21,7 @@ struct CameraParameters {
 namespace CommonValues {
     constexpr double zModuleWalls = 0;
     constexpr double zModuleMainBackgroung = 0.4;
-    constexpr double zModuleFarBackgroung = 0.6;
+    constexpr double zModuleFarBackgroung = 2;
     constexpr double zMachinery = 0.3;
     constexpr double zMachineryFront = 0.1;
     constexpr double zMachineryBack = 0.35;
@@ -76,7 +76,7 @@ class GraphicsEngine {
             BackgroundStar star;
             star.color = al_map_rgb(fRand(150, 255), fRand(150, 255), fRand(150, 255));
             star.radius = fRand(0.3, 2);
-            star.pos = Vector2d(fRand(-1000, 1000), fRand(-1000, 1000));
+            star.pos = Vector2d(fRand(0, 3000), fRand(0, 1500));
             stars.push_back(star);
         }
     }
@@ -197,7 +197,7 @@ public:
 
     void drawStarsBackgroung() {
         static std::vector<BackgroundStar> stars;
-        if (!stars.size()) initStars(stars, 1000);
+        if (!stars.size()) initStars(stars, 2000);
 
         for (auto star: stars) {
             al_draw_filled_circle(star.pos.x, star.pos.y, star.radius, star.color);

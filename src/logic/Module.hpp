@@ -52,17 +52,17 @@ public:
             GraphicsEngine::instance()->drawLine(node.position.rotate(rotation) + position, node.position.rotate(rotation) + position + Vector2d(rotation + node.rotation, 5), 0, al_map_rgb(0, 0, 255));
         }
 
-        // for (auto wall: walls) {
-        //     GraphicsEngine::instance()->drawPolygon(wall->transformedVerticies, -0.001, al_map_rgb(255, 0, 0));
-        // }
+        for (auto wall: walls) {
+            GraphicsEngine::instance()->drawPolygon(wall->transformedVerticies, -0.001, al_map_rgb(255, 0, 0));
+        }
 
-        // for (auto area: blockingAreas) {
-        //     GraphicsEngine::instance()->drawPolygon(area->transformedVerticies, -0.001, al_map_rgba(100, 0, 0, 40));
-        // }
+        for (auto area: blockingAreas) {
+            GraphicsEngine::instance()->drawPolygon(area->transformedVerticies, -0.001, al_map_rgba(100, 0, 0, 40));
+        }
 
-        // for (auto area: buildableAreas) {
-        //     GraphicsEngine::instance()->drawPolygon(area->transformedVerticies, -0.001, al_map_rgba(0, 100, 100, 30));
-        // }
+        for (auto area: buildableAreas) {
+            GraphicsEngine::instance()->drawPolygon(area->transformedVerticies, -0.001, al_map_rgba(0, 100, 100, 30));
+        }
     };
 
     void setTransforms(Vector2d aPos, Rotation aRot)
@@ -294,7 +294,7 @@ public:
     }
 
     void draw() {
-        Module::draw();
+        // Module::draw();
         for (auto sprite: sprites) {
             GraphicsEngine::instance()->drawBitmap(position, sprite.bitmap, 20, sprite.z, sprite.pivot, rotation);
         }
@@ -311,7 +311,9 @@ enum ModuleType
     Frame,
     FrameCross,
     Frame3,
-    LargeModule
+    LargeModule,
+    SolarPanel,
+    Antena
 };
 
 class ModuleBuilder
@@ -404,9 +406,9 @@ public:
     }
     void createModuleSelectionButtons()
     {
-        std::string labels[] = {"Corridor", "Cross Connector", "3 Way Connector", "T Connector", "Deadend", "Frame", "Square Frame", "Triangle Frame", "Utility Module"};
-        ModuleType types[] = {Corridor, ConnectorCross, Connector3, ConnectorT, Deadend, Frame, FrameCross, Frame3, LargeModule};
-        int n = 9;
+        std::string labels[] = {"Corridor", "Cross Connector", "3 Way Connector", "T Connector", "Deadend", "Frame", "Square Frame", "Triangle Frame", "Utility Module", "Solar Panel", "Antena array"};
+        ModuleType types[] = {Corridor, ConnectorCross, Connector3, ConnectorT, Deadend, Frame, FrameCross, Frame3, LargeModule, SolarPanel, Antena};
+        int n = 11;
 
         for (int i = 0; i < n; i++) {
             Button *corridorButton = window->addButton(Rect2d(Vector2d(20, 60) + Vector2d(0, i * 25), Vector2d(200, 80) + Vector2d(0, i * 25)));
