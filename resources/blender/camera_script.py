@@ -39,15 +39,16 @@ def turn_collection_hierarchy_into_path(obj):
     parent_names.reverse()
     return '/'.join(parent_names)
 
-cameras = []
-
 for ob in scene.objects:
-    if ob.type == 'CAMERA' and (len(cameras) == 0 or ob.name in cameras):
+    if ob.type == 'CAMERA' and ((not bpy.context.selected_objects) or ob.select_get()):
         bpy.context.scene.camera = ob # setting camera
         print('Set camera %s' % ob.name)
         for col in ob.users_collection[0].children:
             disable_render_all()
             enable_render(col)
-            file = os.path.join(image_dir, turn_collection_hierarchy_into_path(ob), col.name[:-4])
+            if "." in col.name:
+                file = os.path.join(image_dir, turn_collection_hierarchy_into_path(ob), col.name[:-4])
+            else:
+                file = os.path.join(image_dir, turn_collection_hierarchy_into_path(ob), col.name)
             bpy.context.scene.render.filepath = file
             bpy.ops.render.render( write_still=True)
