@@ -21,7 +21,7 @@ struct CameraParameters {
 namespace CommonValues {
     constexpr double zModuleWalls = 0;
     constexpr double zModuleMainBackgroung = 0.4;
-    constexpr double zModuleFarBackgroung = 2;
+    constexpr double zModuleFarBackgroung = 1.5;
     constexpr double zMachinery = 0.3;
     constexpr double zMachineryFront = 0.1;
     constexpr double zMachineryBack = 0.35;
