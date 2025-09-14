@@ -36,21 +36,21 @@ void init()
     ModuleBuilder::instance()->createModulePrototype(LargeModule);
     ModuleBuilder::instance()->buildModule(true);
 
-    auto controller7 = new Controller(Vector2d(-10.5, 3.5));
-    controller7->addInstruction("delay 50");
-    controller7->addInstruction("delay 100");
-    controller7->addInstruction("send 3 0 180");
-    controller7->addInstruction("send 3 1 270");
-    controller7->addInstruction("delay 400");
-    controller7->addInstruction("send 3 200 0");
-    controller7->addInstruction("delay 10");
-    controller7->addInstruction("send 3 0 190"); // move box 1 to furnace
-    controller7->addInstruction("send 3 1 100");
-    controller7->addInstruction("delay 400");
-    controller7->addInstruction("send 3 100 0");
-    controller7->addInstruction("delay 10");
-    controller7->addInstruction("goto 2");
-    controller7->addToGameWorld();
+    // auto controller7 = new Controller(Vector2d(-10.5, 3.5));
+    // controller7->addInstruction("delay 50");
+    // controller7->addInstruction("delay 100");
+    // controller7->addInstruction("send 3 0 180");
+    // controller7->addInstruction("send 3 1 270");
+    // controller7->addInstruction("delay 400");
+    // controller7->addInstruction("send 3 200 0");
+    // controller7->addInstruction("delay 10");
+    // controller7->addInstruction("send 3 0 190"); // move box 1 to furnace
+    // controller7->addInstruction("send 3 1 100");
+    // controller7->addInstruction("delay 400");
+    // controller7->addInstruction("send 3 100 0");
+    // controller7->addInstruction("delay 10");
+    // controller7->addInstruction("goto 2");
+    // controller7->addToGameWorld();
 
 }
 

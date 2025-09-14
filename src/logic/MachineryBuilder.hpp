@@ -13,7 +13,9 @@ enum MachineryType {
     TypeFurnace, 
     TypeCreator,
     TypeDestroyer,
-    TypeAssembler
+    TypeAssembler,
+    TypeLab,
+    TypeParticleResearch
 };
 
 class MachineryBuilder {
@@ -42,6 +44,12 @@ class MachineryBuilder {
             break;
         case TypeDestroyer:
             prototype = new BoxDestroyer(Vector2d());
+            break;
+        case TypeLab:
+            prototype = new Lab(Vector2d());
+            break;
+        case TypeParticleResearch:
+            prototype = new ParticleResearch(Vector2d());
             break;
         default:
             break;
@@ -130,16 +138,16 @@ public:
         window->addLabel(Vector2d(20, 40), false, "Build machinery:", 0);
 
         Button *armButton = window->addButton(Rect2d(Vector2d(20, 60), Vector2d(200, 80)));
-        window->addLabel(armButton->getRect().center(), true, "Manipulator Tier 1", 0);
+        window->addLabel(armButton->getRect().center(), true, "Manipulator", 0);
         armButton->setOnClickCallback([this](){this->selectType(TypeArm);});
 
         Button *controllerButton = window->addButton(Rect2d(Vector2d(20, 85), Vector2d(200, 105)));
         window->addLabel(controllerButton->getRect().center(), true, "Controller", 0);
         controllerButton->setOnClickCallback([this](){this->selectType(TypeController);});
 
-        Button *furnaceButton = window->addButton(Rect2d(Vector2d(20, 110), Vector2d(200, 130)));
-        window->addLabel(furnaceButton->getRect().center(), true, "Furnace", 0);
-        furnaceButton->setOnClickCallback([this](){this->selectType(TypeFurnace);});
+        Button *labButton = window->addButton(Rect2d(Vector2d(20, 110), Vector2d(200, 130)));
+        window->addLabel(labButton->getRect().center(), true, "Lab", 0);
+        labButton->setOnClickCallback([this](){this->selectType(TypeLab);});
 
         Button *creatorButton = window->addButton(Rect2d(Vector2d(20, 135), Vector2d(200, 155)));
         window->addLabel(creatorButton->getRect().center(), true, "Box Creator", 0);
@@ -149,9 +157,9 @@ public:
         window->addLabel(destroyerButton->getRect().center(), true, "Box Destroyer", 0);
         destroyerButton->setOnClickCallback([this](){this->selectType(TypeDestroyer);});
 
-        Button *assemblerButton = window->addButton(Rect2d(Vector2d(20, 190), Vector2d(200, 210)));
-        window->addLabel(assemblerButton->getRect().center(), true, "Assembler Tier 1", 0);
-        assemblerButton->setOnClickCallback([this](){this->selectType(TypeAssembler);});
+        Button *particleButton = window->addButton(Rect2d(Vector2d(20, 190), Vector2d(200, 210)));
+        window->addLabel(particleButton->getRect().center(), true, "Particle Detector", 0);
+        particleButton->setOnClickCallback([this](){this->selectType(TypeParticleResearch);});
     }
 };
 

@@ -140,7 +140,7 @@ public:
     }
 
      void draw() {
-        drawDebug();
+        // drawDebug();
     }
 
     void rotateJointToTarget(int i) { // TODO stop after reacing target rotation

@@ -42,7 +42,7 @@ public:
 
     void draw() override {
         // GraphicsEngine::instance()->drawRectangle(rect, 0, al_map_rgb(100, 255, 100));
-        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->controllerSprite, 20, 0.2);
+        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Controller/main.png"), 20, 0.2);
     }
 
     void addInstruction(std::string instr) {

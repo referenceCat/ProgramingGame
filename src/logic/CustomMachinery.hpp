@@ -1,6 +1,8 @@
 #ifndef __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_CUSTOMMACHINERY_HPP_
 #define __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_CUSTOMMACHINERY_HPP_
 
+#include <cstdlib> 
+
 class Furnace: public Machinery {
     ProductionArea heatingArea;
 public:
@@ -195,6 +197,52 @@ public:
         GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerPressSprite, 10, CommonValues::zMachinery, Vector2d(165, 165 - pressShiftByProcessTime() + 4));
         GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerPlateSprite, 10, CommonValues::zMachinery, Vector2d(165, 165));
         GraphicsEngine::instance()->drawLine(Vector2d(rect.p1.x, rect.p2.y + 1), Vector2d(rect.p1.x + processTime / 10, rect.p2.y + 1), CommonValues::zMachinery, al_map_rgb(100, 100, 100), 2);
+    }
+};
+
+class Lab: public Machinery {
+    long tickCounter = 0;
+    bool lamps[16][32] = {0};
+
+public:
+    Lab(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(17, 17))) {
+    }
+
+    void updateLamps() {
+        for (int i = 0; i < 16; i++) for (int j = 0; j < 32; j++) {
+            lamps[i][j] = (rand() % 3) == 0;
+        }
+    }
+
+    void run() override {
+        tickCounter++;
+        if (tickCounter % 30 == 0) updateLamps(); // update lamps every 0.5 seconds
+    }
+
+    void draw() override {
+        // Machinery::draw();
+        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Lab/background.png"), 20, CommonValues::zMachineryBack);
+        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Lab/main.png"), 20, CommonValues::zMachinery);
+        
+        for (int i = 0; i < 16; i++) for (int j = 0; j < 32; j++) {
+            if (lamps[i][j] && !(Rect2d(Vector2d(24, 9), Vector2d(31, 15)).isInside(Vector2d(j, i)))) GraphicsEngine::instance()->drawCircle(Vector2d(j *  0.5, i * 0.5) + rect.p1 + Vector2d(0.75, 4.75), 0.1, CommonValues::zMachinery, al_map_rgba(255, 255, 100, 100));
+        }
+    }
+};
+
+class ParticleResearch: public Machinery {
+    ProductionArea destroyingArea;
+    int cooldown = 200;
+
+public:
+    ParticleResearch(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(10, 10))) {
+    }
+
+    void run() override {
+    }
+
+    void draw() override {
+        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/ParticleResearch/main.png"), 20, CommonValues::zMachinery);
     }
 };
 
