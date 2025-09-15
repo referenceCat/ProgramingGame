@@ -44,10 +44,9 @@ protected:
 
 public:
     virtual void drawInfo() {
-        for (auto node : nodes)
-        {
-            GraphicsEngine::instance()->drawPoint(node.position.rotate(rotation) + position, CommonValues::zDebug, al_map_rgb(0, 0, 255));
-            GraphicsEngine::instance()->drawLine(node.position.rotate(rotation) + position, node.position.rotate(rotation) + position + Vector2d(rotation + node.rotation, 5), CommonValues::zDebug, al_map_rgb(0, 0, 255));
+        for (auto node : nodes) {
+            if (node.attachedNode == nullptr)
+                GraphicsEngine::instance()->drawCircle(node.position.rotate(rotation) + position, 0.5, CommonValues::zDebug, al_map_rgba(255, 255, 0, 100), 3);
         }
     }
 
@@ -63,6 +62,11 @@ public:
 
         for (auto area: buildableAreas) {
             GraphicsEngine::instance()->drawPolygon(area->transformedVerticies, -0.001, al_map_rgba(0, 100, 100, 30));
+        }
+
+        for (auto node : nodes) {
+            GraphicsEngine::instance()->drawPoint(node.position.rotate(rotation) + position, CommonValues::zDebug, al_map_rgb(0, 0, 255));
+            GraphicsEngine::instance()->drawLine(node.position.rotate(rotation) + position, node.position.rotate(rotation) + position + Vector2d(rotation + node.rotation, 5), CommonValues::zDebug, al_map_rgb(0, 0, 255));
         }
     }
 

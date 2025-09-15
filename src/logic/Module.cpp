@@ -22,9 +22,9 @@ bool ModuleBuilder::buildModule(bool initial) {
             if (module->checkBlockingAreaCollision(modulePrototype)) {
                 return false;
             }
-            parentModuleNode->attachedNode = newModuleNode;
-            newModuleNode->attachedNode = parentModuleNode;
         }
+        parentModuleNode->attachedNode = newModuleNode;
+        newModuleNode->attachedNode = parentModuleNode;
     }
     
 

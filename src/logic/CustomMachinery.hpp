@@ -39,7 +39,6 @@ public:
             GraphicsEngine::instance()->drawBitmap(arm->getJointPosition(0),  GraphicsEngine::instance()->segment0Sprite, 20, 0.05, Vector2d(20, 40), arm->getJointRotation(0));
             GraphicsEngine::instance()->drawBitmap(arm->getJointPosition(1),  GraphicsEngine::instance()->segment1Sprite, 20, 0.1, Vector2d(20, 40), arm->getJointRotation(0) + arm->getJointRotation(1));
         }
-
     }
 
     void onCommandRecive(int cmd, int arg) override {
@@ -105,7 +104,6 @@ public:
     }
 
     void draw() override {
-        // Machinery::draw();
         GraphicsEngine::instance()->drawLine(Vector2d(rect.p1.x, rect.p2.y + 1), Vector2d(rect.p1.x + (period - cooldown) / 40, rect.p2.y + 1), 0, al_map_rgb(100, 100, 100), 2);
         GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->boxCreatorDestroyerBaseSprite, 10, CommonValues::zMachinery);
     }
@@ -191,7 +189,6 @@ public:
     }
 
     void draw() override {
-        // Machinery::draw();
         GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerBaseSprite, 10, CommonValues::zMachineryFront, Vector2d(165, 165));
         GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerCyllindersSprite, 10, CommonValues::zMachineryBack, Vector2d(165, 165));
         GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerPressSprite, 10, CommonValues::zMachinery, Vector2d(165, 165 - pressShiftByProcessTime() + 4));
@@ -220,7 +217,6 @@ public:
     }
 
     void draw() override {
-        // Machinery::draw();
         GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Lab/background.png"), 20, CommonValues::zMachineryBack);
         GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Lab/main.png"), 20, CommonValues::zMachinery);
         

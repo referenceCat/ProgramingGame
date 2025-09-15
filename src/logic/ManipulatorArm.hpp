@@ -113,29 +113,33 @@ public:
         }
     }
 
+    void drawInfo() {
+
+    }
+
     void drawDebug() {
         // draw target state
         for (int i = 0; i < jointsNumber; i++) {
-            GraphicsEngine::instance()->drawPoint(jointsTargetPosition[i], 0, al_map_rgb(0, 100, 100));
+            GraphicsEngine::instance()->drawPoint(jointsTargetPosition[i], CommonValues::zDebug, al_map_rgb(0, 100, 100));
         }
 
         for (int i = 1; i < jointsNumber; i++) {
-           GraphicsEngine::instance()->drawLine(jointsTargetPosition[i - 1], jointsTargetPosition[i], 0, al_map_rgb(0, 100, 100), 1);
+           GraphicsEngine::instance()->drawLine(jointsTargetPosition[i - 1], jointsTargetPosition[i], CommonValues::zDebug, al_map_rgb(0, 100, 100), 2);
         }
 
         // draw current state
         for (int i = 0; i < jointsNumber; i++) {
             // TODO al_draw_text(GameObject::debugFont, al_map_rgb(255, 255, 255), jointsPosition[i].x + 5, jointsPosition[i].y + 5, 0, std::to_string(i).c_str());
-            GraphicsEngine::instance()->drawPoint(jointsPosition[i], 0, al_map_rgb(255, 255, 255));
+            GraphicsEngine::instance()->drawPoint(jointsPosition[i], CommonValues::zDebug, al_map_rgb(255, 255, 255));
         }
 
         for (int i = 1; i < jointsNumber; i++) {
-            GraphicsEngine::instance()->drawLine(jointsPosition[i - 1], jointsPosition[i], 0, al_map_rgb(255, 255, 255), 1);
+            GraphicsEngine::instance()->drawLine(jointsPosition[i - 1], jointsPosition[i], CommonValues::zDebug, al_map_rgb(255, 255, 255), 2);
         }
 
         // draw active arm
         if (active) {
-            GraphicsEngine::instance()->drawPoint(jointsPosition[jointsNumber - 1], 0, al_map_rgb(0, 255, 0), 4);
+            GraphicsEngine::instance()->drawPoint(jointsPosition[jointsNumber - 1], CommonValues::zDebug, al_map_rgb(0, 255, 0), 4);
         }
     }
 

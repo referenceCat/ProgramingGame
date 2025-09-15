@@ -80,6 +80,8 @@ Box* GameWorld::getBox(Vector2d aPos) {
 void GameWorld::drawAll(bool info=false, bool debug=true) {
     for (auto item: arms) {
         item->draw();
+        if (info) item->drawInfo();
+        if (debug) item->drawDebug();
     }
 
     for (auto item: boxes) {
@@ -88,6 +90,8 @@ void GameWorld::drawAll(bool info=false, bool debug=true) {
 
     for (auto item: machines) {
         item->draw();
+        if (info) item->drawInfo();
+        if (debug) item->drawDebug();
     }
 
     for (auto item: modules) {
