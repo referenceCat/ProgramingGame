@@ -44,7 +44,7 @@ public:
     Module *getModule(int id);
     std::vector<Module*> getModules();
 
-    void drawAll();
+    void drawAll(bool, bool);
     void run();
     void click(Vector2d point) {
         for (auto machinery: machines) {

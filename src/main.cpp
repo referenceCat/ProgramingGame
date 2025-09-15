@@ -19,7 +19,7 @@
 
 long long tick = 0;
 long long eventCounter = 0;
-
+bool drawDebug = false, drawInfo = false;
 void init()
 {
     GuiEngine::instance()->init();
@@ -57,7 +57,7 @@ void init()
 void redraw()
 {
     // auto start = std::chrono::system_clock::now();
-    GameWorld::instance()->drawAll();
+    GameWorld::instance()->drawAll(drawInfo, drawDebug);
     MachineryBuilder::instance()->drawGhost();
     // GraphicsEngine::instance()->drawDebugBackgroung2();
     al_set_target_bitmap(al_get_backbuffer(al_get_current_display()));
@@ -141,6 +141,12 @@ void onKeyDown(int keycode)
         break;
     case ALLEGRO_KEY_ESCAPE:
         MachineryBuilder::instance()->clearItem();
+        break;
+    case ALLEGRO_KEY_F1:
+        drawDebug = !drawDebug;
+        break;
+     case ALLEGRO_KEY_ALT:
+        drawInfo = !drawInfo;
         break;
     default:
         break;

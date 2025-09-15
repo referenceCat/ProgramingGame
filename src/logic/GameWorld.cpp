@@ -77,7 +77,7 @@ Box* GameWorld::getBox(Vector2d aPos) {
     return nullptr;
 }
 
-void GameWorld::drawAll() {
+void GameWorld::drawAll(bool info=false, bool debug=true) {
     for (auto item: arms) {
         item->draw();
     }
@@ -92,6 +92,8 @@ void GameWorld::drawAll() {
 
     for (auto item: modules) {
         item->draw();
+        if (info) item->drawInfo();
+        if (debug) item->drawDebug();
     }
 }
 

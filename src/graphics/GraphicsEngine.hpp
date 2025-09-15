@@ -292,7 +292,8 @@ public:
         for (int i = layers.size() - 1; i >= 0; i--) {
             al_draw_bitmap(layers.at(i).bitmap, 0, 0, 0); 
         }
-        al_draw_bitmap(debugLayer.bitmap, 0, 0, 0); 
+        if (debugLayer.bitmap != nullptr)
+            al_draw_bitmap(debugLayer.bitmap, 0, 0, 0); 
     }
 
     void clearBitmaps() {

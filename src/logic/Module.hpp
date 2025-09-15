@@ -43,15 +43,16 @@ protected:
     std::vector<PolygonalArea*> blockingAreas;
 
 public:
-    virtual void draw()
-    {
-        GraphicsEngine::instance()->drawPoint(position, 0, al_map_rgb(255, 255, 255));
+    virtual void drawInfo() {
         for (auto node : nodes)
         {
             GraphicsEngine::instance()->drawPoint(node.position.rotate(rotation) + position, CommonValues::zDebug, al_map_rgb(0, 0, 255));
             GraphicsEngine::instance()->drawLine(node.position.rotate(rotation) + position, node.position.rotate(rotation) + position + Vector2d(rotation + node.rotation, 5), CommonValues::zDebug, al_map_rgb(0, 0, 255));
         }
+    }
 
+    virtual void drawDebug() {
+        GraphicsEngine::instance()->drawPoint(position, 0, al_map_rgb(255, 255, 255));
         for (auto wall: walls) {
             GraphicsEngine::instance()->drawPolygon(wall->transformedVerticies, -0.001, al_map_rgb(255, 0, 0));
         }
@@ -63,7 +64,9 @@ public:
         for (auto area: buildableAreas) {
             GraphicsEngine::instance()->drawPolygon(area->transformedVerticies, -0.001, al_map_rgba(0, 100, 100, 30));
         }
-    };
+    }
+
+    virtual void draw() {};
 
     void setTransforms(Vector2d aPos, Rotation aRot)
     {
