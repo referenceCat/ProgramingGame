@@ -53,9 +53,11 @@ class GraphicsEngine {
         if (isnan(z)) { // check if debug layer should be used (cant use == for NANs)
             if (debugLayer.bitmap == nullptr) {
                 debugLayer.bitmap = al_create_bitmap(al_get_display_width(al_get_current_display()), al_get_display_height(al_get_current_display()));
+                al_set_target_bitmap(debugLayer.bitmap);
                 al_clear_to_color(al_map_rgba(0, 0, 0, 0));
+            } else {
+                al_set_target_bitmap(debugLayer.bitmap);
             }
-            al_set_target_bitmap(debugLayer.bitmap);
             return;
         }
 
