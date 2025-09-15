@@ -17,7 +17,8 @@ bool ModuleBuilder::buildModule(bool initial) {
         ModuleNode* newModuleNode = modulePrototype->getNode(newModuleNodeNumber);
         modulePrototype->setTransforms(parentModuleNode, newModuleNode);
         for (auto module: GameWorld::instance()->getModules()) {
-            if (module == parentModuleNode->parentModule) continue; // ignore collision with parent module
+            // TODO not sure do i need this
+            // if (module == parentModuleNode->parentModule) continue; // ignore collision with parent module
             if (module->checkBlockingAreaCollision(modulePrototype)) {
                 return false;
             }
@@ -130,7 +131,7 @@ bool ModuleBuilder::createModulePrototype(ModuleType type) {
         moduleSetup->addNode(Vector2d(Rotation(M_PI / 2), 16), Rotation(M_PI / 2));
         moduleSetup->addNode(Vector2d(Rotation(M_PI / 2 * 3), 16), Rotation(M_PI / 2 * 3));
         moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/FrameStraight/background.png"), Vector2d(320, 320), CommonValues::zModuleMainBackgroung);
-        moduleSetup->addBlockingArea(Rect2d::fromTwoCorners(Vector2d(-6, -16), Vector2d(6, 16)));
+        moduleSetup->addBlockingArea(Rect2d::fromTwoCorners(Vector2d(-6, -10), Vector2d(6, 10)));
         moduleSetup->addBuildableArea(Rect2d::fromTwoCorners(Vector2d(-7, -16), Vector2d(7, 16)));
         modulePrototype = moduleSetup;
         break;

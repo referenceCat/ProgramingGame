@@ -48,8 +48,8 @@ public:
         GraphicsEngine::instance()->drawPoint(position, 0, al_map_rgb(255, 255, 255));
         for (auto node : nodes)
         {
-            GraphicsEngine::instance()->drawPoint(node.position.rotate(rotation) + position, 0, al_map_rgb(0, 0, 255));
-            GraphicsEngine::instance()->drawLine(node.position.rotate(rotation) + position, node.position.rotate(rotation) + position + Vector2d(rotation + node.rotation, 5), 0, al_map_rgb(0, 0, 255));
+            GraphicsEngine::instance()->drawPoint(node.position.rotate(rotation) + position, CommonValues::zDebug, al_map_rgb(0, 0, 255));
+            GraphicsEngine::instance()->drawLine(node.position.rotate(rotation) + position, node.position.rotate(rotation) + position + Vector2d(rotation + node.rotation, 5), CommonValues::zDebug, al_map_rgb(0, 0, 255));
         }
 
         for (auto wall: walls) {
@@ -294,7 +294,7 @@ public:
     }
 
     void draw() {
-        // Module::draw();
+        Module::draw();
         for (auto sprite: sprites) {
             GraphicsEngine::instance()->drawBitmap(position, sprite.bitmap, 20, sprite.z, sprite.pivot, rotation);
         }

@@ -9,6 +9,7 @@
 #include <iostream>
 #include <filesystem>
 #include <map>
+#include <cmath>
 
 
 struct CameraParameters {
@@ -19,6 +20,7 @@ struct CameraParameters {
 };
 
 namespace CommonValues {
+    constexpr double zDebug = NAN;
     constexpr double zModuleWalls = 0;
     constexpr double zModuleMainBackgroung = 0.4;
     constexpr double zModuleFarBackgroung = 1.5;
@@ -45,13 +47,23 @@ class GraphicsEngine {
     };
 
     std::vector<Layer> layers{};
+    Layer debugLayer{0, nullptr};
 
     void setLayerAsTargetBitmap(double z) {
+        if (isnan(z)) { // check if debug layer should be used (cant use == for NANs)
+            if (debugLayer.bitmap == nullptr) {
+                debugLayer.bitmap = al_create_bitmap(al_get_display_width(al_get_current_display()), al_get_display_height(al_get_current_display()));
+                al_clear_to_color(al_map_rgba(0, 0, 0, 0));
+            }
+            al_set_target_bitmap(debugLayer.bitmap);
+            return;
+        }
+
         for (int i = 0; i < layers.size(); i++) {
-            if (layers.at(i).z == z) {
+            if (layers.at(i).z == z) { // layer is already exists
                 al_set_target_bitmap(layers.at(i).bitmap);
                 return;
-            } else if (layers.at(i).z >= z) {
+            } else if (layers.at(i).z >= z) { // layer doesnt exist and must be inserted before other layer
                 layers.insert(layers.begin() + i, Layer{z, nullptr});
                 layers.at(i).bitmap = al_create_bitmap(al_get_display_width(al_get_current_display()), al_get_display_height(al_get_current_display()));
                 al_set_target_bitmap(layers.at(i).bitmap);
@@ -60,7 +72,7 @@ class GraphicsEngine {
             }
         }
 
-        layers.push_back(Layer{z, nullptr});
+        layers.push_back(Layer{z, nullptr}); // layer doesnt exist and must be inserted last
         layers.back().bitmap = al_create_bitmap(al_get_display_width(al_get_current_display()), al_get_display_height(al_get_current_display()));
         al_set_target_bitmap(layers.back().bitmap);
         al_clear_to_color(al_map_rgba(0, 0, 0, 0));
@@ -95,27 +107,7 @@ public:
     ALLEGRO_BITMAP* assemblerPressSprite = nullptr;
     ALLEGRO_BITMAP* assemblerPlateSprite = nullptr;
     ALLEGRO_BITMAP* backhroundTile100x100 = nullptr;
-    ALLEGRO_BITMAP* controllerSprite = nullptr;
     ALLEGRO_BITMAP* boxCreatorDestroyerBaseSprite = nullptr;
-
-    ALLEGRO_BITMAP* worldLayer0 = nullptr;
-    ALLEGRO_BITMAP* worldLayer1 = nullptr;
-    ALLEGRO_BITMAP* worldLayer2 = nullptr;
-
-    ALLEGRO_BITMAP* xModuleLayer0 = nullptr;
-    ALLEGRO_BITMAP* xModuleLayer1 = nullptr;
-
-    ALLEGRO_BITMAP* corridorModuleLayer0 = nullptr;
-    ALLEGRO_BITMAP* corridorModuleLayer1 = nullptr;
-
-    ALLEGRO_BITMAP* beamLayer0 = nullptr;
-    ALLEGRO_BITMAP* beamLayer1 = nullptr;
-
-    ALLEGRO_BITMAP* junction3Layer0 = nullptr;
-    ALLEGRO_BITMAP* junction3Layer1 = nullptr;
-
-    ALLEGRO_BITMAP* endLayer0 = nullptr;
-    ALLEGRO_BITMAP* endLayer1 = nullptr;
     
     // TODO memory leak then reloading bitmaps
     void loadImagesLegacyTesting() {
@@ -140,28 +132,7 @@ public:
         assemblerPressSprite = al_load_bitmap("resources/assets/assembler3.png");
         assemblerPlateSprite = al_load_bitmap("resources/assets/assembler2.png");
 
-        controllerSprite = al_load_bitmap("resources/assets/controller.png");
-
         boxCreatorDestroyerBaseSprite = al_load_bitmap("resources/assets/box_creator_destroyer_base.png");
-
-        worldLayer0 = al_load_bitmap("resources/assets/background0.png");
-        worldLayer1 = al_load_bitmap("resources/assets/background1_no_shadow.png");
-        worldLayer2 = al_load_bitmap("resources/assets/background2.png");
-
-        xModuleLayer0 = al_load_bitmap("resources/assets/oldModules/xcorridor_background.png");
-        xModuleLayer1 = al_load_bitmap("resources/assets/oldModules/xcorridor_walls.png");
-
-        corridorModuleLayer0 = al_load_bitmap("resources/assets/oldModules/corridor_background.png");
-        corridorModuleLayer1 = al_load_bitmap("resources/assets/oldModules/corridor_walls.png");
-
-        beamLayer0 = al_load_bitmap("resources/assets/oldModules/beam1.png");
-        beamLayer1 = al_load_bitmap("resources/assets/oldModules/beam3.png");
-
-        junction3Layer0 = al_load_bitmap("resources/assets/oldModules/junction3_background.png");
-        junction3Layer1 = al_load_bitmap("resources/assets/oldModules/junction3_walls.png");
-
-        endLayer0 = al_load_bitmap("resources/assets/oldModules/end_background.png");
-        endLayer1 = al_load_bitmap("resources/assets/oldModules/end_walls.png");
     }
 
     void loadBitmaps() { 
@@ -254,12 +225,16 @@ public:
 
     void drawPoint(Vector2d aPoint, double z, ALLEGRO_COLOR color, double r = 3) {
         setLayerAsTargetBitmap(z);
+        if (isnan(z)) z = 0;
+
         aPoint = transformPoint(aPoint, z);
         al_draw_filled_circle(aPoint.x, aPoint.y, r, color);
     }
 
     void drawRectangle(Rect2d aRect, double z, ALLEGRO_COLOR color, int thickness = 0) {
         setLayerAsTargetBitmap(z);
+        if (isnan(z)) z = 0;
+
         aRect.p1 = transformPoint(aRect.p1, z);
         aRect.p2 = transformPoint(aRect.p2, z);
         if (thickness <= 0) al_draw_filled_rectangle(aRect.p1.x, aRect.p1.y, aRect.p2.x, aRect.p2.y, color);
@@ -268,6 +243,8 @@ public:
 
     void drawLine(Vector2d aPoint0, Vector2d aPoint1, double z, ALLEGRO_COLOR color, int thickness = 0) {
         setLayerAsTargetBitmap(z);
+        if (isnan(z)) z = 0;
+
         aPoint0 = transformPoint(aPoint0, z);
         aPoint1 = transformPoint(aPoint1, z);
         al_draw_line(aPoint0.x, aPoint0.y, aPoint1.x, aPoint1.y, color, thickness);
@@ -275,6 +252,8 @@ public:
 
     void drawCircle(Vector2d aPoint, double r, double z, ALLEGRO_COLOR color, int thickness = 0) {
         setLayerAsTargetBitmap(z);
+        if (isnan(z)) z = 0;
+
         aPoint = transformPoint(aPoint, z);
         r = transformScalar(r, z);
         if (thickness <= 0) al_draw_filled_circle(aPoint.x, aPoint.y, r, color);
@@ -283,6 +262,7 @@ public:
 
     void drawPolygon(std::vector<Vector2d> vertices, double z, ALLEGRO_COLOR color) {
         setLayerAsTargetBitmap(z);
+        if (isnan(z)) z = 0;
 
         float dots [vertices.size() * 2];
         for (int i = 0; i < vertices.size(); i++) {
@@ -295,6 +275,8 @@ public:
 
     void drawBitmap(Vector2d aPoint, ALLEGRO_BITMAP* bitmap, double pixelsPerUnit, double z, Vector2d bitmapPivot = Vector2d(), Rotation bitmapRotation = Rotation()) {
         setLayerAsTargetBitmap(z);
+        if (isnan(z)) z = 0;
+
         aPoint = transformPoint(aPoint, z);
         double sizeMultiplayer = transformScalar(1, z) / pixelsPerUnit;
         al_draw_scaled_rotated_bitmap(bitmap, bitmapPivot.x, bitmapPivot.y, aPoint.x, aPoint.y, sizeMultiplayer, sizeMultiplayer, bitmapRotation.radians, 0);
@@ -310,6 +292,7 @@ public:
         for (int i = layers.size() - 1; i >= 0; i--) {
             al_draw_bitmap(layers.at(i).bitmap, 0, 0, 0); 
         }
+        al_draw_bitmap(debugLayer.bitmap, 0, 0, 0); 
     }
 
     void clearBitmaps() {
@@ -317,6 +300,8 @@ public:
             al_destroy_bitmap(layers.at(i).bitmap);
         }
         layers.clear();
+        al_destroy_bitmap(debugLayer.bitmap);
+        debugLayer.bitmap = nullptr;
     }
 };
 
