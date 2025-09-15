@@ -1,4 +1,5 @@
 #include "GameWorld.hpp"
+#include "../graphics/GraphicsEngine.hpp"
 
 void GameWorld::addManipulatorArm(ManipulatorArm *arm)
 {
@@ -98,6 +99,13 @@ Box *GameWorld::getBox(Vector2d aPos)
     return nullptr;
 }
 
+void GameWorld::drawSurface() {
+    GraphicsEngine::instance()->drawRectangle(Rect2d(Vector2d(-500, surfaceY + 3), Vector2d(500, surfaceY + 100)), CommonValues::zSurface, al_map_rgb(15, 15, 15));
+    for (int i = -30; i < 30; i++) {
+        GraphicsEngine::instance()->drawBitmap(Vector2d(i * 10, surfaceY), GraphicsEngine::instance()->getBitmap("resources/assets/environment/surface/tile0.png"), 20, CommonValues::zSurface);
+    }
+}
+
 void GameWorld::drawAll(bool info = false, bool debug = true)
 {
     for (auto item : arms)
@@ -131,6 +139,7 @@ void GameWorld::drawAll(bool info = false, bool debug = true)
         if (debug)
             item->drawDebug();
     }
+    drawSurface();
 }
 
 void GameWorld::run()

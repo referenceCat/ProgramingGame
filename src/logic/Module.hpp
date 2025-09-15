@@ -94,7 +94,8 @@ enum ModuleType // TODO maybe not
     Frame3,
     LargeModule,
     SolarPanel,
-    Antena
+    Antena,
+    FrameFoundation
 };
 
 class ModuleBuilder

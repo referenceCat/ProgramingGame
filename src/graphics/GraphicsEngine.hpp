@@ -23,6 +23,7 @@ namespace CommonValues {
     constexpr double zDebug = NAN;
     constexpr double zModuleWalls = 0;
     constexpr double zModuleMainBackgroung = 0.4;
+    constexpr double zSurface = 0.5;
     constexpr double zModuleFarBackgroung = 1.5;
     constexpr double zMachinery = 0.3;
     constexpr double zMachineryFront = 0.1;

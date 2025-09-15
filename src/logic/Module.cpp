@@ -16,7 +16,7 @@ bool ModuleBuilder::buildModule(bool initial)
 
     if (initial)
     {
-        modulePrototype->setTransforms(Vector2d(0, 0), Rotation(0));
+        modulePrototype->setTransforms(Vector2d(0, -20), Rotation::fromDegrees(90)); // TODO
     }
     else
     {
@@ -141,6 +141,16 @@ bool ModuleBuilder::createModulePrototype(ModuleType type)
         moduleSetup->addNode(Vector2d(Rotation(M_PI / 2 * 3), 16), Rotation(M_PI / 2 * 3));
         moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/FrameStraight/background.png"), Vector2d(320, 320), CommonValues::zModuleMainBackgroung);
         moduleSetup->addBlockingArea(Rect2d::fromTwoCorners(Vector2d(-6, -10), Vector2d(6, 10)));
+        moduleSetup->addBuildableArea(Rect2d::fromTwoCorners(Vector2d(-7, -16), Vector2d(7, 16)));
+        modulePrototype = moduleSetup;
+        break;
+    }
+    case ModuleType::FrameFoundation:
+    {
+        BasicModulePrototype *moduleSetup = new BasicModulePrototype(2);
+        moduleSetup->addNode(Vector2d(Rotation(M_PI / 2), 16), Rotation(M_PI / 2));
+        moduleSetup->addNode(Vector2d(Rotation(M_PI / 2 * 3), 16), Rotation(M_PI / 2 * 3));
+        moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/FrameStraight/background.png"), Vector2d(320, 320), CommonValues::zModuleFarBackgroung);
         moduleSetup->addBuildableArea(Rect2d::fromTwoCorners(Vector2d(-7, -16), Vector2d(7, 16)));
         modulePrototype = moduleSetup;
         break;

@@ -22,6 +22,7 @@ class GameWorld {
     std::vector<Module*> modules{};
 
 public:
+    constexpr static double surfaceY = 0;
     static GameWorld* instance() {
         static GameWorld instance;
         return &instance;
@@ -43,11 +44,10 @@ public:
     Module *getModule(int id);
     std::vector<Module*> getModules();
 
+    void drawSurface();
     void drawAll(bool, bool);
     void run();
     void click(Vector2d point);
-
-    double getSurfaceHeight() {return 0;}
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_GAMEWORLD_HPP_
