@@ -9,11 +9,9 @@
 #include <string>
 #include <vector>
 #include "../common/common.hpp"
-#include "ManipulatorArm.hpp"
-#include "Box.hpp"
-#include "GameObject.hpp"
 #include "../ui/GuiEngine.hpp"
 #include "Machinery.hpp"
+#include "../graphics/GraphicsEngine.hpp"
 
 class Controller : public Machinery {
     struct InstructionLine {
@@ -39,135 +37,23 @@ class Controller : public Machinery {
 
 public:
     Controller(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(5, 7))) {}
-
-    void draw() override {
-        // GraphicsEngine::instance()->drawRectangle(rect, 0, al_map_rgb(100, 255, 100));
-        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Controller/main.png"), 20, 0.2);
-    }
-
-    void addInstruction(std::string instr) {
-        instructions.push_back(instr);
-        breakpoints.push_back(false);
-    }
-
-    std::vector<std::string> split(const std::string& s, const std::string& delimiter) {
-        std::string strCopy = s;
-        std::vector<std::string> tokens;
-        size_t pos = 0;
-        std::string token;
-        while ((pos = strCopy.find(delimiter)) != std::string::npos) {
-            token = strCopy.substr(0, pos);
-            tokens.push_back(token);
-            strCopy.erase(0, pos + delimiter.length());
-        }
-        tokens.push_back(strCopy);
-
-        return tokens;
-    }
-
+    void draw() override;
+    void addInstruction(std::string instr);
+    std::vector<std::string> split(const std::string &s,
+                                   const std::string &delimiter);
     void createWindow();
-
     void updateWindow();
-
-    // returns error code
-    int execNextInstr();
-
-    void drawInstructions() {
-        for (int i = 0; i < instructions.size(); i++) {
-            al_draw_text(GuiEngine::debugFont, al_map_rgb(255, 255, 255), 30, 40 + i * 10, 0, instructions.at(i).c_str());
-        }
-        al_draw_line(10,  43 + rInstr * 10 + 5, 20, 40 + rInstr * 10 + 5, al_map_rgb(255, 255, 255), 1);
-        al_draw_line(10,  37 + rInstr * 10 + 5, 20, 40 + rInstr * 10 + 5, al_map_rgb(255, 255, 255), 1);
-    }
-
-    void drawRegisters() {
-        // TODO
-        // al_draw_text(GameObject::debugFont, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 10, 0, std::to_string(rInstr).c_str());
-        // al_draw_text(GameObject::debugFont, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 20, 0, std::to_string(r1).c_str());
-        // al_draw_text(GameObject::debugFont, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 30, 0, std::to_string(r2).c_str());
-        // al_draw_text(GameObject::debugFont, al_map_rgb(255, 255, 255), rect.p1.x, rect.p2.y + 40, 0, std::to_string(rDelay).c_str());
-    }
-
-    void run() override {
-        if (paused) {
-            return;
-        }
-
-        if (failure) {
-            return;
-        }
-
-        failure = execNextInstr();
-        updateWindow();
-    }
-
-    void pause() {
-        paused = true;
-        updateWindow();
-    }
-
-    void unpause() {
-        if (failure) {
-            return;
-        }
-
-        failure = execNextInstr();
-        paused = false;
-        updateWindow();
-    }
-
-    void pauseUnpause() {
-        if (paused) {
-            unpause();
-        } else {
-            pause();
-        }
-    }
-
-    void up() {
-        if (!paused) {
-            return;
-        }
-        failure = 0;
-        rDelay = 0;
-        if (rInstr > 0) {
-            rInstr--;
-        }
-        updateWindow();
-    }
-
-    void down() {
-        if (!paused) {
-            return;
-        }
-        failure = 0;
-        rDelay = 0;
-        if (rInstr < instructions.size() - 1) {
-            rInstr++;
-        }
-        updateWindow();
-    }
-
-    void next() {
-        if (failure) {
-            return;
-        }
-
-        if (!paused) {
-            return;
-        }
-
-        failure = execNextInstr();
-        updateWindow();
-    }
-
+    int execNextInstr(); // returns error code
+    void drawInstructions();
+    void run() override;
+    void pause();
+    void unpause();
+    void pauseUnpause();
+    void up();
+    void down();
+    void next();
     void toggle(int line);
-
-    void onClick() override {
-        if (window == nullptr) {
-            createWindow();
-        }
-    }
+    void onClick() override;
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_CONTROLLER_HPP_

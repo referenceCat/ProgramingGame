@@ -3,9 +3,6 @@
 
 class GameWorld;
 
-#include "../graphics/GraphicsEngine.hpp"
-#include "allegro5/allegro_font.h"
-
 class GameObject {
 private:
     inline static int lastId = 0;

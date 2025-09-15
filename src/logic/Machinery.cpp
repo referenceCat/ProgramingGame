@@ -1,5 +1,6 @@
 #include "Machinery.hpp"
 #include "GameWorld.hpp"
+#include "../graphics/GraphicsEngine.hpp"
 
 void Machinery::destroyBox(Box *box) {
     GameWorld::instance()->removeBox(box->getId());
@@ -45,4 +46,20 @@ std::vector<Box *> Machinery::getBoxesTouching(ProductionArea area) {
 void Machinery::addToGameWorld()
 {
     GameWorld::instance()->addMachinery(this);
+}
+void Machinery::drawDebug() {
+    GraphicsEngine::instance()->drawRectangle(rect, CommonValues::zDebug,
+                                            al_map_rgb(100, 255, 100), 1);
+
+  for (auto item : areas) {
+    Rect2d areaRect;
+    areaRect.p1 = item->rect.p1 + rect.p1;
+    areaRect.p2 = item->rect.p2 + rect.p1;
+    GraphicsEngine::instance()->drawRectangle(areaRect, CommonValues::zDebug,
+                                              al_map_rgb(100, 100, 255), 1);
+  }
+}
+Rect2d Machinery::getRect() { return rect; }
+void Machinery::setCenter(Vector2d pos) {
+  rect = Rect2d::fromCenterAndDimensions(pos, rect.dimensions());
 }

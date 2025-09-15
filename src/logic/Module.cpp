@@ -1,5 +1,6 @@
 #include "Module.hpp"
 #include "GameWorld.hpp"
+#include "../graphics/GraphicsEngine.hpp"
 
 Module::Module() {}
 
@@ -8,25 +9,31 @@ void Module::addToGameWorld()
     GameWorld::instance()->addModule(this);
 }
 
-bool ModuleBuilder::buildModule(bool initial) {
-    if (modulePrototype == nullptr) return false;
+bool ModuleBuilder::buildModule(bool initial)
+{
+    if (modulePrototype == nullptr)
+        return false;
 
-    if (initial) {
+    if (initial)
+    {
         modulePrototype->setTransforms(Vector2d(0, 0), Rotation(0));
-    } else {
-        ModuleNode* newModuleNode = modulePrototype->getNode(newModuleNodeNumber);
+    }
+    else
+    {
+        ModuleNode *newModuleNode = modulePrototype->getNode(newModuleNodeNumber);
         modulePrototype->setTransforms(parentModuleNode, newModuleNode);
-        for (auto module: GameWorld::instance()->getModules()) {
+        for (auto module : GameWorld::instance()->getModules())
+        {
             // TODO not sure do i need this
             // if (module == parentModuleNode->parentModule) continue; // ignore collision with parent module
-            if (module->checkBlockingAreaCollision(modulePrototype)) {
+            if (module->checkBlockingAreaCollision(modulePrototype))
+            {
                 return false;
             }
         }
         parentModuleNode->attachedNode = newModuleNode;
         newModuleNode->attachedNode = parentModuleNode;
     }
-    
 
     GameWorld::instance()->addModule(modulePrototype);
     modulePrototype->addToGameWorld();
@@ -34,12 +41,14 @@ bool ModuleBuilder::buildModule(bool initial) {
     return true;
 }
 
-bool ModuleBuilder::createModulePrototype(ModuleType type) {
+bool ModuleBuilder::createModulePrototype(ModuleType type)
+{
     delete modulePrototype;
-    switch (type) { // put this data to json vvv
+    switch (type)
+    { // put this data to json vvv
     case ModuleType::Corridor:
     {
-        BasicModulePrototype* moduleSetup = new BasicModulePrototype(6);
+        BasicModulePrototype *moduleSetup = new BasicModulePrototype(6);
         moduleSetup->addNode(Vector2d(Rotation(0), 16), Rotation(0));
         moduleSetup->addNode(Vector2d(Rotation(M_PI), 16), Rotation(M_PI));
         moduleSetup->addNode(Vector2d(-8, -8), Rotation(M_PI / 2 * 3));
@@ -57,7 +66,7 @@ bool ModuleBuilder::createModulePrototype(ModuleType type) {
     }
     case ModuleType::ConnectorCross:
     {
-        BasicModulePrototype* moduleSetup = new BasicModulePrototype(4);
+        BasicModulePrototype *moduleSetup = new BasicModulePrototype(4);
         moduleSetup->addNode(Vector2d(Rotation(0), 12), Rotation(0));
         moduleSetup->addNode(Vector2d(Rotation(M_PI / 2), 12), Rotation(M_PI / 2));
         moduleSetup->addNode(Vector2d(Rotation(M_PI), 12), Rotation(M_PI));
@@ -80,7 +89,7 @@ bool ModuleBuilder::createModulePrototype(ModuleType type) {
     }
     case ModuleType::Connector3:
     {
-        BasicModulePrototype* moduleSetup = new BasicModulePrototype(3);
+        BasicModulePrototype *moduleSetup = new BasicModulePrototype(3);
         moduleSetup->addNode(Vector2d(Rotation(M_PI), 8.62), Rotation(M_PI));
         moduleSetup->addNode(Vector2d(Rotation(M_PI / 3), 8.62), Rotation(M_PI / 3));
         moduleSetup->addNode(Vector2d(Rotation(-M_PI / 3), 8.62), Rotation(-M_PI / 3));
@@ -92,7 +101,7 @@ bool ModuleBuilder::createModulePrototype(ModuleType type) {
     }
     case ModuleType::Deadend:
     {
-        BasicModulePrototype* moduleSetup = new BasicModulePrototype(2);
+        BasicModulePrototype *moduleSetup = new BasicModulePrototype(2);
         moduleSetup->addNode(Vector2d(Rotation(M_PI / 2), 12), Rotation(M_PI / 2));
         moduleSetup->addNode(Vector2d(Rotation(M_PI / 2 * 3), -4), Rotation(M_PI / 2 * 3));
         moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/Deadend/background.png"), Vector2d(240, 240), CommonValues::zModuleMainBackgroung);
@@ -107,7 +116,7 @@ bool ModuleBuilder::createModulePrototype(ModuleType type) {
     }
     case ModuleType::ConnectorT:
     {
-        BasicModulePrototype* moduleSetup = new BasicModulePrototype(4);
+        BasicModulePrototype *moduleSetup = new BasicModulePrototype(4);
         moduleSetup->addNode(Vector2d(Rotation(0), 12), Rotation(0));
         moduleSetup->addNode(Vector2d(Rotation(M_PI / 2), 9), Rotation(M_PI / 2));
         moduleSetup->addNode(Vector2d(Rotation(M_PI), 12), Rotation(M_PI));
@@ -127,7 +136,7 @@ bool ModuleBuilder::createModulePrototype(ModuleType type) {
     }
     case ModuleType::Frame:
     {
-        BasicModulePrototype* moduleSetup = new BasicModulePrototype(2);
+        BasicModulePrototype *moduleSetup = new BasicModulePrototype(2);
         moduleSetup->addNode(Vector2d(Rotation(M_PI / 2), 16), Rotation(M_PI / 2));
         moduleSetup->addNode(Vector2d(Rotation(M_PI / 2 * 3), 16), Rotation(M_PI / 2 * 3));
         moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/FrameStraight/background.png"), Vector2d(320, 320), CommonValues::zModuleMainBackgroung);
@@ -138,7 +147,7 @@ bool ModuleBuilder::createModulePrototype(ModuleType type) {
     }
     case ModuleType::FrameCross:
     {
-        BasicModulePrototype* moduleSetup = new BasicModulePrototype(4);
+        BasicModulePrototype *moduleSetup = new BasicModulePrototype(4);
         moduleSetup->addNode(Vector2d(Rotation(0), 7), Rotation(0));
         moduleSetup->addNode(Vector2d(Rotation(M_PI / 2), 7), Rotation(M_PI / 2));
         moduleSetup->addNode(Vector2d(Rotation(M_PI), 7), Rotation(M_PI));
@@ -151,7 +160,7 @@ bool ModuleBuilder::createModulePrototype(ModuleType type) {
     }
     case ModuleType::Frame3:
     {
-        BasicModulePrototype* moduleSetup = new BasicModulePrototype(3);
+        BasicModulePrototype *moduleSetup = new BasicModulePrototype(3);
         moduleSetup->addNode(Vector2d(Rotation(M_PI), 4.04), Rotation(M_PI));
         moduleSetup->addNode(Vector2d(Rotation(M_PI / 3), 4.04), Rotation(M_PI / 3));
         moduleSetup->addNode(Vector2d(Rotation(-M_PI / 3), 4.04), Rotation(-M_PI / 3));
@@ -162,7 +171,7 @@ bool ModuleBuilder::createModulePrototype(ModuleType type) {
     }
     case ModuleType::LargeModule:
     {
-        BasicModulePrototype* moduleSetup = new BasicModulePrototype(4);
+        BasicModulePrototype *moduleSetup = new BasicModulePrototype(4);
         moduleSetup->addNode(Vector2d(16, -16), Rotation(0));
         moduleSetup->addNode(Vector2d(0, 32), Rotation(M_PI / 2));
         moduleSetup->addNode(Vector2d(-16, -16), Rotation(M_PI));
@@ -173,19 +182,19 @@ bool ModuleBuilder::createModulePrototype(ModuleType type) {
         moduleSetup->addBlockingArea(Rect2d::fromTwoCorners(Vector2d(-16, -32), Vector2d(16, 32)));
         moduleSetup->addBuildableArea(Rect2d::fromTwoCorners(Vector2d(-16, -32), Vector2d(16, 32)));
         moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(-16, -32), Vector2d(-7, -30))); // top left
-        moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(-16, -32), Vector2d(-14, -23))); 
+        moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(-16, -32), Vector2d(-14, -23)));
         moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(16, -32), Vector2d(7, -30))); // top rith
-        moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(16, -32), Vector2d(14, -23))); 
+        moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(16, -32), Vector2d(14, -23)));
         moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(-16, 32), Vector2d(-7, 30))); // bottom left
-        moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(-16, 32), Vector2d(-14, -9))); 
+        moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(-16, 32), Vector2d(-14, -9)));
         moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(16, 32), Vector2d(7, 30))); // bottom right
-        moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(16, 32), Vector2d(14, -9))); 
+        moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(16, 32), Vector2d(14, -9)));
         modulePrototype = moduleSetup;
         break;
     }
     case ModuleType::SolarPanel:
     {
-        BasicModulePrototype* moduleSetup = new BasicModulePrototype(1);
+        BasicModulePrototype *moduleSetup = new BasicModulePrototype(1);
         moduleSetup->addNode(Vector2d(Rotation(M_PI / 2), 12), Rotation(M_PI / 2));
         moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/external/SolarPanel/background.png"), Vector2d(160, 320), CommonValues::zModuleFarBackgroung);
         moduleSetup->addBlockingArea(Rect2d::fromTwoCorners(Vector2d(-8, -16), Vector2d(8, 8)));
@@ -194,7 +203,7 @@ bool ModuleBuilder::createModulePrototype(ModuleType type) {
     }
     case ModuleType::Antena:
     {
-        BasicModulePrototype* moduleSetup = new BasicModulePrototype(1);
+        BasicModulePrototype *moduleSetup = new BasicModulePrototype(1);
         moduleSetup->addNode(Vector2d(Rotation(M_PI / 2), 12), Rotation(M_PI / 2));
         moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/external/CommunicationArray/background.png"), Vector2d(160, 320), CommonValues::zModuleFarBackgroung);
         moduleSetup->addBlockingArea(Rect2d::fromTwoCorners(Vector2d(-8, -16), Vector2d(8, 8)));
@@ -209,7 +218,360 @@ bool ModuleBuilder::createModulePrototype(ModuleType type) {
     return true;
 }
 
-bool ModuleBuilder::selectNewNodeNumber(int number) {
+bool ModuleBuilder::selectNewNodeNumber(int number)
+{
     newModuleNodeNumber = number;
     return true;
+}
+void Module::drawInfo()
+{
+    for (auto node : nodes)
+    {
+        if (node.attachedNode == nullptr)
+            GraphicsEngine::instance()->drawCircle(
+                node.position.rotate(rotation) + position, 0.5, CommonValues::zDebug,
+                al_map_rgba(255, 255, 0, 100), 3);
+    }
+}
+void Module::drawDebug()
+{
+    GraphicsEngine::instance()->drawPoint(position, 0, al_map_rgb(255, 255, 255));
+    for (auto wall : walls)
+    {
+        GraphicsEngine::instance()->drawPolygon(wall->transformedVerticies, -0.001,
+                                                al_map_rgb(255, 0, 0));
+    }
+
+    for (auto area : blockingAreas)
+    {
+        GraphicsEngine::instance()->drawPolygon(area->transformedVerticies, -0.001,
+                                                al_map_rgba(100, 0, 0, 40));
+    }
+
+    for (auto area : buildableAreas)
+    {
+        GraphicsEngine::instance()->drawPolygon(area->transformedVerticies, -0.001,
+                                                al_map_rgba(0, 100, 100, 30));
+    }
+
+    for (auto node : nodes)
+    {
+        GraphicsEngine::instance()->drawPoint(
+            node.position.rotate(rotation) + position, CommonValues::zDebug,
+            al_map_rgb(0, 0, 255));
+        GraphicsEngine::instance()->drawLine(
+            node.position.rotate(rotation) + position,
+            node.position.rotate(rotation) + position +
+                Vector2d(rotation + node.rotation, 5),
+            CommonValues::zDebug, al_map_rgb(0, 0, 255));
+    }
+}
+void Module::setTransforms(Vector2d aPos, Rotation aRot)
+{
+    position = aPos;
+    rotation = aRot;
+    for (auto wall : walls)
+    {
+        wall->transformedVerticies.clear();
+        for (auto dot : wall->initialVerticies)
+        {
+            wall->transformedVerticies.push_back(position + dot.rotate(rotation));
+        }
+    }
+
+    for (auto area : buildableAreas)
+    {
+        area->transformedVerticies.clear();
+        for (auto dot : area->initialVerticies)
+        {
+            area->transformedVerticies.push_back(position + dot.rotate(rotation));
+        }
+    }
+
+    for (auto area : blockingAreas)
+    {
+        area->transformedVerticies.clear();
+        for (auto dot : area->initialVerticies)
+        {
+            area->transformedVerticies.push_back(position + dot.rotate(rotation));
+        }
+    }
+}
+void Module::setTransforms(ModuleNode *parentNode, ModuleNode *ownNode)
+{
+    Module *parentModule = parentNode->parentModule;
+    Rotation newRot =
+        parentModule->rotation + parentNode->rotation - ownNode->rotation + M_PI;
+    Vector2d newPos =
+        parentModule->position +
+        parentNode->position.rotate(parentModule->rotation) +
+        ownNode->position.rotate(parentModule->rotation + parentNode->rotation -
+                                 ownNode->rotation);
+    setTransforms(newPos, newRot);
+}
+ModuleNode *Module::getNode(int number)
+{
+    if (number < nodes.size())
+    { // TODO should be ok since nodes size wont change
+        return &nodes.at(number);
+    }
+    return nullptr;
+}
+std::vector<ModuleNode *> Module::getNodes()
+{
+    std::vector<ModuleNode *> result;
+    for (int i = 0; i < nodes.size(); i++)
+    {
+        result.push_back(&nodes.at(i));
+    }
+
+    return result;
+}
+bool Module::checkWallCollision(Rect2d rect)
+{
+    collision::Polygon rectangle({collision::fvec2(rect.p1.x, rect.p1.y),
+                                  collision::fvec2(rect.p2.x, rect.p1.y),
+                                  collision::fvec2(rect.p2.x, rect.p2.y),
+                                  collision::fvec2(rect.p1.x, rect.p2.y)});
+
+    collision::GJKCollisionDetector detector;
+    std::vector<collision::fvec2> dots;
+    for (auto wall : walls)
+    {
+
+        dots.clear();
+        for (auto dot : wall->transformedVerticies)
+        {
+            dots.push_back(collision::fvec2(dot.x, dot.y));
+        }
+
+        collision::Polygon ownPolygon(dots);
+        if (detector.detect(rectangle, ownPolygon))
+            return true;
+    }
+
+    return false;
+}
+bool Module::checkBlockingAreaCollision(Module *other)
+{
+    collision::GJKCollisionDetector detector;
+    std::vector<collision::fvec2> dots;
+    for (auto otherArea : other->blockingAreas)
+    {
+        dots.clear();
+        for (auto dot : otherArea->transformedVerticies)
+        {
+            dots.push_back(collision::fvec2(dot.x, dot.y));
+        }
+        collision::Polygon otherPolygon(dots);
+
+        for (auto ownArea : blockingAreas)
+        {
+
+            dots.clear();
+            for (auto dot : ownArea->transformedVerticies)
+            {
+                dots.push_back(collision::fvec2(dot.x, dot.y));
+            }
+
+            collision::Polygon ownPolygon(dots);
+            if (detector.detect(otherPolygon, ownPolygon))
+                return true;
+        }
+    }
+    return false;
+}
+bool Module::checkTouchesBuildableArea(Rect2d rect)
+{
+    collision::Polygon rectangle({collision::fvec2(rect.p1.x, rect.p1.y),
+                                  collision::fvec2(rect.p2.x, rect.p1.y),
+                                  collision::fvec2(rect.p2.x, rect.p2.y),
+                                  collision::fvec2(rect.p1.x, rect.p2.y)});
+
+    collision::GJKCollisionDetector detector;
+    std::vector<collision::fvec2> dots;
+    for (auto area : buildableAreas)
+    {
+
+        dots.clear();
+        for (auto dot : area->transformedVerticies)
+        {
+            dots.push_back(collision::fvec2(dot.x, dot.y));
+        }
+
+        collision::Polygon ownPolygon(dots);
+        if (detector.detect(rectangle, ownPolygon))
+            return true;
+    }
+
+    return false;
+}
+BasicModulePrototype::BasicModulePrototype(int nodesNumber)
+    : Module(), nodesNumber(nodesNumber)
+{
+    assert(nodesNumber > 0);
+    nodes.reserve(nodesNumber);
+}
+void BasicModulePrototype::addNode(Vector2d pos, Rotation rot)
+{
+    assert(nodes.size() < nodesNumber);
+    ModuleNode newNode;
+    newNode.position = pos;
+    newNode.rotation = rot;
+    newNode.parentModule = this;
+    nodes.push_back(newNode);
+}
+void BasicModulePrototype::addBitmap(ALLEGRO_BITMAP *bitmap, Vector2d pivot,
+                                     double z)
+{
+    sprites.push_back(ModuleSprite{});
+    sprites.back().bitmap = bitmap;
+    sprites.back().pivot = pivot;
+    sprites.back().z = z;
+}
+void BasicModulePrototype::addWall(Rect2d rect)
+{
+    auto wall = new PolygonalArea{};
+    wall->initialVerticies.push_back(Vector2d(rect.p1.x, rect.p2.y));
+    wall->initialVerticies.push_back(rect.p2);
+    wall->initialVerticies.push_back(Vector2d(rect.p2.x, rect.p1.y));
+    wall->initialVerticies.push_back(rect.p1);
+
+    wall->transformedVerticies.push_back(Vector2d(rect.p1.x, rect.p2.y));
+    wall->transformedVerticies.push_back(rect.p2);
+    wall->transformedVerticies.push_back(Vector2d(rect.p2.x, rect.p1.y));
+    wall->transformedVerticies.push_back(rect.p1);
+
+    walls.push_back(wall);
+}
+void BasicModulePrototype::addBuildableArea(Rect2d rect)
+{
+    auto area = new PolygonalArea{};
+    area->initialVerticies.push_back(Vector2d(rect.p1.x, rect.p2.y));
+    area->initialVerticies.push_back(rect.p2);
+    area->initialVerticies.push_back(Vector2d(rect.p2.x, rect.p1.y));
+    area->initialVerticies.push_back(rect.p1);
+
+    area->transformedVerticies.push_back(Vector2d(rect.p1.x, rect.p2.y));
+    area->transformedVerticies.push_back(rect.p2);
+    area->transformedVerticies.push_back(Vector2d(rect.p2.x, rect.p1.y));
+    area->transformedVerticies.push_back(rect.p1);
+
+    buildableAreas.push_back(area);
+}
+void BasicModulePrototype::addBlockingArea(Rect2d rect)
+{
+    auto area = new PolygonalArea{};
+    area->initialVerticies.push_back(Vector2d(rect.p1.x, rect.p2.y));
+    area->initialVerticies.push_back(rect.p2);
+    area->initialVerticies.push_back(Vector2d(rect.p2.x, rect.p1.y));
+    area->initialVerticies.push_back(rect.p1);
+
+    area->transformedVerticies.push_back(Vector2d(rect.p1.x, rect.p2.y));
+    area->transformedVerticies.push_back(rect.p2);
+    area->transformedVerticies.push_back(Vector2d(rect.p2.x, rect.p1.y));
+    area->transformedVerticies.push_back(rect.p1);
+
+    blockingAreas.push_back(area);
+}
+void BasicModulePrototype::draw()
+{
+    Module::draw();
+    for (auto sprite : sprites)
+    {
+        GraphicsEngine::instance()->drawBitmap(position, sprite.bitmap, 20,
+                                               sprite.z, sprite.pivot, rotation);
+    }
+}
+void ModuleBuilder::updateNodeNumberSelection()
+{
+    if (!window)
+        return;
+    for (auto button : nodeNumberButtons)
+    {
+        window->deleteButton(button);
+    }
+    nodeNumberButtons.clear();
+
+    for (auto label : nodeNumberLabels)
+    {
+        window->deleteLabel(label);
+    }
+    nodeNumberLabels.clear();
+
+    int i = 0;
+    for (auto node : modulePrototype->getNodes())
+    {
+        Button *newButton = window->addButton(Rect2d::fromTwoCorners(
+            Vector2d(220, 60 + i * 25), Vector2d(420, 80 + i * 25)));
+        Label *newLabel = window->addLabel(newButton->getRect().center(), true,
+                                           std::to_string(i), 0);
+        newButton->setOnClickCallback(
+            [this, n = i]()
+            { this->selectNewNodeNumber(n); });
+        nodeNumberButtons.push_back(newButton);
+        nodeNumberLabels.push_back(newLabel);
+        i++;
+    }
+}
+void ModuleBuilder::onWindowClose()
+{
+    window = nullptr;
+    nodeNumberButtons.clear();
+    nodeNumberLabels.clear();
+}
+ModuleBuilder *ModuleBuilder::instance()
+{
+    static ModuleBuilder instance;
+    return &instance;
+}
+void ModuleBuilder::setParentNode(ModuleNode *node) { parentModuleNode = node; }
+void ModuleBuilder::createWindow()
+{
+    if (window)
+        GuiEngine::instance()->closeWindow(window);
+    if (parentModuleNode->attachedNode != nullptr)
+        return;
+    window = GuiEngine::instance()->addWindow(
+        Rect2d(Vector2d(400, 400), 400, 440), true, true);
+    window->setOnCloseCallback([this]()
+                               { onWindowClose(); });
+
+    Button *createButton =
+        window->addButton(Rect2d(Vector2d(10, 340), Vector2d(210, 390)));
+    window->addLabel(createButton->getRect().center(), true, "Create module", 0);
+    createButton->setOnClickCallback([this, &window = window]()
+                                     {
+    bool result = this->buildModule();
+    if (result)
+      GuiEngine::instance()->closeWindow(window); });
+
+    window->addLabel(Vector2d(20, 40), false, "Module type:", 0);
+    window->addLabel(Vector2d(220, 40), false, "Node number:", 0);
+
+    createModuleSelectionButtons();
+
+    createModulePrototype(Corridor);
+}
+void ModuleBuilder::createModuleSelectionButtons()
+{
+    std::string labels[] = {"Corridor", "Cross Connector", "3 Way Connector",
+                            "T Connector", "Deadend", "Frame",
+                            "Square Frame", "Triangle Frame", "Utility Module",
+                            "Solar Panel", "Antena array"};
+    ModuleType types[] = {Corridor, ConnectorCross, Connector3, ConnectorT,
+                          Deadend, Frame, FrameCross, Frame3,
+                          LargeModule, SolarPanel, Antena};
+    int n = 11;
+
+    for (int i = 0; i < n; i++)
+    {
+        Button *corridorButton =
+            window->addButton(Rect2d(Vector2d(20, 60) + Vector2d(0, i * 25),
+                                     Vector2d(200, 80) + Vector2d(0, i * 25)));
+        window->addLabel(corridorButton->getRect().center(), true, labels[i], 0);
+        corridorButton->setOnClickCallback(
+            [this, type = types[i]]()
+            { createModulePrototype(type); });
+    }
 }

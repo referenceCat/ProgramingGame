@@ -5,11 +5,11 @@
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_color.h>
+#include <allegro5/allegro_font.h>
 #include <vector>
-#include <iostream>
-#include <filesystem>
-#include <map>
 #include <cmath>
+#include <map>
+#include <string>
 
 
 struct CameraParameters {
@@ -49,53 +49,11 @@ class GraphicsEngine {
     std::vector<Layer> layers{};
     Layer debugLayer{0, nullptr};
 
-    void setLayerAsTargetBitmap(double z) {
-        if (isnan(z)) { // check if debug layer should be used (cant use == for NANs)
-            if (debugLayer.bitmap == nullptr) {
-                debugLayer.bitmap = al_create_bitmap(al_get_display_width(al_get_current_display()), al_get_display_height(al_get_current_display()));
-                al_set_target_bitmap(debugLayer.bitmap);
-                al_clear_to_color(al_map_rgba(0, 0, 0, 0));
-            } else {
-                al_set_target_bitmap(debugLayer.bitmap);
-            }
-            return;
-        }
+    void setLayerAsTargetBitmap(double z);
+    double fRand(double fMin, double fMax);
+    void initStars(std::vector<BackgroundStar> &stars, int n);
 
-        for (int i = 0; i < layers.size(); i++) {
-            if (layers.at(i).z == z) { // layer is already exists
-                al_set_target_bitmap(layers.at(i).bitmap);
-                return;
-            } else if (layers.at(i).z >= z) { // layer doesnt exist and must be inserted before other layer
-                layers.insert(layers.begin() + i, Layer{z, nullptr});
-                layers.at(i).bitmap = al_create_bitmap(al_get_display_width(al_get_current_display()), al_get_display_height(al_get_current_display()));
-                al_set_target_bitmap(layers.at(i).bitmap);
-                al_clear_to_color(al_map_rgba(0, 0, 0, 0));
-                return;
-            }
-        }
-
-        layers.push_back(Layer{z, nullptr}); // layer doesnt exist and must be inserted last
-        layers.back().bitmap = al_create_bitmap(al_get_display_width(al_get_current_display()), al_get_display_height(al_get_current_display()));
-        al_set_target_bitmap(layers.back().bitmap);
-        al_clear_to_color(al_map_rgba(0, 0, 0, 0));
-    }
-
-    double fRand(double fMin, double fMax) {
-        double f = (double)rand() / RAND_MAX;
-        return fMin + f * (fMax - fMin);
-    }
-
-    void initStars(std::vector<BackgroundStar> &stars, int n) {
-        for (int i = 0; i < n; i++) {
-            BackgroundStar star;
-            star.color = al_map_rgb(fRand(150, 255), fRand(150, 255), fRand(150, 255));
-            star.radius = fRand(0.3, 2);
-            star.pos = Vector2d(fRand(0, 3000), fRand(0, 1500));
-            stars.push_back(star);
-        }
-    }
-
-public:
+  public:
     ALLEGRO_FONT* debugFont = nullptr;
 
     std::map<std::string, ALLEGRO_BITMAP*> loadedBitmaps;
@@ -108,197 +66,42 @@ public:
     ALLEGRO_BITMAP* backhroundTile100x100 = nullptr;
     ALLEGRO_BITMAP* boxCreatorDestroyerBaseSprite = nullptr;
     
-    // TODO memory leak then reloading bitmaps
-    void loadImagesLegacyTesting() {
-        backhroundTile100x100 = al_create_bitmap(100, 100);
-        al_set_target_bitmap(backhroundTile100x100);
-        al_draw_filled_rectangle(0, 0, 100, 100, al_map_rgb(50, 50, 50));
-        for (int i = 0; i < 100; i++) {
-            int x = i % 10;
-            int y = i / 10;
-            if ((x + y) % 2) al_draw_filled_rectangle(x * 10, y * 10, x * 10 + 10, y * 10 + 10, al_map_rgb(20, 20, 20));
+    void loadImagesLegacyTesting(); // TODO memory leak then reloading bitmaps
+    void loadBitmaps();
+    ALLEGRO_BITMAP *getBitmap(std::string path);
+    void drawDebugBackgroung();
+    void drawDebugBackgroung2();
+    void drawStarsBackgroung();
+    Vector2d transformPoint(Vector2d originalPoint, double z);
+    Vector2d transformPointInverse(Vector2d originalPoint);
+    double transformScalar(double value, double z);
+    void setCameraParameters(CameraParameters parameters);
+    CameraParameters getCameraParameters();
+    void changeDisplayDimensions(Vector2d d);
 
-        }
+    void drawPoint(Vector2d aPoint, double z, ALLEGRO_COLOR color,
+                   double r = 3);
 
-        furnaceSprite = al_load_bitmap("resources/assets/heater.png");
+    void drawRectangle(Rect2d aRect, double z, ALLEGRO_COLOR color,
+                       int thickness = 0);
 
-        assemblerBaseSprite = al_load_bitmap("resources/assets/assembler0.png");
-        assemblerCyllindersSprite = al_load_bitmap("resources/assets/assembler1.png");
-        assemblerPressSprite = al_load_bitmap("resources/assets/assembler3.png");
-        assemblerPlateSprite = al_load_bitmap("resources/assets/assembler2.png");
+    void drawLine(Vector2d aPoint0, Vector2d aPoint1, double z,
+                  ALLEGRO_COLOR color, int thickness = 0);
 
-        boxCreatorDestroyerBaseSprite = al_load_bitmap("resources/assets/box_creator_destroyer_base.png");
-    }
+    void drawCircle(Vector2d aPoint, double r, double z, ALLEGRO_COLOR color,
+                    int thickness = 0);
 
-    void loadBitmaps() { 
+    void drawPolygon(std::vector<Vector2d> vertices, double z,
+                     ALLEGRO_COLOR color);
 
-        for (const auto & [key, value] : loadedBitmaps)
-            al_destroy_bitmap(value);
+    void drawBitmap(Vector2d aPoint, ALLEGRO_BITMAP *bitmap,
+                    double pixelsPerUnit, double z,
+                    Vector2d bitmapPivot = Vector2d(),
+                    Rotation bitmapRotation = Rotation());
 
-        for (const auto& dirEntry : std::filesystem::recursive_directory_iterator("resources/assets")) {
-            loadedBitmaps[dirEntry.path().string()] = al_load_bitmap(dirEntry.path().string().c_str());
-            std::cout << dirEntry.path().string() << std::endl;
-        }
-    }
-
-    ALLEGRO_BITMAP* getBitmap(std::string path) {
-        return loadedBitmaps[path];
-    }
-
-    void drawDebugBackgroung() { // TODO very slow way to draw tiles
-        double tileSize = transformScalar(al_get_bitmap_width(backhroundTile100x100), 0);
-        Vector2d position = transformPoint(Vector2d(static_cast<int> (camera.position.x) / 100 * 100, static_cast<int> (camera.position.y) / 100 * 100) , 0);
-        for (int x = -10; x < 10; x++) for (int y = -10; y < 10; y++) {
-            al_draw_scaled_bitmap(backhroundTile100x100, 0, 0, 100, 100, position.x + x * tileSize, position.y + y * tileSize, tileSize, tileSize, 0);
-        }
-    }
-
-    void drawDebugBackgroung2() { // TODO very slow way to draw tiles
-        for (int x = -50; x < 50; x++) {
-            for (int y = -50; y < 50; y++) {
-                GraphicsEngine::instance()->drawPoint(Vector2d(x + 0.5, y + 0.5), 0, al_map_rgb(200, 200, 200), 1.5);
-            }
-        }
-    }
-
-    void drawStarsBackgroung() {
-        static std::vector<BackgroundStar> stars;
-        if (!stars.size()) initStars(stars, 2000);
-
-        for (auto star: stars) {
-            al_draw_filled_circle(star.pos.x, star.pos.y, star.radius, star.color);
-        }
-    }
-
-    
-
-    Vector2d transformPoint(Vector2d originalPoint, double z) {
-        Vector2d relativePoint = originalPoint - camera.position;
-
-        Vector2d proportionalPoint = relativePoint;
-        proportionalPoint.x /= camera.fov / 2;
-        proportionalPoint.y /= camera.fov / 2;
-        proportionalPoint.x /= (z - camera.z) / -camera.z;
-        proportionalPoint.y /= (z - camera.z) / -camera.z;
-
-        Vector2d resultPoint;
-        double pixelPerUnit = camera.displayDimensions.x / 2;
-        resultPoint.x = camera.displayDimensions.x / 2 + proportionalPoint.x * pixelPerUnit;
-        resultPoint.y = camera.displayDimensions.y / 2 + proportionalPoint.y * pixelPerUnit;
-        return resultPoint;
-    }
-
-    Vector2d transformPointInverse(Vector2d originalPoint) {
-        Vector2d result = camera.position;
-        double pixelsPerUnit = camera.displayDimensions.x / camera.fov;
-        result = result - Vector2d(camera.fov / 2, camera.displayDimensions.y / 2 / pixelsPerUnit);
-        result = result + originalPoint / pixelsPerUnit;
-        return result;
-    }
-
-    double transformScalar(double value, double z) {
-        value /= (z - camera.z) / -camera.z;
-        value /= camera.fov;
-        value *= camera.displayDimensions.x;
-        return value;
-    }
-
-    void setCameraParameters(CameraParameters parameters) {
-        camera = parameters;
-    }
-
-    CameraParameters getCameraParameters() {
-        return camera;
-    }
-
-    void changeDisplayDimensions(Vector2d d) {
-        auto oldCamera = camera;
-        camera.displayDimensions = d;
-        camera.fov *= d.x / oldCamera.displayDimensions.x;
-
-    }
-
-    void drawPoint(Vector2d aPoint, double z, ALLEGRO_COLOR color, double r = 3) {
-        setLayerAsTargetBitmap(z);
-        if (isnan(z)) z = 0;
-
-        aPoint = transformPoint(aPoint, z);
-        al_draw_filled_circle(aPoint.x, aPoint.y, r, color);
-    }
-
-    void drawRectangle(Rect2d aRect, double z, ALLEGRO_COLOR color, int thickness = 0) {
-        setLayerAsTargetBitmap(z);
-        if (isnan(z)) z = 0;
-
-        aRect.p1 = transformPoint(aRect.p1, z);
-        aRect.p2 = transformPoint(aRect.p2, z);
-        if (thickness <= 0) al_draw_filled_rectangle(aRect.p1.x, aRect.p1.y, aRect.p2.x, aRect.p2.y, color);
-        else al_draw_rectangle(aRect.p1.x, aRect.p1.y, aRect.p2.x, aRect.p2.y, color, thickness);
-    }
-
-    void drawLine(Vector2d aPoint0, Vector2d aPoint1, double z, ALLEGRO_COLOR color, int thickness = 0) {
-        setLayerAsTargetBitmap(z);
-        if (isnan(z)) z = 0;
-
-        aPoint0 = transformPoint(aPoint0, z);
-        aPoint1 = transformPoint(aPoint1, z);
-        al_draw_line(aPoint0.x, aPoint0.y, aPoint1.x, aPoint1.y, color, thickness);
-    }
-
-    void drawCircle(Vector2d aPoint, double r, double z, ALLEGRO_COLOR color, int thickness = 0) {
-        setLayerAsTargetBitmap(z);
-        if (isnan(z)) z = 0;
-
-        aPoint = transformPoint(aPoint, z);
-        r = transformScalar(r, z);
-        if (thickness <= 0) al_draw_filled_circle(aPoint.x, aPoint.y, r, color);
-        else al_draw_circle(aPoint.x, aPoint.y, r, color, thickness);
-    }
-
-    void drawPolygon(std::vector<Vector2d> vertices, double z, ALLEGRO_COLOR color) {
-        setLayerAsTargetBitmap(z);
-        if (isnan(z)) z = 0;
-
-        float dots [vertices.size() * 2];
-        for (int i = 0; i < vertices.size(); i++) {
-            Vector2d tp = transformPoint(vertices.at(i), z);
-            dots[i * 2] = tp.x;
-            dots[i * 2 + 1] = tp.y;
-        }
-        al_draw_filled_polygon(dots, vertices.size(), color);
-    }
-
-    void drawBitmap(Vector2d aPoint, ALLEGRO_BITMAP* bitmap, double pixelsPerUnit, double z, Vector2d bitmapPivot = Vector2d(), Rotation bitmapRotation = Rotation()) {
-        setLayerAsTargetBitmap(z);
-        if (isnan(z)) z = 0;
-
-        aPoint = transformPoint(aPoint, z);
-        double sizeMultiplayer = transformScalar(1, z) / pixelsPerUnit;
-        al_draw_scaled_rotated_bitmap(bitmap, bitmapPivot.x, bitmapPivot.y, aPoint.x, aPoint.y, sizeMultiplayer, sizeMultiplayer, bitmapRotation.radians, 0);
-    }
-
-    static GraphicsEngine* instance() {
-        static GraphicsEngine instance;
-        return &instance;
-    }
-
-    void draw() {
-        drawStarsBackgroung();
-        for (int i = layers.size() - 1; i >= 0; i--) {
-            al_draw_bitmap(layers.at(i).bitmap, 0, 0, 0); 
-        }
-        if (debugLayer.bitmap != nullptr)
-            al_draw_bitmap(debugLayer.bitmap, 0, 0, 0); 
-    }
-
-    void clearBitmaps() {
-        for (int i = layers.size() - 1; i >= 0; i--) {
-            al_destroy_bitmap(layers.at(i).bitmap);
-        }
-        layers.clear();
-        al_destroy_bitmap(debugLayer.bitmap);
-        debugLayer.bitmap = nullptr;
-    }
+    static GraphicsEngine *instance();
+    void draw();
+    void clearBitmaps();
 };
 
 

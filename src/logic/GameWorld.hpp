@@ -6,7 +6,6 @@
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
-#include <string>
 #include <vector>
 
 #include "../common/common.hpp"
@@ -46,14 +45,9 @@ public:
 
     void drawAll(bool, bool);
     void run();
-    void click(Vector2d point) {
-        for (auto machinery: machines) {
-            if (machinery->getRect().isInside(point)) {
-                machinery->onClick();
-                return;
-            }
-        }
-    }
+    void click(Vector2d point);
+
+    double getSurfaceHeight() {return 0;}
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_GAMEWORLD_HPP_

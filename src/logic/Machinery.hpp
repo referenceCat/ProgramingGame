@@ -30,33 +30,15 @@ protected:
 
 public:
     Machinery(Rect2d rect): rect(rect) {};
-
     virtual void drawInfo() {}
-
-    virtual void drawDebug() {
-        GraphicsEngine::instance()->drawRectangle(rect, CommonValues::zDebug,  al_map_rgb(100, 255, 100), 1);
-
-        for (auto item: areas) {
-            Rect2d areaRect;
-            areaRect.p1 = item->rect.p1 + rect.p1;
-            areaRect.p2 = item->rect.p2 + rect.p1;
-            GraphicsEngine::instance()->drawRectangle(areaRect, CommonValues::zDebug, al_map_rgb(100, 100, 255), 1);
-        }
-    }
-
+    virtual void drawDebug();
     virtual void draw() {}
-
-    Rect2d getRect() {
-        return rect;
-    }
-
+    Rect2d getRect();
     virtual void run() {};
     virtual void onCommandRecive(int command, int argument) {}
     virtual void onClick() {};
     void addToGameWorld() override;
-    void setCenter(Vector2d pos) {
-        rect = Rect2d::fromCenterAndDimensions(pos, rect.dimensions());
-    }
+    void setCenter(Vector2d pos);
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_MACHINERY_HPP_

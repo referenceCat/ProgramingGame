@@ -1,120 +1,167 @@
 #include "GameWorld.hpp"
-#include "Controller.hpp"
 
-void GameWorld::addManipulatorArm(ManipulatorArm* arm) {
+void GameWorld::addManipulatorArm(ManipulatorArm *arm)
+{
     arms.push_back(arm);
 }
 
-void GameWorld::addBox(Box* box) {
+void GameWorld::addBox(Box *box)
+{
     boxes.push_back(box);
 }
 
-void GameWorld::addMachinery(Machinery *machinery) {
+void GameWorld::addMachinery(Machinery *machinery)
+{
     machines.push_back(machinery);
 }
 
-void GameWorld::addModule(Module *module) {
+void GameWorld::addModule(Module *module)
+{
     modules.push_back(module);
 }
 
-void GameWorld::removeBox(int id) {
-    Box* boxToRemove = getBox(id);
-    for (auto item: arms) {
+void GameWorld::removeBox(int id)
+{
+    Box *boxToRemove = getBox(id);
+    for (auto item : arms)
+    {
         item->removeBox(boxToRemove);
     }
     delete boxToRemove;
     boxes.erase(std::remove(boxes.begin(), boxes.end(), boxToRemove), boxes.end());
 }
 
-ManipulatorArm* GameWorld::getManipulatorArm(int id) {
-    for (auto item: arms) {
-        if (item->getId() == id) return item;
+ManipulatorArm *GameWorld::getManipulatorArm(int id)
+{
+    for (auto item : arms)
+    {
+        if (item->getId() == id)
+            return item;
     }
     return nullptr;
 }
 
-Machinery* GameWorld::getMachinery(int id) {
-    for (auto item: machines) {
-        if (item->getId() == id) return item;
+Machinery *GameWorld::getMachinery(int id)
+{
+    for (auto item : machines)
+    {
+        if (item->getId() == id)
+            return item;
     }
     return nullptr;
 }
 
-std::vector<Machinery*> GameWorld::getMachinery()
+std::vector<Machinery *> GameWorld::getMachinery()
 {
     return machines;
 }
 
 Module *GameWorld::getModule(int id)
 {
-    for (auto item: modules) {
-        if (item->getId() == id) return item;
+    for (auto item : modules)
+    {
+        if (item->getId() == id)
+            return item;
     }
     return nullptr;
 }
 
-std::vector<Box *> GameWorld::getBoxes() {
+std::vector<Box *> GameWorld::getBoxes()
+{
     std::vector<Box *> result = boxes;
     return result;
 }
 
-std::vector<Module *> GameWorld::getModules() {
+std::vector<Module *> GameWorld::getModules()
+{
     std::vector<Module *> result = modules;
     return result;
 }
 
-Box* GameWorld::getBox(int id) {
-    for (auto item: boxes) {
-        if (item->getId() == id) return item;
+Box *GameWorld::getBox(int id)
+{
+    for (auto item : boxes)
+    {
+        if (item->getId() == id)
+            return item;
     }
     return nullptr;
 }
 
-Box* GameWorld::getBox(Vector2d aPos) {
-    for (auto item: boxes) {
-        if (item->getRect().isInside(aPos)) return item;
+Box *GameWorld::getBox(Vector2d aPos)
+{
+    for (auto item : boxes)
+    {
+        if (item->getRect().isInside(aPos))
+            return item;
     }
     return nullptr;
 }
 
-void GameWorld::drawAll(bool info=false, bool debug=true) {
-    for (auto item: arms) {
+void GameWorld::drawAll(bool info = false, bool debug = true)
+{
+    for (auto item : arms)
+    {
         item->draw();
-        if (info) item->drawInfo();
-        if (debug) item->drawDebug();
+        if (info)
+            item->drawInfo();
+        if (debug)
+            item->drawDebug();
     }
 
-    for (auto item: boxes) {
+    for (auto item : boxes)
+    {
         item->draw();
     }
 
-    for (auto item: machines) {
+    for (auto item : machines)
+    {
         item->draw();
-        if (info) item->drawInfo();
-        if (debug) item->drawDebug();
+        if (info)
+            item->drawInfo();
+        if (debug)
+            item->drawDebug();
     }
 
-    for (auto item: modules) {
+    for (auto item : modules)
+    {
         item->draw();
-        if (info) item->drawInfo();
-        if (debug) item->drawDebug();
+        if (info)
+            item->drawInfo();
+        if (debug)
+            item->drawDebug();
     }
 }
 
-void GameWorld::run() {
+void GameWorld::run()
+{
     // run arms
-    for (auto arm: arms) {
+    for (auto arm : arms)
+    {
         arm->moveToTarget();
         arm->recalculate();
     }
 
     // run machinery
-    for (auto machinery: machines) {
+    for (auto machinery : machines)
+    {
         machinery->run();
     }
 
     // run boxes
-    for (auto box: boxes) {
+    for (auto box : boxes)
+    {
         box->update();
+    }
+}
+void GameWorld::click(Vector2d point)
+{
+    for (auto machinery : machines)
+    {
+        if (machinery->getRect().isInside(point))
+        {
+            machinery->onClick();
+            return;
+        }
     }
 }

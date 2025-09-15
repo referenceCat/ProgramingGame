@@ -2,6 +2,8 @@
 #define __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_CUSTOMMACHINERY_HPP_
 
 #include <cstdlib> 
+#include "Machinery.hpp"
+#include "../graphics/GraphicsEngine.hpp"
 
 class Furnace: public Machinery {
     ProductionArea heatingArea;
@@ -104,7 +106,7 @@ public:
     }
 
     void draw() override {
-        GraphicsEngine::instance()->drawLine(Vector2d(rect.p1.x, rect.p2.y + 1), Vector2d(rect.p1.x + (period - cooldown) / 40, rect.p2.y + 1), 0, al_map_rgb(100, 100, 100), 2);
+        // GraphicsEngine::instance()->drawLine(Vector2d(rect.p1.x, rect.p2.y + 1), Vector2d(rect.p1.x + (period - cooldown) / 40, rect.p2.y + 1), 0, al_map_rgb(100, 100, 100), 2);
         GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->boxCreatorDestroyerBaseSprite, 10, CommonValues::zMachinery);
     }
 
@@ -193,7 +195,7 @@ public:
         GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerCyllindersSprite, 10, CommonValues::zMachineryBack, Vector2d(165, 165));
         GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerPressSprite, 10, CommonValues::zMachinery, Vector2d(165, 165 - pressShiftByProcessTime() + 4));
         GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerPlateSprite, 10, CommonValues::zMachinery, Vector2d(165, 165));
-        GraphicsEngine::instance()->drawLine(Vector2d(rect.p1.x, rect.p2.y + 1), Vector2d(rect.p1.x + processTime / 10, rect.p2.y + 1), CommonValues::zMachinery, al_map_rgb(100, 100, 100), 2);
+        // GraphicsEngine::instance()->drawLine(Vector2d(rect.p1.x, rect.p2.y + 1), Vector2d(rect.p1.x + processTime / 10, rect.p2.y + 1), CommonValues::zMachinery, al_map_rgb(100, 100, 100), 2);
     }
 };
 
