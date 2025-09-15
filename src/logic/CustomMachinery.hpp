@@ -34,10 +34,10 @@ public:
     }
 
     void draw() override {
-        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->baseSpite, 20, 0.1);
+        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/Base/main.png"), 20, 0.1);
         if (arm) {
-            GraphicsEngine::instance()->drawBitmap(arm->getJointPosition(0),  GraphicsEngine::instance()->segment0Sprite, 20, 0.05, Vector2d(20, 40), arm->getJointRotation(0));
-            GraphicsEngine::instance()->drawBitmap(arm->getJointPosition(1),  GraphicsEngine::instance()->segment1Sprite, 20, 0.1, Vector2d(20, 40), arm->getJointRotation(0) + arm->getJointRotation(1));
+            GraphicsEngine::instance()->drawBitmap(arm->getJointPosition(0),  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/Segment0/main.png"), 20, 0.05, Vector2d(20, 40), arm->getJointRotation(0));
+            GraphicsEngine::instance()->drawBitmap(arm->getJointPosition(1),  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/Segment1/main.png"), 20, 0.1, Vector2d(20, 40), arm->getJointRotation(0) + arm->getJointRotation(1));
         }
     }
 

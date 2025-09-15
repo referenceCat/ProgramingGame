@@ -101,9 +101,6 @@ public:
     std::map<std::string, ALLEGRO_BITMAP*> loadedBitmaps;
     // TODO remove ASAP
     ALLEGRO_BITMAP* furnaceSprite = nullptr;
-    ALLEGRO_BITMAP* baseSpite = nullptr;
-    ALLEGRO_BITMAP* segment0Sprite = nullptr;
-    ALLEGRO_BITMAP* segment1Sprite = nullptr;
     ALLEGRO_BITMAP* assemblerBaseSprite = nullptr;
     ALLEGRO_BITMAP* assemblerCyllindersSprite = nullptr;
     ALLEGRO_BITMAP* assemblerPressSprite = nullptr;
@@ -124,10 +121,6 @@ public:
         }
 
         furnaceSprite = al_load_bitmap("resources/assets/heater.png");
-
-        baseSpite = al_load_bitmap("resources/assets/new_manipulator_base.png");
-        segment0Sprite = al_load_bitmap("resources/assets/new_manipulator_segment0.png");
-        segment1Sprite = al_load_bitmap("resources/assets/new_manipulator_segment1.png");
 
         assemblerBaseSprite = al_load_bitmap("resources/assets/assembler0.png");
         assemblerCyllindersSprite = al_load_bitmap("resources/assets/assembler1.png");
