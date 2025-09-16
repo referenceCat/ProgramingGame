@@ -109,6 +109,9 @@ void GameWorld::drawSurface() {
         }
         
     }
+
+    GraphicsEngine::instance()->drawBitmap(Vector2d(-100, 100), GraphicsEngine::instance()->getBitmap("resources/assets/environment/mountains/peaks.png"), 5, 50, Vector2d(400,  1200));
+    GraphicsEngine::instance()->drawBitmap(Vector2d(-100, 50), GraphicsEngine::instance()->getBitmap("resources/assets/environment/mountains/peaks.png"), 15, 20, Vector2d(400,  1200));
 }
 
 void GameWorld::drawAll(bool info = false, bool debug = true)
