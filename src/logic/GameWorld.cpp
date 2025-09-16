@@ -100,9 +100,14 @@ Box *GameWorld::getBox(Vector2d aPos)
 }
 
 void GameWorld::drawSurface() {
-    GraphicsEngine::instance()->drawRectangle(Rect2d(Vector2d(-500, surfaceY + 3), Vector2d(500, surfaceY + 100)), CommonValues::zSurface, al_map_rgb(15, 15, 15));
+    GraphicsEngine::instance()->drawRectangle(Rect2d(Vector2d(-500, surfaceY + 10), Vector2d(500, surfaceY + 300)), -1, al_map_rgb(5, 5, 5));
     for (int i = -30; i < 30; i++) {
-        GraphicsEngine::instance()->drawBitmap(Vector2d(i * 10, surfaceY), GraphicsEngine::instance()->getBitmap("resources/assets/environment/surface/tile0.png"), 20, CommonValues::zSurface);
+        if (i % 4 == 0) {
+            GraphicsEngine::instance()->drawBitmap(Vector2d(i * 40, surfaceY), GraphicsEngine::instance()->getBitmap("resources/assets/environment/surface/tile1.png"), 10, -1);
+        } else {
+            GraphicsEngine::instance()->drawBitmap(Vector2d(i * 40, surfaceY), GraphicsEngine::instance()->getBitmap("resources/assets/environment/surface/tile0.png"), 10, -1);
+        }
+        
     }
 }
 
