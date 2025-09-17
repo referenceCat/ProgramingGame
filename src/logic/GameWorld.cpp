@@ -102,16 +102,26 @@ Box *GameWorld::getBox(Vector2d aPos)
 void GameWorld::drawSurface() {
     GraphicsEngine::instance()->drawRectangle(Rect2d(Vector2d(-500, surfaceY + 10), Vector2d(500, surfaceY + 300)), -1, al_map_rgb(5, 5, 5));
     for (int i = -30; i < 30; i++) {
-        if (i % 4 == 0) {
-            GraphicsEngine::instance()->drawBitmap(Vector2d(i * 40, surfaceY), GraphicsEngine::instance()->getBitmap("resources/assets/environment/surface/tile1.png"), 10, -1);
+        if (i % 5 == 0) {
+            GraphicsEngine::instance()->drawBitmap(Vector2d(i * 40, surfaceY), GraphicsEngine::instance()->getBitmap("resources/assets/environment/surface/tile2/main.png"), 10, -1);
+        // } else if ((i + 3)% 5 == 0) {
+        //     GraphicsEngine::instance()->drawBitmap(Vector2d(i * 40, surfaceY), GraphicsEngine::instance()->getBitmap("resources/assets/environment/surface/tile1/main.png"), 10, -1);
         } else {
-            GraphicsEngine::instance()->drawBitmap(Vector2d(i * 40, surfaceY), GraphicsEngine::instance()->getBitmap("resources/assets/environment/surface/tile0.png"), 10, -1);
+            GraphicsEngine::instance()->drawBitmap(Vector2d(i * 40, surfaceY), GraphicsEngine::instance()->getBitmap("resources/assets/environment/surface/tile0/main.png"), 10, -1);
         }
         
     }
 
-    GraphicsEngine::instance()->drawBitmap(Vector2d(-100, 100), GraphicsEngine::instance()->getBitmap("resources/assets/environment/mountains/peaks.png"), 5, 50, Vector2d(400,  1200));
-    GraphicsEngine::instance()->drawBitmap(Vector2d(-100, 50), GraphicsEngine::instance()->getBitmap("resources/assets/environment/mountains/peaks.png"), 15, 20, Vector2d(400,  1200));
+    for (int i = -5; i < 5; i++) {
+        GraphicsEngine::instance()->drawBitmap(Vector2d(i * 200, surfaceY + 25), GraphicsEngine::instance()->getBitmap("resources/assets/environment/surface/plains/main.png"), 6, 10,  Vector2d(600,  400));
+        GraphicsEngine::instance()->drawBitmap(Vector2d(i * 300, surfaceY + 30), GraphicsEngine::instance()->getBitmap("resources/assets/environment/surface/plains2/main.png"), 4, 20,  Vector2d(600,  400));
+        
+    }
+
+    
+
+    GraphicsEngine::instance()->drawBitmap(Vector2d(200, surfaceY + 50), GraphicsEngine::instance()->getBitmap("resources/assets/environment/mountains/peaks.png"), 5, 40, Vector2d(600,  1200));
+    GraphicsEngine::instance()->drawBitmap(Vector2d(-100, surfaceY + 20), GraphicsEngine::instance()->getBitmap("resources/assets/environment/mountains/peaks.png"), 15, 25, Vector2d(600,  1200));
 }
 
 void GameWorld::drawAll(bool info = false, bool debug = true)
