@@ -188,7 +188,7 @@ bool ModuleBuilder::createModulePrototype(ModuleType type)
         moduleSetup->addNode(Vector2d(0, -32), Rotation(M_PI / 2 * 3));
         moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/LargeModule/background.png"), Vector2d(320, 640), CommonValues::zModuleMainBackgroung);
         moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/LargeModule/walls.png"), Vector2d(320, 640), CommonValues::zModuleWalls);
-        moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/LargeModule/far_background.png"), Vector2d(320, 640), CommonValues::zModuleFarBackgroung);
+        moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/LargeModule/far_background.png"), Vector2d(320, 640), CommonValues::zModuleVeryFarBackgroung);
         moduleSetup->addBlockingArea(Rect2d::fromTwoCorners(Vector2d(-16, -32), Vector2d(16, 32)));
         moduleSetup->addBuildableArea(Rect2d::fromTwoCorners(Vector2d(-16, -32), Vector2d(16, 32)));
         moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(-16, -32), Vector2d(-7, -30))); // top left

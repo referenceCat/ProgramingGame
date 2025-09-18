@@ -297,7 +297,7 @@ int main(int argc, char **argv)
     ALLEGRO_DISPLAY *display = nullptr;
     al_set_new_display_option(ALLEGRO_VSYNC, 2, ALLEGRO_REQUIRE);
     al_set_new_display_flags(ALLEGRO_RESIZABLE);
-    display = al_create_display(900, 900);
+    display = al_create_display(1920, 1080);
     al_register_event_source(event_queue, al_get_display_event_source(display));
 
     init();
