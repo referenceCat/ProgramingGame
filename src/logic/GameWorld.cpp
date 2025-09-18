@@ -114,15 +114,15 @@ void GameWorld::drawSurface() {
     }
 
     for (int i = -5; i < 5; i++) {
-        GraphicsEngine::instance()->drawBitmap(Vector2d(i * 200, surfaceY + 25), GraphicsEngine::instance()->getBitmap(std::format("resources/assets/environment/surface/plains{}/main.png", (i + 10) % 3)), 6, 10,  Vector2d(600,  400));
-        GraphicsEngine::instance()->drawBitmap(Vector2d(i * 300, surfaceY + 30), GraphicsEngine::instance()->getBitmap(std::format("resources/assets/environment/surface/plains{}/background.png", (i + 10) % 3)), 4, 20,  Vector2d(600,  400));
+        GraphicsEngine::instance()->drawBitmap(Vector2d(i * 200, surfaceY + 25), GraphicsEngine::instance()->getBitmap(std::format("resources/assets/environment/surface/plains{}/main.png", (i + 9) % 3)), 6, 10,  Vector2d(600,  400));
+        GraphicsEngine::instance()->drawBitmap(Vector2d(i * 300 - 100, surfaceY + 30), GraphicsEngine::instance()->getBitmap(std::format("resources/assets/environment/surface/plains{}/background.png", (i + 8) % 3)), 4, 20,  Vector2d(600,  400));
         
     }
 
     
 
-    GraphicsEngine::instance()->drawBitmap(Vector2d(200, surfaceY + 50), GraphicsEngine::instance()->getBitmap("resources/assets/environment/mountains/peaks.png"), 5, 40, Vector2d(600,  1200));
-    GraphicsEngine::instance()->drawBitmap(Vector2d(-100, surfaceY + 20), GraphicsEngine::instance()->getBitmap("resources/assets/environment/mountains/peaks.png"), 15, 25, Vector2d(600,  1200));
+    // GraphicsEngine::instance()->drawBitmap(Vector2d(200, surfaceY + 50), GraphicsEngine::instance()->getBitmap("resources/assets/environment/mountains/peaks.png"), 5, 40, Vector2d(600,  1200));
+    // GraphicsEngine::instance()->drawBitmap(Vector2d(-100, surfaceY + 20), GraphicsEngine::instance()->getBitmap("resources/assets/environment/mountains/peaks.png"), 15, 25, Vector2d(600,  1200));
 }
 
 void GameWorld::drawAll(bool info = false, bool debug = true)
