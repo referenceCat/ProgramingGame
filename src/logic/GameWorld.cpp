@@ -116,7 +116,6 @@ void GameWorld::drawSurface() {
     for (int i = -5; i < 5; i++) {
         GraphicsEngine::instance()->drawBitmap(Vector2d(i * 200, surfaceY + 25), GraphicsEngine::instance()->getBitmap(std::format("resources/assets/environment/surface/plains{}/main.png", (i + 9) % 3)), 6, 10,  Vector2d(600,  400));
         GraphicsEngine::instance()->drawBitmap(Vector2d(i * 300 - 100, surfaceY + 30), GraphicsEngine::instance()->getBitmap(std::format("resources/assets/environment/surface/plains{}/background.png", (i + 8) % 3)), 4, 20,  Vector2d(600,  400));
-        
     }
 
     

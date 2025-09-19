@@ -229,18 +229,34 @@ public:
 };
 
 class ParticleResearch: public Machinery {
+    long tickCounter = 0;
     ProductionArea destroyingArea;
     int cooldown = 200;
+    int blink = 0;
+
+    void createBlink() {
+        blink = rand() % 28;
+    }
+
+    void clearBlink() {
+        blink = 0;
+    }
 
 public:
     ParticleResearch(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(10, 10))) {
     }
 
     void run() override {
+        tickCounter++;
+        if (tickCounter % 15 == 0) createBlink(); // update lamps every 0.5 seconds
+        if (tickCounter % 15 == 5) clearBlink(); // update lamps every 0.5 seconds
     }
 
     void draw() override {
         GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/ParticleResearch/main.png"), 20, CommonValues::zMachinery);
+        if (blink) {
+            GraphicsEngine::instance()->drawCircle(rect.p1 + Vector2d(4.6, 0.85) + Vector2d((blink % 7 * 0.73), (blink / 7) * 0.73), 0.2, CommonValues::zMachinery, al_map_rgb(255, 255, 255));
+        }
     }
 };
 
