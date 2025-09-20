@@ -35,10 +35,15 @@ class Controller : public Machinery {
     int failure = false;
     Icon* pauseIcon = nullptr;
 
+    void openFile();
+
 public:
-    Controller(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(5, 7))) {}
+    Controller(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(5, 7))) {
+        addInstruction("");
+    }
     void draw() override;
     void addInstruction(std::string instr);
+    void clearInstructions();
     std::vector<std::string> split(const std::string &s,
                                    const std::string &delimiter);
     void createWindow();

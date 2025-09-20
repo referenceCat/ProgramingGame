@@ -98,6 +98,11 @@ public:
         buttons.erase(std::remove(buttons.begin(), buttons.end(), buttonToRemove), buttons.end());
     };
 
+    void deleteIcon(Icon* iconToRemove) {
+        delete iconToRemove;
+        icons.erase(std::remove(icons.begin(), icons.end(), iconToRemove), icons.end());
+    };
+
     void deleteLabel(Label* labelToRemove) {
         delete labelToRemove;
         labels.erase(std::remove(labels.begin(), labels.end(), labelToRemove), labels.end());

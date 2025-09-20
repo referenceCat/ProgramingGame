@@ -1,26 +1,19 @@
 #include "Controller.hpp"
 #include "GameWorld.hpp"
+#include <iostream>
+#include <fstream>
+#include <string>
 
 void Controller::createWindow()
 {
     window = GuiEngine::instance()->addWindow(Rect2d::fromCenterAndDimensions(Vector2d(400, 400), Vector2d(400, 750)), true, true);
-    int line = 0;
-    for (auto item : instructions)
-    {
-        InstructionLine instructionLine;
-        instructionLine.label = window->addLabel(Vector2d(40, 80), false, item, line);
-        instructionLine.breakpointButton = window->addButton(Rect2d::fromTwoCorners(Vector2d(18, 80 + line * 14), Vector2d(32, 94 + line * 14)));
-        instructionLine.breakpointIcon = window->addIcon(Vector2d(18 + 7, 80 + line * 14 + 7), GuiEngine::emptyIcon);
-        instructionLine.breakpointButton->setOnClickCallback([this, line]()
-                                                             { this->toggle(line); });
-        instructionsGui.push_back(instructionLine);
-        line++;
-    }
-    InstructionLine lastInstructionLine;
-    lastInstructionLine.label = window->addLabel(Vector2d(40, 80), false, "", line);
-    instructionsGui.push_back(lastInstructionLine); // last empty line
+
     rInstrLabel = window->addLabel(Vector2d(20, 30), false, "rInstr: " + std::to_string(rInstr), 0);
     rDelayLabel = window->addLabel(Vector2d(20, 30), false, "rDelay: " + std::to_string(rDelay), 1);
+
+    window->addLabel(Vector2d(270, 40), true, "open");
+    window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(270, 40), Vector2d(60, 18)))->setOnClickCallback([this]()
+                                                                                                                { this->openFile(); });
 
     pauseIcon = window->addIcon(Vector2d(315, 40), GuiEngine::unpauseIcon);
     window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(315, 40), Vector2d(18, 18)))->setOnClickCallback([this]()
@@ -34,15 +27,35 @@ void Controller::createWindow()
     window->addIcon(Vector2d(375, 40), GuiEngine::nextIcon);
     window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(375, 40), Vector2d(18, 18)))->setOnClickCallback([this]()
                                                                                                                 { this->next(); });
-
+    window->setOnCloseCallback([this](){this->window = nullptr; instructionsGui.clear();});
     updateWindow();
 }
 
 void Controller::updateWindow()
 {
-    if (!window)
-    {
+    if (!window) {
         return;
+    }
+
+    for (auto line: instructionsGui) {
+        window->deleteButton(line.breakpointButton);
+        window->deleteIcon(line.breakpointIcon);
+        window->deleteLabel(line.label);
+    }
+
+    instructionsGui.clear();
+
+    int line = 0;
+    for (auto item : instructions)
+    {
+        InstructionLine instructionLine;
+        instructionLine.label = window->addLabel(Vector2d(40, 80), false, item, line);
+        instructionLine.breakpointButton = window->addButton(Rect2d::fromTwoCorners(Vector2d(18, 80 + line * 14), Vector2d(32, 94 + line * 14)));
+        instructionLine.breakpointIcon = window->addIcon(Vector2d(18 + 7, 80 + line * 14 + 7), GuiEngine::emptyIcon);
+        instructionLine.breakpointButton->setOnClickCallback([this, line]()
+                                                             { this->toggle(line); });
+        instructionsGui.push_back(instructionLine);
+        line++;
     }
 
     rInstrLabel->setText("rInstr: " + std::to_string(rInstr));
@@ -144,8 +157,7 @@ int Controller::execNextInstr()
     return 0;
 }
 
-void Controller::toggle(int line)
-{
+void Controller::toggle(int line) {
     assert(line < instructions.size());
     breakpoints.at(line) = !breakpoints.at(line);
     if (window)
@@ -156,6 +168,30 @@ void Controller::toggle(int line)
             instructionsGui.at(line).breakpointIcon->setBitmap(GuiEngine::emptyIcon);
     }
 }
+
+void Controller::openFile() {
+    char filename[1024];
+    FILE *f = popen("zenity --file-selection", "r");
+    fgets(filename, 1024, f);
+    if (filename == "�?tXUU") return; // check if no file was selected
+
+    for (int i = 0; i < sizeof(filename); i++) { // remove \n from file name 
+        if (filename[i] == '\n') filename[i] = '\0';
+    }
+
+    std::cout << "Opening file " << filename << "." << std::endl;
+    std::ifstream file(filename);
+    if (!file.is_open()) return;
+    clearInstructions();
+    std::string line;
+    while (std::getline(file, line)) {
+        std::cout << line << std::endl;
+        addInstruction(line);
+    }
+    pause();
+    updateWindow();
+}
+
 void Controller::draw()
 {
     // GraphicsEngine::instance()->drawRectangle(rect, 0, al_map_rgb(100, 255,
@@ -171,6 +207,14 @@ void Controller::addInstruction(std::string instr)
     instructions.push_back(instr);
     breakpoints.push_back(false);
 }
+
+void Controller::clearInstructions() {
+    breakpoints.clear();
+    instructions.clear();
+    rDelay = 0;
+    rInstr = 0;
+}
+
 std::vector<std::string> Controller::split(const std::string &s,
                                            const std::string &delimiter)
 {
