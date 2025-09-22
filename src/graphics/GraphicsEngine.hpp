@@ -59,19 +59,9 @@ class GraphicsEngine {
     ALLEGRO_FONT* debugFont = nullptr;
 
     std::map<std::string, ALLEGRO_BITMAP*> loadedBitmaps;
-    // TODO remove ASAP
-    ALLEGRO_BITMAP* furnaceSprite = nullptr;
-    ALLEGRO_BITMAP* assemblerBaseSprite = nullptr;
-    ALLEGRO_BITMAP* assemblerCyllindersSprite = nullptr;
-    ALLEGRO_BITMAP* assemblerPressSprite = nullptr;
-    ALLEGRO_BITMAP* assemblerPlateSprite = nullptr;
-    ALLEGRO_BITMAP* backhroundTile100x100 = nullptr;
-    ALLEGRO_BITMAP* boxCreatorDestroyerBaseSprite = nullptr;
     
-    void loadImagesLegacyTesting(); // TODO memory leak then reloading bitmaps
     void loadBitmaps();
     ALLEGRO_BITMAP *getBitmap(std::string path);
-    void drawDebugBackgroung();
     void drawDebugBackgroung2();
     void drawStarsBackgroung();
     Vector2d transformPoint(Vector2d originalPoint, double z);
@@ -104,6 +94,8 @@ class GraphicsEngine {
     static GraphicsEngine *instance();
     void draw();
     void clearBitmaps();
+
+    void drawArcProgressBar(Vector2d aPoint, double fraction, double r, double z, ALLEGRO_COLOR color, double thickness = 0.1);
 };
 
 

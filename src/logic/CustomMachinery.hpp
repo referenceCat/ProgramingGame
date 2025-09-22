@@ -4,6 +4,7 @@
 #include <cstdlib> 
 #include "Machinery.hpp"
 #include "../graphics/GraphicsEngine.hpp"
+#include <math.h>
 
 enum ProductionProcessStatus {
     Running,
@@ -32,7 +33,7 @@ public:
     }
 
     void draw() override {
-        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->furnaceSprite, 10, CommonValues::zMachinery);
+        // GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->furnaceSprite, 10, CommonValues::zMachinery);
         // Machinery::draw();
     }
 };
@@ -91,6 +92,13 @@ class Drill: public Machinery {
     ProductionArea output0;
     ProductionArea output1;
     ProductionProcess miningProcess;
+    int tick = 0;
+    Vector2d detailShift = Vector2d();
+
+    void updateAnimation() {
+        tick++;
+        detailShift = Vector2d(std::sin(static_cast<double>(tick) / 2), std::sin(static_cast<double>(tick) / 3)) / 15;
+    }
 
 public:
     Drill(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(10, 10))) {
@@ -113,6 +121,7 @@ public:
             } else {
                 miningProcess.progress++;
             }
+            updateAnimation(); // shake drill sprite if running
         }
 
         if (miningProcess.status == WaitingToFinish) {
@@ -130,14 +139,20 @@ public:
             // else continue waiting
         }
 
+
     }
 
     void draw() override {
-        GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Drill/detail1.png"), 20, CommonValues::zMachinery);
-        GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Drill/detail2.png"), 20, CommonValues::zMachinery);
+        GraphicsEngine::instance()->drawBitmap(rect.p1 + detailShift, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Drill/detail1.png"), 20, CommonValues::zMachinery);
+        GraphicsEngine::instance()->drawBitmap(rect.p1 + detailShift * 0.7, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Drill/detail2.png"), 20, CommonValues::zMachinery);
         GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Drill/main.png"), 20, CommonValues::zMachinery);
-        GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Drill/drill.png"), 20, CommonValues::zMachineryBack);
+        GraphicsEngine::instance()->drawBitmap(rect.p1 + detailShift * 0.5, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Drill/drill.png"), 20, CommonValues::zMachineryBack);
         GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Drill/background.png"), 20, CommonValues::zMachineryBack);
+        GraphicsEngine::instance()->drawArcProgressBar(rect.p1 + Vector2d(1.8, 1.8), static_cast<double> (miningProcess.progress) / miningProcess.duration, 0.7, CommonValues::zMachinery, al_map_rgb(255, 255, 255), 0.2);
+
+        for (int y = rect.p2.y; y < GameWorld::instance()->surfaceY + 10; y += 10) { // draw drill to the ground level
+            GraphicsEngine::instance()->drawBitmap(Vector2d(rect.p1.x, y) + detailShift * 0.5, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Drill/drill.png"), 20, CommonValues::zMachineryBack);
+        }
     }
 };
 
@@ -198,6 +213,7 @@ public:
     void draw() override {
         GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Electrolyzer/main.png"), 20, CommonValues::zMachinery);
         GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Electrolyzer/background.png"), 20, CommonValues::zMachineryBack);
+        GraphicsEngine::instance()->drawArcProgressBar(rect.p1 + Vector2d(6.6, 4.4), static_cast<double> (process.progress) / process.duration, 0.7, CommonValues::zMachinery, al_map_rgb(255, 255, 255), 0.2);
     }
 };
 

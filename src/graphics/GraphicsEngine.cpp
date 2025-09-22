@@ -3,31 +3,6 @@
 #include <iostream>
 #include <allegro5/allegro_image.h>
 
-void GraphicsEngine::loadImagesLegacyTesting()
-{
-    backhroundTile100x100 = al_create_bitmap(100, 100);
-    al_set_target_bitmap(backhroundTile100x100);
-    al_draw_filled_rectangle(0, 0, 100, 100, al_map_rgb(50, 50, 50));
-    for (int i = 0; i < 100; i++)
-    {
-        int x = i % 10;
-        int y = i / 10;
-        if ((x + y) % 2)
-            al_draw_filled_rectangle(x * 10, y * 10, x * 10 + 10, y * 10 + 10,
-                                     al_map_rgb(20, 20, 20));
-    }
-
-    furnaceSprite = al_load_bitmap("resources/assets/heater.png");
-
-    assemblerBaseSprite = al_load_bitmap("resources/assets/assembler0.png");
-    assemblerCyllindersSprite = al_load_bitmap("resources/assets/assembler1.png");
-    assemblerPressSprite = al_load_bitmap("resources/assets/assembler3.png");
-    assemblerPlateSprite = al_load_bitmap("resources/assets/assembler2.png");
-
-    boxCreatorDestroyerBaseSprite =
-        al_load_bitmap("resources/assets/box_creator_destroyer_base.png");
-}
-
 void GraphicsEngine::loadBitmaps()
 {
 
@@ -46,23 +21,6 @@ void GraphicsEngine::loadBitmaps()
 ALLEGRO_BITMAP *GraphicsEngine::getBitmap(std::string path)
 {
     return loadedBitmaps[path];
-}
-
-void GraphicsEngine::drawDebugBackgroung()
-{ // TODO very slow way to draw tiles
-    double tileSize =
-        transformScalar(al_get_bitmap_width(backhroundTile100x100), 0);
-    Vector2d position =
-        transformPoint(Vector2d(static_cast<int>(camera.position.x) / 100 * 100,
-                                static_cast<int>(camera.position.y) / 100 * 100),
-                       0);
-    for (int x = -10; x < 10; x++)
-        for (int y = -10; y < 10; y++)
-        {
-            al_draw_scaled_bitmap(backhroundTile100x100, 0, 0, 100, 100,
-                                  position.x + x * tileSize,
-                                  position.y + y * tileSize, tileSize, tileSize, 0);
-        }
 }
 
 void GraphicsEngine::drawDebugBackgroung2()
@@ -194,6 +152,17 @@ void GraphicsEngine::drawCircle(Vector2d aPoint, double r, double z,
         al_draw_filled_circle(aPoint.x, aPoint.y, r, color);
     else
         al_draw_circle(aPoint.x, aPoint.y, r, color, thickness);
+}
+
+void GraphicsEngine::drawArcProgressBar(Vector2d aPoint, double fraction, double r, double z, ALLEGRO_COLOR color, double thickness) {
+    setLayerAsTargetBitmap(z);
+    if (isnan(z))
+        z = 0;
+
+    aPoint = transformPoint(aPoint, z);
+    r = transformScalar(r, z);
+    thickness = transformScalar(thickness, z);
+    al_draw_arc(aPoint.x, aPoint.y, r, M_PI / 2, M_PI * fraction * 2, color, thickness);
 }
 
 void GraphicsEngine::drawPolygon(std::vector<Vector2d> vertices, double z,

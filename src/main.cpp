@@ -35,38 +35,6 @@ void init()
 
     ModuleBuilder::instance()->createModulePrototype(LargeModule);
     ModuleBuilder::instance()->buildModule(true);
-
-    auto box = new ResourceBoxPrototype(Rect2d(Vector2d(0, -20), 3, 3), GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Alloy/main.png"), Resource::Alloy);
-    box->addToGameWorld();
-
-    box = new ResourceBoxPrototype(Rect2d(Vector2d(5, -20), 3, 3), GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Silicon/main.png"), Resource::Silicon);
-    box->addToGameWorld();
-
-    box = new ResourceBoxPrototype(Rect2d(Vector2d(10, -20), 3, 3), GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Oxygen/main.png"), Resource::Oxygen);
-    box->addToGameWorld();
-
-    box = new ResourceBoxPrototype(Rect2d(Vector2d(15, -20), 4, 4), GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Regolith/main.png"), Resource::Regolith);
-    box->addToGameWorld();
-    
-    box = new ResourceBoxPrototype(Rect2d(Vector2d(20, -20), 2, 4), GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Tape/empty.png"), Resource::Regolith); 
-    box->addToGameWorld();
-
-    // auto controller7 = new Controller(Vector2d(-10.5, 3.5));
-    // controller7->addInstruction("delay 50");
-    // controller7->addInstruction("delay 100");
-    // controller7->addInstruction("send 3 0 180");
-    // controller7->addInstruction("send 3 1 270");
-    // controller7->addInstruction("delay 400");
-    // controller7->addInstruction("send 3 200 0");
-    // controller7->addInstruction("delay 10");
-    // controller7->addInstruction("send 3 0 190"); // move box 1 to furnace
-    // controller7->addInstruction("send 3 1 100");
-    // controller7->addInstruction("delay 400");
-    // controller7->addInstruction("send 3 100 0");
-    // controller7->addInstruction("delay 10");
-    // controller7->addInstruction("goto 2");
-    // controller7->addToGameWorld();
-
 }
 
 void redraw()
@@ -294,7 +262,6 @@ int main(int argc, char **argv)
     GraphicsEngine::instance()->debugFont = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
     GuiEngine::debugFont = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
     GraphicsEngine::instance()->loadBitmaps();
-    GraphicsEngine::instance()->loadImagesLegacyTesting();
 
     // Initialize user inputs
     al_install_keyboard();
