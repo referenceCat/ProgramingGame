@@ -5,6 +5,18 @@
 #include "Machinery.hpp"
 #include "../graphics/GraphicsEngine.hpp"
 
+enum ProductionProcessStatus {
+    Running,
+    WaitingToFinish,
+    WaitingToStart
+};
+
+struct ProductionProcess {
+    int duration = 100;
+    int progress = 0;
+    ProductionProcessStatus status = WaitingToStart;
+};
+
 class Furnace: public Machinery {
     ProductionArea heatingArea;
 public:
@@ -75,127 +87,117 @@ public:
     }
 };
 
-class BoxGenerator: public Machinery {
-    ProductionArea creatingArea;
-    int period = 200;
-    int cooldown = period;
-    BoxContent boxContent = BoxContent::EmptyBox;
-    
+class Drill: public Machinery {
+    ProductionArea output0;
+    ProductionArea output1;
+    ProductionProcess miningProcess;
 
 public:
-    BoxGenerator(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(5, 5))) {
-        creatingArea.rect = Rect2d::fromCenterAndDimensions(Vector2d(2.5, 2.5), Vector2d(4, 4));
-        areas.push_back(&creatingArea);
-    }
-
-    void setPeriod(int aPeriod) {
-        period = aPeriod;
-    }
-
-    void setType(BoxContent aContent) {
-        boxContent = aContent;
+    Drill(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(10, 10))) {
+        miningProcess.duration = 500;
+        output0 = ProductionArea(Rect2d::fromCenterAndDimensions(Vector2d(7.5, 2.5), Vector2d(5, 5)));
+        areas.push_back(&output0);
+        output1 = ProductionArea(Rect2d::fromCenterAndDimensions(Vector2d(7.5, 7.5), Vector2d(5, 5)));
+        areas.push_back(&output1);
     }
 
     void run() override {
-        if (cooldown > 0) cooldown--;
-
-        if (cooldown == 0 && getBoxesTouching(creatingArea).size() == 0) {
-            createBox(creatingArea)->setContent(boxContent);
-            cooldown = period;
+        if (miningProcess.status == WaitingToStart) {
+            miningProcess.status = Running;
+            miningProcess.progress = 0;
         }
-    }
 
-    void draw() override {
-        // GraphicsEngine::instance()->drawLine(Vector2d(rect.p1.x, rect.p2.y + 1), Vector2d(rect.p1.x + (period - cooldown) / 40, rect.p2.y + 1), 0, al_map_rgb(100, 100, 100), 2);
-        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->boxCreatorDestroyerBaseSprite, 10, CommonValues::zMachinery);
-    }
-
-};
-
-class BoxDestroyer: public Machinery {
-    ProductionArea destroyingArea;
-    int cooldown = 200;
-
-public:
-    BoxDestroyer(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(5, 5))) {
-        destroyingArea.rect = Rect2d::fromCenterAndDimensions(Vector2d(2.5, 2.5), Vector2d(4, 4));
-        areas.push_back(&destroyingArea);
-    }
-
-    void run() override {
-        for (auto item: getBoxesInside(destroyingArea))  {
-            destroyBox(item);
-        }
-    }
-
-    void draw() override {
-        // Machinery::draw();
-        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->boxCreatorDestroyerBaseSprite, 10, CommonValues::zMachinery);
-    }
-};
-
-class AssemblerTier1: public Machinery {
-    ProductionArea ingridientArea0;
-    ProductionArea ingridientArea1;
-    ProductionArea resultArea;
-    int period = 160;
-    int processTime = 0;
-    bool processRunning = false;
-
-    int pressShiftByProcessTime() { // TODO bad function name xd
-        if (processTime < 20 || processTime > 140) return 0;
-        if (processTime > 60 && processTime < 100) return 20;
-        if (processTime < 80) return (processTime - 20) / 2;
-        return (140 - processTime) / 2;
-    }
-    
-
-public:
-    AssemblerTier1(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(16, 8))) {
-        ingridientArea0.rect = Rect2d::fromCenterAndDimensions(Vector2d(2, 2), Vector2d(3.5, 3.5)); // TODO process class for this kind of behavior
-        ingridientArea1.rect = Rect2d::fromCenterAndDimensions(Vector2d(2, 6), Vector2d(3.5, 3.5));
-        resultArea.rect = Rect2d::fromCenterAndDimensions(Vector2d(14, 2), Vector2d(3.5, 3.5));
-        areas.push_back(&ingridientArea0);
-        areas.push_back(&ingridientArea1);
-        areas.push_back(&resultArea);
-    }
-
-    void setPeriod(int aPeriod) {
-        period = aPeriod;
-    }
-
-    void run() override {
-        if (!processRunning && getBoxesInside(ingridientArea0).size() && getBoxesInside(ingridientArea1).size()) {
-            auto box0 = getBoxesInside(ingridientArea0).at(0);
-            auto box1 = getBoxesInside(ingridientArea1).at(0);
-            if (box0->getContent() == BoxContent::IronPlate 
-                && box1->getContent() == BoxContent::IronPlate
-                && box0->getTemperature() > 100
-                && box1->getTemperature() > 100) {
-                destroyBox(box0); // process begins here
-                destroyBox(box1);
-                processRunning = true;
+        if (miningProcess.status == Running) {
+            if (miningProcess.progress == miningProcess.duration) {
+                miningProcess.status = WaitingToFinish;
+            } else {
+                miningProcess.progress++;
             }
         }
 
-        if (processRunning && processTime < period) processTime++;
-
-        if (processRunning && processTime >= period) {
-            if (getBoxesTouching(resultArea).size() == 0) { // check if can create box
-                auto resultBox = createBox(resultArea); // process stops here
-                resultBox->setContent(BoxContent::HeavyIronPlate);
-                processRunning = false;
-                processTime = 0;
+        if (miningProcess.status == WaitingToFinish) {
+            if (getBoxesTouching(output0).size() == 0) {
+                auto box = new ResourceBoxPrototype(Rect2d::fromCenterAndDimensions(rect.p1 + output0.rect.center(), Vector2d(4, 4)), GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Regolith/main.png"), Resource::Regolith);
+                box->addToGameWorld();
+                miningProcess.status = WaitingToStart;
+                miningProcess.progress = 0;
+            } else if (getBoxesTouching(output1).size() == 0) {
+                auto box = new ResourceBoxPrototype(Rect2d::fromCenterAndDimensions(rect.p1 + output1.rect.center(), Vector2d(4, 4)), GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Regolith/main.png"), Resource::Regolith);
+                box->addToGameWorld();
+                miningProcess.status = WaitingToStart;
+                miningProcess.progress = 0;
             }
+            // else continue waiting
         }
+
     }
 
     void draw() override {
-        GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerBaseSprite, 10, CommonValues::zMachineryFront, Vector2d(165, 165));
-        GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerCyllindersSprite, 10, CommonValues::zMachineryBack, Vector2d(165, 165));
-        GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerPressSprite, 10, CommonValues::zMachinery, Vector2d(165, 165 - pressShiftByProcessTime() + 4));
-        GraphicsEngine::instance()->drawBitmap(rect.p2,  GraphicsEngine::instance()->assemblerPlateSprite, 10, CommonValues::zMachinery, Vector2d(165, 165));
-        // GraphicsEngine::instance()->drawLine(Vector2d(rect.p1.x, rect.p2.y + 1), Vector2d(rect.p1.x + processTime / 10, rect.p2.y + 1), CommonValues::zMachinery, al_map_rgb(100, 100, 100), 2);
+        GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Drill/detail1.png"), 20, CommonValues::zMachinery);
+        GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Drill/detail2.png"), 20, CommonValues::zMachinery);
+        GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Drill/main.png"), 20, CommonValues::zMachinery);
+        GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Drill/drill.png"), 20, CommonValues::zMachineryBack);
+        GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Drill/background.png"), 20, CommonValues::zMachineryBack);
+    }
+};
+
+class Electrolyzer: public Machinery {
+    ProductionArea input0;
+    ProductionArea output0;
+    ProductionArea output1;
+    ProductionArea output2;
+    ProductionProcess process;
+
+public:
+    Electrolyzer(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(10, 10))) {
+        process.duration = 500;
+        input0 = ProductionArea(Rect2d::fromCenterAndDimensions(Vector2d(2.5, 2.5), Vector2d(5, 5)));
+        areas.push_back(&input0);
+        output0 = ProductionArea(Rect2d::fromCenterAndDimensions(Vector2d(1.6, 8.3), Vector2d(3.33, 3.33)));
+        areas.push_back(&output0);
+        output1 = ProductionArea(Rect2d::fromCenterAndDimensions(Vector2d(5, 8.3), Vector2d(3.33, 3.33)));
+        areas.push_back(&output1);
+        output2 = ProductionArea(Rect2d::fromCenterAndDimensions(Vector2d(8.3, 8.3), Vector2d(3.33, 3.33)));
+        areas.push_back(&output2);
+    }
+
+    void run() override {
+        if (process.status == WaitingToStart) {
+            if (getBoxesInside(input0).size()) {
+                auto box = getBoxesInside(input0).at(0);
+                process.status = Running;
+                process.progress = 0;
+                destroyBox(box);
+            } // TODO check resource type
+        }
+
+        if (process.status == Running) {
+            if (process.progress == process.duration) {
+                process.status = WaitingToFinish;
+            } else {
+                process.progress++;
+            }
+        }
+
+        if (process.status == WaitingToFinish) {
+            if (getBoxesTouching(output0).size() == 0 && getBoxesTouching(output1).size() == 0 && getBoxesTouching(output1).size() == 0) {
+                auto box = new ResourceBoxPrototype(Rect2d::fromCenterAndDimensions(rect.p1 + output0.rect.center(), Vector2d(3, 3)), GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Oxygen/main.png"), Resource::Oxygen);
+                box->addToGameWorld();
+                box = new ResourceBoxPrototype(Rect2d::fromCenterAndDimensions(rect.p1 + output1.rect.center(), Vector2d(3, 3)), GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Alloy/main.png"), Resource::Alloy);
+                box->addToGameWorld();
+                box = new ResourceBoxPrototype(Rect2d::fromCenterAndDimensions(rect.p1 + output2.rect.center(), Vector2d(3, 3)), GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Silicon/main.png"), Resource::Silicon);
+                box->addToGameWorld();
+                process.status = WaitingToStart;
+                process.progress = 0;
+            }
+            // else continue waiting
+        }
+
+    }
+
+    void draw() override {
+        GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Electrolyzer/main.png"), 20, CommonValues::zMachinery);
+        GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Electrolyzer/background.png"), 20, CommonValues::zMachineryBack);
     }
 };
 
@@ -253,7 +255,7 @@ public:
     }
 
     void draw() override {
-        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/ParticleResearch/main.png"), 20, CommonValues::zMachinery);
+        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/ParticleResearch/main.png"), 20, CommonValues::zMachineryBack);
         if (blink) {
             GraphicsEngine::instance()->drawCircle(rect.p1 + Vector2d(4.6, 0.85) + Vector2d((blink % 7 * 0.73), (blink / 7) * 0.73), 0.2, CommonValues::zMachinery, al_map_rgb(255, 255, 255));
         }

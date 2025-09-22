@@ -138,6 +138,10 @@ void GameWorld::drawAll(bool info = false, bool debug = true)
     for (auto item : boxes)
     {
         item->draw();
+        if (info)
+            item->drawInfo();
+        if (debug)
+            item->drawDebug();
     }
 
     for (auto item : machines)

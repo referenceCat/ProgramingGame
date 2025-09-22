@@ -6,7 +6,7 @@ void Machinery::destroyBox(Box *box) {
     GameWorld::instance()->removeBox(box->getId());
 }
 
-Box* Machinery::createBox(ProductionArea area)
+Box* Machinery::createBox(ProductionArea area) // TODO no
 {
     auto box = new Box(Rect2d::fromCenterAndDimensions(area.rect.center() + rect.p1, Vector2d(2, 2)));
     box->addToGameWorld();

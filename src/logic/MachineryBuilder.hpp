@@ -10,12 +10,10 @@
 enum MachineryType {
     TypeArm,
     TypeController,
-    TypeFurnace, 
-    TypeCreator,
-    TypeDestroyer,
-    TypeAssembler,
     TypeLab,
-    TypeParticleResearch
+    TypeParticleResearch,
+    TypeDrill,
+    TypeElectrolyzer
 };
 
 class MachineryBuilder {
@@ -33,17 +31,11 @@ class MachineryBuilder {
         case TypeController:
             prototype = new Controller(Vector2d());
             break;
-        case TypeFurnace:
-            prototype = new Furnace(Vector2d());
+        case TypeDrill:
+            prototype = new Drill(Vector2d());
             break;
-        case TypeAssembler:
-            prototype = new AssemblerTier1(Vector2d());
-            break;
-        case TypeCreator:
-            prototype = new BoxGenerator(Vector2d());
-            break;
-        case TypeDestroyer:
-            prototype = new BoxDestroyer(Vector2d());
+        case TypeElectrolyzer:
+            prototype = new Electrolyzer(Vector2d());
             break;
         case TypeLab:
             prototype = new Lab(Vector2d());
@@ -149,13 +141,13 @@ public:
         window->addLabel(labButton->getRect().center(), true, "Lab", 0);
         labButton->setOnClickCallback([this](){this->selectType(TypeLab);});
 
-        Button *creatorButton = window->addButton(Rect2d(Vector2d(20, 135), Vector2d(200, 155)));
-        window->addLabel(creatorButton->getRect().center(), true, "Box Creator", 0);
-        creatorButton->setOnClickCallback([this](){this->selectType(TypeCreator);});
+        Button *drillButton = window->addButton(Rect2d(Vector2d(20, 135), Vector2d(200, 155)));
+        window->addLabel(drillButton->getRect().center(), true, "Drill", 0);
+        drillButton->setOnClickCallback([this](){this->selectType(TypeDrill);});
 
-        Button *destroyerButton = window->addButton(Rect2d(Vector2d(20, 160), Vector2d(200, 185)));
-        window->addLabel(destroyerButton->getRect().center(), true, "Box Destroyer", 0);
-        destroyerButton->setOnClickCallback([this](){this->selectType(TypeDestroyer);});
+        Button *electrolyzerButton = window->addButton(Rect2d(Vector2d(20, 160), Vector2d(200, 185)));
+        window->addLabel(electrolyzerButton->getRect().center(), true, "Electrolyzer", 0);
+        electrolyzerButton->setOnClickCallback([this](){this->selectType(TypeElectrolyzer);});
 
         Button *particleButton = window->addButton(Rect2d(Vector2d(20, 190), Vector2d(200, 210)));
         window->addLabel(particleButton->getRect().center(), true, "Particle Detector", 0);
