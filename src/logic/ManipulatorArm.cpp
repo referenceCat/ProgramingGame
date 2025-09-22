@@ -105,7 +105,11 @@ void ManipulatorArm::moveToTarget()
 void ManipulatorArm::release()
 {
     active = false;
-    takenBox = nullptr;
+    if (takenBox) {
+        takenBox->setGrabbed(false);
+        takenBox = nullptr;
+    }
+    
     relativeBoxPosition = Vector2d();
 }
 bool ManipulatorArm::isActive() { return active; }
@@ -125,6 +129,7 @@ void ManipulatorArm::takeBox(Box *aBox)
 {
     takenBox = aBox;
     relativeBoxPosition = takenBox->getRect().center() - jointsPosition[jointsNumber - 1];
+    takenBox->setGrabbed(true);
 }
 void ManipulatorArm::recalculate()
 {

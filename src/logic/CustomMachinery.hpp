@@ -18,26 +18,6 @@ struct ProductionProcess {
     ProductionProcessStatus status = WaitingToStart;
 };
 
-class Furnace: public Machinery {
-    ProductionArea heatingArea;
-public:
-    Furnace(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(10, 10))) {
-        heatingArea.rect = Rect2d::fromCenterAndDimensions(Vector2d(5, 5), Vector2d(8, 8));
-        areas.push_back(&heatingArea);
-    }
-
-    void run() override {
-        for (auto item: getBoxesInside(heatingArea))  {
-            if(item->getTemperature() < 255) item->setTemperature(item->getTemperature() + 1);
-        }
-    }
-
-    void draw() override {
-        // GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->furnaceSprite, 10, CommonValues::zMachinery);
-        // Machinery::draw();
-    }
-};
-
 class ManipulatorTier1: public Machinery {
     ManipulatorArm* arm = nullptr;
 
@@ -49,6 +29,7 @@ class ManipulatorTier1: public Machinery {
     Window* window = nullptr;
     Button* manualControlButton = nullptr;
     Label* manualControlLabel = nullptr;
+    Label* grabLabel = nullptr;
 
     static double q2(double x, double y, double l1, double l2) { // TODO
         return std::acos((x * x + y * y - l1 * l1 - l2 * l2) / (2 * l1 * l2));
@@ -84,10 +65,11 @@ class ManipulatorTier1: public Machinery {
         button->setOnClickCallback([this](){this->manualTarget = this->manualTarget + Vector2d(1, 0); setTarget(manualTarget);});
 
         button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(90, 105), Vector2d(48, 48)));
-        window->addLabel(button->getRect().center(), true, "grab");
+        grabLabel = window->addLabel(button->getRect().center(), true, arm->isActive() ? "release" : "grab");
         button->setOnClickCallback([this](){
             if (this->arm->isActive()) this->arm->release();
             else this->arm->grab();
+            this->grabLabel->setText(this->arm->isActive() ? "release" : "grab");
         });
     }
 
@@ -95,6 +77,7 @@ class ManipulatorTier1: public Machinery {
         window = nullptr;
         manualControlButton = nullptr;
         manualControlLabel = nullptr;
+        grabLabel = nullptr;
     }
 
     void onManualControlButtonClick() {
@@ -289,6 +272,7 @@ public:
         if (process.status == WaitingToStart) {
             if (getBoxesInside(input0).size()) {
                 auto box = getBoxesInside(input0).at(0);
+                if (box->isGrabbed()) return;
                 process.status = Running;
                 process.progress = 0;
                 destroyBox(box);

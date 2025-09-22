@@ -15,6 +15,7 @@ class GameWorld;
 class Box : public GameObject {
     Rect2d rect;
     double temperature = 0;
+    bool grabbed = false;
 
 public:
     Box(Rect2d aRect): rect(aRect) {}
@@ -27,6 +28,8 @@ public:
     double getTemperature();
     void setTemperature(double aTemperature);
     void addToGameWorld() override;
+    bool isGrabbed();
+    void setGrabbed(bool value);
 };
 
 enum Resource {

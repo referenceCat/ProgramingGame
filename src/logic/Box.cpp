@@ -4,6 +4,14 @@
 
 void Box::addToGameWorld() { GameWorld::instance()->addBox(this); }
 
+bool Box::isGrabbed() {
+    return grabbed;
+}
+
+void Box::setGrabbed(bool value) {
+    grabbed = value;
+}
+
 void Box::draw() {}
 
 Rect2d Box::getRect() { return rect; }
