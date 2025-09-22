@@ -139,13 +139,14 @@ int Controller::execNextInstr()
     }
     else if (command == "send")
     {
-        int id = std::atoi(instr.at(1).c_str());
-        Machinery *machinery = GameWorld::instance()->getMachinery(id);
-        if (!machinery)
-            return 2;
+        int address = std::atoi(instr.at(1).c_str());            
         int command = std::atoi(instr.at(2).c_str());
         int argument = std::atoi(instr.at(3).c_str());
-        machinery->onCommandRecive(command, argument);
+
+        for (auto item: GameWorld::instance()->getMachinery()) {
+            if (item->getAddress() == address) item->onCommandRecive(command, argument);
+        }
+        
         rInstr++;
         return 0;
     }

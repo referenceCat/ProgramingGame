@@ -26,7 +26,9 @@ protected:
     void destroyBox(Box* box);
     Box* createBox(ProductionArea area);
     std::vector<Box*> getBoxesInside(ProductionArea area);
-    std::vector<Box*> getBoxesTouching(ProductionArea area);
+    std::vector<Box*> getBoxesTouching(ProductionArea area);\
+
+    int address = 0;
 
 public:
     Machinery(Rect2d rect): rect(rect) {};
@@ -39,6 +41,8 @@ public:
     virtual void onClick() {};
     void addToGameWorld() override;
     void setCenter(Vector2d pos);
+    void setAddress(int id);
+    int getAddress();
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_MACHINERY_HPP_

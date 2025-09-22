@@ -30,6 +30,7 @@ class ManipulatorTier1: public Machinery {
     Button* manualControlButton = nullptr;
     Label* manualControlLabel = nullptr;
     Label* grabLabel = nullptr;
+    Label* addressLabel = nullptr;
 
     static double q2(double x, double y, double l1, double l2) { // TODO
         return std::acos((x * x + y * y - l1 * l1 - l2 * l2) / (2 * l1 * l2));
@@ -41,7 +42,7 @@ class ManipulatorTier1: public Machinery {
     }
 
     void createWindow() {
-        window = GuiEngine::instance()->addWindow(Rect2d::fromCenterAndDimensions(Vector2d(300, 300), Vector2d(200, 200)), true, true);
+        window = GuiEngine::instance()->addWindow(Rect2d::fromCenterAndDimensions(Vector2d(600, 600), Vector2d(680, 550)), true, true);
         window->setOnCloseCallback([this](){this->onWindowClose();});
         manualControlButton = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(40, 55), Vector2d(48, 48)));
         manualControlLabel = window->addLabel(manualControlButton->getRect().center(), true, manualMode ? "manual" : "auto");
@@ -71,6 +72,16 @@ class ManipulatorTier1: public Machinery {
             else this->arm->grab();
             this->grabLabel->setText(this->arm->isActive() ? "release" : "grab");
         });
+
+        addressLabel = window->addLabel(Vector2d(200, 30), false, std::format("Device address is: {}", getAddress())); 
+        for (int i = 0; i <= 255; i++) {
+            button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(200.5, 60.5) + Vector2d((i % 16) * 30, (i / 16) * 30), Vector2d(26, 26)));
+            window->addLabel(button->getRect().center(), true, std::to_string(i));
+            button->setOnClickCallback([this, i](){
+                this->setAddress(i);
+                this->addressLabel->setText(std::format("Device address is: {}", i));
+            });
+        }
     }
 
     void onWindowClose() {
@@ -78,6 +89,7 @@ class ManipulatorTier1: public Machinery {
         manualControlButton = nullptr;
         manualControlLabel = nullptr;
         grabLabel = nullptr;
+        addressLabel = nullptr;
     }
 
     void onManualControlButtonClick() {

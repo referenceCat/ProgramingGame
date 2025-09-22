@@ -63,3 +63,11 @@ Rect2d Machinery::getRect() { return rect; }
 void Machinery::setCenter(Vector2d pos) {
   rect = Rect2d::fromCenterAndDimensions(pos, rect.dimensions());
 }
+
+void Machinery::setAddress(int id) {
+    address = id;
+}
+
+int Machinery::getAddress() {
+    return address;
+}
