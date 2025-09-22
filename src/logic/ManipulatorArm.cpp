@@ -124,8 +124,7 @@ void ManipulatorArm::removeBox(Box *aBox)
 void ManipulatorArm::takeBox(Box *aBox)
 {
     takenBox = aBox;
-    relativeBoxPosition =
-        jointsPosition[jointsNumber - 1] - takenBox->getRect().center();
+    relativeBoxPosition = takenBox->getRect().center() - jointsPosition[jointsNumber - 1];
 }
 void ManipulatorArm::recalculate()
 {

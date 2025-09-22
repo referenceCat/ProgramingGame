@@ -18,7 +18,7 @@ double Box::getTemperature() { return temperature; }
 void Box::setTemperature(double aTemperature) { temperature = aTemperature; }
 
 void Box::move(Vector2d position) {
-    Vector2d dPosition = rect.center() - position;
+    Vector2d dPosition = position - rect.center();
     rect.p1 = rect.p1 + dPosition;
     rect.p2 = rect.p2 + dPosition;
 }

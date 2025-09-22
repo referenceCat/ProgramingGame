@@ -40,6 +40,72 @@ public:
 
 class ManipulatorTier1: public Machinery {
     ManipulatorArm* arm = nullptr;
+
+    Vector2d target;
+
+    bool manualMode = false;
+    Vector2d manualTarget;
+
+    Window* window = nullptr;
+    Button* manualControlButton = nullptr;
+    Label* manualControlLabel = nullptr;
+
+    static double q2(double x, double y, double l1, double l2) { // TODO
+        return std::acos((x * x + y * y - l1 * l1 - l2 * l2) / (2 * l1 * l2));
+    }
+
+    static double q1(double x, double y, double l1, double l2) {
+        double q2_value = q2(x, y, l1, l2);
+        return std::atan2(y, x) - std::atan2(l2 * std::sin(q2_value), l1 + l2 * std::cos(q2_value));
+    }
+
+    void createWindow() {
+        window = GuiEngine::instance()->addWindow(Rect2d::fromCenterAndDimensions(Vector2d(300, 300), Vector2d(200, 200)), true, true);
+        window->setOnCloseCallback([this](){this->onWindowClose();});
+        manualControlButton = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(40, 55), Vector2d(48, 48)));
+        manualControlLabel = window->addLabel(manualControlButton->getRect().center(), true, manualMode ? "manual" : "auto");
+        manualControlButton->setOnClickCallback([this](){this->onManualControlButtonClick();});
+
+        
+        auto button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(90, 55), Vector2d(48, 48)));
+        window->addLabel(button->getRect().center(), true, "up");
+        button->setOnClickCallback([this](){this->manualTarget = this->manualTarget + Vector2d(0, -1); setTarget(manualTarget);});
+
+        button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(40, 105), Vector2d(48, 48)));
+        window->addLabel(button->getRect().center(), true, "left");
+        button->setOnClickCallback([this](){this->manualTarget = this->manualTarget + Vector2d(-1, 0); setTarget(manualTarget);});
+
+        button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(90, 155), Vector2d(48, 48)));
+        window->addLabel(button->getRect().center(), true, "down");
+        button->setOnClickCallback([this](){this->manualTarget = this->manualTarget + Vector2d(0, 1); setTarget(manualTarget);});
+
+        button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(140, 105), Vector2d(48, 48)));
+        window->addLabel(button->getRect().center(), true, "right");
+        button->setOnClickCallback([this](){this->manualTarget = this->manualTarget + Vector2d(1, 0); setTarget(manualTarget);});
+
+        button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(90, 105), Vector2d(48, 48)));
+        window->addLabel(button->getRect().center(), true, "grab");
+        button->setOnClickCallback([this](){
+            if (this->arm->isActive()) this->arm->release();
+            else this->arm->grab();
+        });
+    }
+
+    void onWindowClose() {
+        window = nullptr;
+        manualControlButton = nullptr;
+        manualControlLabel = nullptr;
+    }
+
+    void onManualControlButtonClick() {
+        manualMode = !manualMode;
+        manualControlLabel->setText(manualMode ? "manual" : "auto");
+
+        if (manualMode) {
+            manualTarget = arm->getLastJointPos();
+        }
+    }
+
 public:
     ManipulatorTier1(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(5, 3))) {
     }
@@ -56,13 +122,52 @@ public:
         }
     }
 
+    void drawInfo() override {
+        if (manualMode) {
+            GraphicsEngine::instance()->drawCircle(manualTarget, 1, CommonValues::zDebug, al_map_rgb(255, 255, 0), 2);
+            if (arm->isActive()) {
+                GraphicsEngine::instance()->drawCircle(manualTarget, 0.3, CommonValues::zDebug, al_map_rgb(255, 255, 0));
+            }
+        }
+    }
+
+    void setTarget(Vector2d pos) {
+        pos = pos - arm->getJointPosition(0);
+        
+        if (pos.lenght() >= 6 + 8) { // target is too far
+            arm->setJointTargetRotation(0, pos.getDirection());
+            arm->setJointTargetRotation(1, Rotation());
+            return;
+        }
+
+        if (pos.lenght() <= 8 - 6) { // target is too close
+            arm->setJointTargetRotation(0, pos.getDirection());
+            arm->setJointTargetRotation(1, Rotation::fromDegrees(180));
+            return;
+        }
+
+        arm->setJointTargetRotation(0, q1(pos.x, pos.y, 8, 6));
+        arm->setJointTargetRotation(1, q2(pos.x, pos.y, 8, 6));
+    }
+
     void onCommandRecive(int cmd, int arg) override {
+        if (manualMode) return;
         switch (cmd) {
         case 0:
             arm->setJointTargetRotation(0, Rotation::fromDegrees(arg));
+            target = rect.p2; // manipulator should ignore its last target
             break;
         case 1:
             arm->setJointTargetRotation(1, Rotation::fromDegrees(arg));
+            target = rect.p2; // manipulator should ignore its last target
+            break;
+        case 2:
+            target.x = arg;
+            setTarget(target);
+            break;
+        case 3:
+            target.x = arg;
+            setTarget(target);
             break;
         case 100:
             arm->release();
@@ -85,6 +190,10 @@ public:
         arm->setSegmentTargetLength(1, 6);
         arm->recalculate();
         arm->addToGameWorld();
+    }
+
+    void onClick() override {
+        if (window == nullptr) createWindow();
     }
 };
 
@@ -195,7 +304,7 @@ public:
         }
 
         if (process.status == WaitingToFinish) {
-            if (getBoxesTouching(output0).size() == 0 && getBoxesTouching(output1).size() == 0 && getBoxesTouching(output1).size() == 0) {
+            if (getBoxesTouching(output0).size() == 0 && getBoxesTouching(output1).size() == 0 && getBoxesTouching(output2).size() == 0) {
                 auto box = new ResourceBoxPrototype(Rect2d::fromCenterAndDimensions(rect.p1 + output0.rect.center(), Vector2d(3, 3)), GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Oxygen/main.png"), Resource::Oxygen);
                 box->addToGameWorld();
                 box = new ResourceBoxPrototype(Rect2d::fromCenterAndDimensions(rect.p1 + output1.rect.center(), Vector2d(3, 3)), GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Alloy/main.png"), Resource::Alloy);
