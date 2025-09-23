@@ -13,7 +13,8 @@ enum MachineryType {
     TypeLab,
     TypeParticleResearch,
     TypeDrill,
-    TypeElectrolyzer
+    TypeElectrolyzer,
+    TypeAnalyzer
 };
 
 class MachineryBuilder {
@@ -41,7 +42,10 @@ class MachineryBuilder {
             prototype = new Lab(Vector2d());
             break;
         case TypeParticleResearch:
-            prototype = new ParticleResearch(Vector2d());
+            prototype = new ParticleDetector(Vector2d());
+            break;
+        case TypeAnalyzer:
+            prototype = new Analyzer(Vector2d());
             break;
         default:
             break;
@@ -145,13 +149,17 @@ public:
         window->addLabel(drillButton->getRect().center(), true, "Drill", 0);
         drillButton->setOnClickCallback([this](){this->selectType(TypeDrill);});
 
-        Button *electrolyzerButton = window->addButton(Rect2d(Vector2d(20, 160), Vector2d(200, 185)));
+        Button *electrolyzerButton = window->addButton(Rect2d(Vector2d(20, 160), Vector2d(200, 180)));
         window->addLabel(electrolyzerButton->getRect().center(), true, "Electrolyzer", 0);
         electrolyzerButton->setOnClickCallback([this](){this->selectType(TypeElectrolyzer);});
 
-        Button *particleButton = window->addButton(Rect2d(Vector2d(20, 190), Vector2d(200, 210)));
+        Button *particleButton = window->addButton(Rect2d(Vector2d(20, 185), Vector2d(200, 205)));
         window->addLabel(particleButton->getRect().center(), true, "Particle Detector", 0);
         particleButton->setOnClickCallback([this](){this->selectType(TypeParticleResearch);});
+
+        Button *analyzerButton = window->addButton(Rect2d(Vector2d(20, 210), Vector2d(200, 230)));
+        window->addLabel(analyzerButton->getRect().center(), true, "Analyzer", 0);
+        analyzerButton->setOnClickCallback([this](){this->selectType(TypeAnalyzer);});
     }
 };
 

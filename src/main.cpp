@@ -35,6 +35,9 @@ void init()
 
     ModuleBuilder::instance()->createModulePrototype(LargeModule);
     ModuleBuilder::instance()->buildModule(true);
+
+    auto box = new TapeBox(Vector2d(10, -10));
+    GameWorld::instance()->addBox(box);
 }
 
 void redraw()

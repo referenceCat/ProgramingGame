@@ -49,3 +49,36 @@ void Box::drawDebug() {
 
     GraphicsEngine::instance()->drawRectangle(rect, CommonValues::zDebug, color);
 }
+
+void ResourceBoxPrototype::draw() {
+    GraphicsEngine::instance()->drawBitmap(getRect().p1, bitmap, 20, CommonValues::zBox);
+}
+
+Resource ResourceBoxPrototype::getResource()
+{
+    return type;
+}
+
+ALLEGRO_COLOR TapeBox::lampColor(DataPointType type) {
+    if (type == MaterialResearchData) return al_map_rgb(255, 50, 50);
+    if (type == ParticleResearchData) return al_map_rgb(50, 255, 50);
+    if (type == GeologyResearchData) return al_map_rgb(50, 50, 255);
+    return al_map_rgba(0, 0, 0, 30);
+}
+
+void TapeBox::draw() {
+    GraphicsEngine::instance()->drawBitmap(getRect().p1, GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Tape/empty.png"), 20, CommonValues::zBox);
+    for (int i = 0; i < dataPointsSize; i++) {
+        auto color = lampColor(dataPoints[i]);
+        GraphicsEngine::instance()->drawCircle(getRect().p1 + Vector2d(2.35 + i * 0.185, 1.8), 0.09, CommonValues::zBox, color);
+    }
+}
+
+void TapeBox::writePoint(DataPointType point) {
+    for (int i = 0; i < dataPointsSize; i++) {
+        if (dataPoints[i] == NoData) {
+            dataPoints[i] = point;
+            return;
+        }
+    }
+}

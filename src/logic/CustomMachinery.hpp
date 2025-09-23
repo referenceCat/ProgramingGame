@@ -285,10 +285,12 @@ public:
             if (getBoxesInside(input0).size()) {
                 auto box = getBoxesInside(input0).at(0);
                 if (box->isGrabbed()) return;
+                if (dynamic_cast<ResourceBoxPrototype*>(box) == nullptr) return; // check if box is resource box
+                if (dynamic_cast<ResourceBoxPrototype*>(box)->getResource() != Regolith) return;
                 process.status = Running;
                 process.progress = 0;
                 destroyBox(box);
-            } // TODO check resource type
+            }
         }
 
         if (process.status == Running) {
@@ -351,7 +353,74 @@ public:
     }
 };
 
-class ParticleResearch: public Machinery {
+class Analyzer: public Machinery {
+    ProductionArea tapeArea;
+    ProductionArea sampleArea;
+    ProductionProcess researchProcess;
+    std::vector<DataPointType> resultingDataPoints = {};
+
+    std::vector<DataPointType> getDataPoints(Resource resource) {
+        if (resource == Regolith) return {GeologyResearchData};
+        if (resource == Alloy) return {MaterialResearchData, MaterialResearchData};
+        if (resource == Silicon) return {MaterialResearchData};
+        return {};
+    }
+
+    void writePointsToTapeBox(TapeBox* box) { // excesive data points are lost
+        for (auto point: resultingDataPoints) {
+            box->writePoint(point);
+        }
+        resultingDataPoints.clear();
+    }
+
+public:
+    Analyzer(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(7, 10))) {
+        tapeArea = ProductionArea(Rect2d::fromCenterAndDimensions(Vector2d(2.2, 1.2), Vector2d(5, 3)));
+        areas.push_back(&tapeArea);
+        sampleArea = ProductionArea(Rect2d::fromCenterAndDimensions(Vector2d(3.5, 7.5), Vector2d(5, 5)));
+        areas.push_back(&sampleArea);
+    }
+
+    void run() override {
+        if (researchProcess.status == WaitingToStart) {
+            if (getBoxesInside(sampleArea).size()) {
+                auto box = getBoxesInside(sampleArea).at(0);
+                if (box->isGrabbed()) return;
+                if (dynamic_cast<ResourceBoxPrototype*>(box) == nullptr) return; // check if box is resource box
+                researchProcess.status = Running;
+                researchProcess.progress = 0;
+                resultingDataPoints = getDataPoints(dynamic_cast<ResourceBoxPrototype*>(box)->getResource());
+                destroyBox(box);
+            }
+        }
+
+        if (researchProcess.status == Running) {
+            if (researchProcess.progress == researchProcess.duration) {
+                researchProcess.status = WaitingToFinish;
+            } else {
+                researchProcess.progress++;
+            }
+        }
+
+        if (researchProcess.status == WaitingToFinish) {
+            if (getBoxesInside(tapeArea).size() == 0) return;
+            auto box = getBoxesInside(tapeArea).at(0);
+            if (box->isGrabbed()) return;
+            if (dynamic_cast<TapeBox*>(box) == nullptr) return; // check if box is resource box
+            researchProcess.status = WaitingToStart;
+            researchProcess.progress = 0;
+            writePointsToTapeBox(dynamic_cast<TapeBox*>(box));
+        }
+    }
+
+    void draw() override {
+        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Analyzer/main.png"), 20, CommonValues::zMachineryFront);
+        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Analyzer/background.png"), 20, CommonValues::zMachineryBack);
+        GraphicsEngine::instance()->drawArcProgressBar(rect.p1 + Vector2d(5.4, 4.5), static_cast<double> (researchProcess.progress) / researchProcess.duration, 0.7, CommonValues::zMachineryFront, al_map_rgb(255, 255, 255), 0.2);
+    }
+};
+
+class ParticleDetector: public Machinery {
     long tickCounter = 0;
     ProductionArea destroyingArea;
     int cooldown = 200;
@@ -366,8 +435,7 @@ class ParticleResearch: public Machinery {
     }
 
 public:
-    ParticleResearch(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(10, 10))) {
-    }
+    ParticleDetector(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(10, 10))) {}
 
     void run() override {
         tickCounter++;

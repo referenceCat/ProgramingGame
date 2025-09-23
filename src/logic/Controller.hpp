@@ -13,6 +13,7 @@
 #include "Machinery.hpp"
 #include "../graphics/GraphicsEngine.hpp"
 
+// TODO change logic to be like irl programming languages?
 class Controller : public Machinery {
     struct InstructionLine {
         Label* label;

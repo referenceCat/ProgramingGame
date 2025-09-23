@@ -45,9 +45,27 @@ class ResourceBoxPrototype: public Box {
 
 public:
     ResourceBoxPrototype(Rect2d aRect, ALLEGRO_BITMAP* bitmap, Resource type): bitmap(bitmap), type(type), Box(aRect) {}
-    void draw() override {
-        GraphicsEngine::instance()->drawBitmap(getRect().p1, bitmap, 20, CommonValues::zBox);
-    }
+    void draw() override;
+    Resource getResource();
+};
+
+enum DataPointType {
+    NoData,
+    MaterialResearchData,
+    ParticleResearchData,
+    GeologyResearchData
+};
+
+class TapeBox: public Box {
+    ALLEGRO_COLOR lampColor(DataPointType);
+public:
+    inline static constexpr int dataPointsSize = 6;
+    TapeBox(Vector2d aPos): Box(Rect2d::fromCenterAndDimensions(aPos, Vector2d(4, 2))) {};
+    void draw() override;
+    void writePoint(DataPointType point);
+
+private:
+    DataPointType dataPoints[dataPointsSize] = {NoData};
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_BOX_HPP_
