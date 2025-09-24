@@ -129,12 +129,12 @@ public:
         GraphicsEngine::instance()->drawArc(arm->getJointPosition(0), Rotation(0), arm->getJointRotation(0), 1, CommonValues::zDebug, al_map_rgb(255, 255, 255));
         GraphicsEngine::instance()->drawLine(arm->getJointPosition(0), arm->getJointPosition(0) + Vector2d(Rotation(0), lineLenght), CommonValues::zDebug, al_map_rgb(255, 255, 255));
         GraphicsEngine::instance()->drawLine(arm->getJointPosition(0), arm->getJointPosition(0) + Vector2d(arm->getJointRotation(0), lineLenght), CommonValues::zDebug, al_map_rgb(255, 255, 255));
-        GraphicsEngine::instance()->drawText(arm->getJointPosition(0) + Vector2d(1, 1), std::format("{:.2f}", arm->getJointRotation(0).degress()), GraphicsEngine::instance()->debugFont, CommonValues::zDebug, al_map_rgb(255, 255, 255), false);
+        GraphicsEngine::instance()->drawText(arm->getJointPosition(0) + Vector2d(1, 1), std::format("{:.0f}", arm->getJointRotation(0).degress()), GraphicsEngine::instance()->debugFont, CommonValues::zDebug, al_map_rgb(255, 255, 255), false);
 
         GraphicsEngine::instance()->drawArc(arm->getJointPosition(1), arm->getJointRotation(0), arm->getJointRotation(1) + arm->getJointRotation(0), 1, CommonValues::zDebug, al_map_rgb(255, 255, 255));
         GraphicsEngine::instance()->drawLine(arm->getJointPosition(1), arm->getJointPosition(1) + Vector2d(arm->getJointRotation(0), lineLenght), CommonValues::zDebug, al_map_rgb(255, 255, 255));
         GraphicsEngine::instance()->drawLine(arm->getJointPosition(1), arm->getJointPosition(1) + Vector2d(arm->getJointRotation(1) + arm->getJointRotation(0), lineLenght), CommonValues::zDebug, al_map_rgb(255, 255, 255));
-        GraphicsEngine::instance()->drawText(arm->getJointPosition(1) + Vector2d(1, 1), std::format("{:.2f}", arm->getJointRotation(1).degress()), GraphicsEngine::instance()->debugFont, CommonValues::zDebug, al_map_rgb(255, 255, 255), false);
+        GraphicsEngine::instance()->drawText(arm->getJointPosition(1) + Vector2d(1, 1), std::format("{:.0f}", arm->getJointRotation(1).degress()), GraphicsEngine::instance()->debugFont, CommonValues::zDebug, al_map_rgb(255, 255, 255), false);
     }
 
     void setTarget(Vector2d pos) {
