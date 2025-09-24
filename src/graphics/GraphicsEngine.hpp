@@ -91,11 +91,15 @@ class GraphicsEngine {
                     Vector2d bitmapPivot = Vector2d(),
                     Rotation bitmapRotation = Rotation());
 
+    void drawText(Vector2d aPoint, std::string text, ALLEGRO_FONT *font, double z, ALLEGRO_COLOR color, bool centered);
+
     static GraphicsEngine *instance();
     void draw();
     void clearBitmaps();
 
+    void drawArc(Vector2d aPoint, Rotation from, Rotation to, double r, double z, ALLEGRO_COLOR color, double thickness = 0.1);
     void drawArcProgressBar(Vector2d aPoint, double fraction, double r, double z, ALLEGRO_COLOR color, double thickness = 0.1);
+    
 };
 
 

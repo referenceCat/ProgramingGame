@@ -33,7 +33,7 @@ struct Rotation {
     }
 
     double degress() {
-        return degreesToRadians(radians);
+        return radiansToDegrees(radians);
     }
 
     static Rotation fromDegrees(double degrees) {

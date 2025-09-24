@@ -155,6 +155,11 @@ void GraphicsEngine::drawCircle(Vector2d aPoint, double r, double z,
 }
 
 void GraphicsEngine::drawArcProgressBar(Vector2d aPoint, double fraction, double r, double z, ALLEGRO_COLOR color, double thickness) {
+    drawArc(aPoint, M_PI / 2, M_PI * fraction * 2 + M_PI / 2, r, z, color, thickness);
+}
+
+void GraphicsEngine::drawArc(Vector2d aPoint, Rotation from, Rotation to, double r, double z, ALLEGRO_COLOR color, double thickness)
+{
     setLayerAsTargetBitmap(z);
     if (isnan(z))
         z = 0;
@@ -162,7 +167,7 @@ void GraphicsEngine::drawArcProgressBar(Vector2d aPoint, double fraction, double
     aPoint = transformPoint(aPoint, z);
     r = transformScalar(r, z);
     thickness = transformScalar(thickness, z);
-    al_draw_arc(aPoint.x, aPoint.y, r, M_PI / 2, M_PI * fraction * 2, color, thickness);
+    al_draw_arc(aPoint.x, aPoint.y, r, from.radians, to.radians - from.radians, color, thickness);
 }
 
 void GraphicsEngine::drawPolygon(std::vector<Vector2d> vertices, double z,
@@ -195,6 +200,18 @@ void GraphicsEngine::drawBitmap(Vector2d aPoint, ALLEGRO_BITMAP *bitmap,
     al_draw_scaled_rotated_bitmap(bitmap, bitmapPivot.x, bitmapPivot.y, aPoint.x,
                                   aPoint.y, sizeMultiplayer, sizeMultiplayer,
                                   bitmapRotation.radians, 0);
+}
+
+void GraphicsEngine::drawText(Vector2d aPoint, std::string text, ALLEGRO_FONT *font, double z, ALLEGRO_COLOR color, bool centered) { // TODO make resizable
+    setLayerAsTargetBitmap(z);
+    if (isnan(z))
+        z = 0;
+
+    aPoint = transformPoint(aPoint, z);
+    double h = al_get_font_line_height(font) + 2;
+    double w = al_get_text_width(font, text.c_str());
+    if (centered) aPoint = aPoint - Vector2d(w, h);
+    al_draw_text(font, color, aPoint.x, aPoint.y, 0, text.c_str());
 }
 
 GraphicsEngine *GraphicsEngine::instance()
