@@ -328,9 +328,9 @@ class Lab: public Machinery {
     long tickCounter = 0;
     bool lamps[16][32] = {0};
 
-public:
-    Lab(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(17, 17))) {
-    }
+    ProductionArea researchArea[6];
+    ProductionProcess researchProcess[6];
+    TapeBox* processedBox[6];
 
     void updateLamps() {
         for (int i = 0; i < 16; i++) for (int j = 0; j < 32; j++) {
@@ -338,9 +338,70 @@ public:
         }
     }
 
+    void readPoints(TapeBox* box) {
+        for (int i = 0; i < TapeBox::dataPointsSize; i++) {
+            if (box->getDataPoint(TapeBox::dataPointsSize - 1 - i)) {
+                box->setDataPoint(TapeBox::dataPointsSize - 1 - i, NoData);
+                return;
+            }
+        }
+    }
+
+    void runResearch(int i) {
+        if (researchProcess[i].status == WaitingToStart) {
+            if (getBoxesInside(researchArea[i]).size()) {
+                auto box = getBoxesInside(researchArea[i]).at(0);
+                if (box->isGrabbed()) return;
+                if (dynamic_cast<TapeBox*>(box) == nullptr) return; // check if box is resource box
+                if (dynamic_cast<TapeBox*>(box)->isDataPointsEmpty()) return;
+                researchProcess[i].status = Running;
+                researchProcess[i].progress = 0;
+                processedBox[i] = dynamic_cast<TapeBox*>(box);
+            }
+        }
+
+        if (researchProcess[i].status == Running) {
+            if (getBoxesInside(researchArea[i]).size() == 0 || getBoxesInside(researchArea[i]).at(0) != processedBox[i] || processedBox[i]->isGrabbed()) { // check if processed boxed was removed
+                processedBox[i] = nullptr;
+                researchProcess[i].status = WaitingToStart;
+                researchProcess[i].progress = 0;
+            }
+
+            if (researchProcess[i].progress == researchProcess[i].duration) {
+                researchProcess[i].status = WaitingToFinish;
+            } else {
+                researchProcess[i].progress++;
+            }
+        }
+
+        if (researchProcess[i].status == WaitingToFinish) {
+            readPoints(processedBox[i]);
+            processedBox[i] = nullptr;
+            researchProcess[i].status = WaitingToStart;
+            researchProcess[i].progress = 0;
+        }
+    }
+
+public:
+    Lab(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(17, 17))) {
+        researchArea[0].rect = Rect2d::fromCenterAndDimensions(Vector2d(3, 2), Vector2d(5, 3));
+        areas.push_back(&researchArea[0]);
+        researchArea[1].rect = Rect2d::fromCenterAndDimensions(Vector2d(8.5, 2), Vector2d(5, 3));
+        areas.push_back(&researchArea[1]);
+        researchArea[2].rect = Rect2d::fromCenterAndDimensions(Vector2d(14, 2), Vector2d(5, 3));
+        areas.push_back(&researchArea[2]);
+        researchArea[3].rect = Rect2d::fromCenterAndDimensions(Vector2d(3, 15), Vector2d(5, 3));
+        areas.push_back(&researchArea[3]);
+        researchArea[4].rect = Rect2d::fromCenterAndDimensions(Vector2d(8.5, 15), Vector2d(5, 3));
+        areas.push_back(&researchArea[4]);
+        researchArea[5].rect = Rect2d::fromCenterAndDimensions(Vector2d(14, 15), Vector2d(5, 3));
+        areas.push_back(&researchArea[5]);
+    }
+
     void run() override {
         tickCounter++;
         if (tickCounter % 30 == 0) updateLamps(); // update lamps every 0.5 seconds
+        for (int i = 0; i < 6; i++) runResearch(i);
     }
 
     void draw() override {
@@ -375,7 +436,7 @@ class Analyzer: public Machinery {
 
 public:
     Analyzer(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(7, 10))) {
-        tapeArea = ProductionArea(Rect2d::fromCenterAndDimensions(Vector2d(2.2, 1.2), Vector2d(5, 3)));
+        tapeArea = ProductionArea(Rect2d::fromCenterAndDimensions(Vector2d(2.2, 1.5), Vector2d(5, 3)));
         areas.push_back(&tapeArea);
         sampleArea = ProductionArea(Rect2d::fromCenterAndDimensions(Vector2d(3.5, 7.5), Vector2d(5, 5)));
         areas.push_back(&sampleArea);

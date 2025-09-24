@@ -82,3 +82,13 @@ void TapeBox::writePoint(DataPointType point) {
         }
     }
 }
+
+bool TapeBox::isDataPointsEmpty() {
+    for (int i = 0; i < dataPointsSize; i++) {
+        if (dataPoints[i] != NoData) {
+            return false;
+        }
+    }
+
+    return true;
+}

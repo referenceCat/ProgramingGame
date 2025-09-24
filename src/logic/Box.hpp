@@ -56,13 +56,16 @@ enum DataPointType {
     GeologyResearchData
 };
 
-class TapeBox: public Box {
+class TapeBox: public Box { // TODO all bs
     ALLEGRO_COLOR lampColor(DataPointType);
 public:
     inline static constexpr int dataPointsSize = 6;
     TapeBox(Vector2d aPos): Box(Rect2d::fromCenterAndDimensions(aPos, Vector2d(4, 2))) {};
     void draw() override;
     void writePoint(DataPointType point);
+    bool isDataPointsEmpty();
+    DataPointType getDataPoint(int index) {return dataPoints[index];}
+    void setDataPoint(int index, DataPointType value) {dataPoints[index] = value;}
 
 private:
     DataPointType dataPoints[dataPointsSize] = {NoData};
