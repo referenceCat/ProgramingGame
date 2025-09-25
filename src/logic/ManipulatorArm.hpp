@@ -59,6 +59,7 @@ class ManipulatorArm : public GameObject { // TODO now supports rendering of 2 s
     void removeBox();
     void removeBox(Box *aBox);
     void addToGameWorld() override;
+    Box* getTakenBox();
 
   private:
     void takeBox(Box *aBox);

@@ -19,18 +19,18 @@ struct ProductionProcess {
 };
 
 class ManipulatorTier1: public Machinery {
-    ManipulatorArm* arm = nullptr;
-
+    ManipulatorArm* arm = nullptr; // game logic
     Vector2d target;
-
     bool manualMode = false;
     Vector2d manualTarget;
 
-    Window* window = nullptr;
+    Window* window = nullptr; // gui
     Button* manualControlButton = nullptr;
     Label* manualControlLabel = nullptr;
     Label* grabLabel = nullptr;
     Label* addressLabel = nullptr;
+
+    Vector2d leftClampPos, rightClampPos;
 
     static double q2(double x, double y, double l1, double l2) { // TODO
         return std::acos((x * x + y * y - l1 * l1 - l2 * l2) / (2 * l1 * l2));
@@ -51,7 +51,7 @@ class ManipulatorTier1: public Machinery {
         
         auto button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(90, 55), Vector2d(48, 48)));
         window->addLabel(button->getRect().center(), true, "up");
-        button->setOnClickCallback([this](){this->manualTarget = this->manualTarget + Vector2d(0, -1); setTarget(manualTarget);});
+        button->setOnClickCallback([this](){this->manualTarget = this->manualTarget + Vector2d(0, -1); setTarget(manualTarget);}); // dont do that if in automatic mode
 
         button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(40, 105), Vector2d(48, 48)));
         window->addLabel(button->getRect().center(), true, "left");
@@ -107,13 +107,37 @@ public:
 
     void run() override {
         // TODO manipulator update here
+        if (arm) {
+            leftClampPos.y = arm->getLastJointPos().y;
+            rightClampPos.y = arm->getLastJointPos().y;
+            double leftClampTargetX = arm->getLastJointPos().x - 1;
+            double rightClampTargetX = arm->getLastJointPos().x + 1;
+            if (arm->getTakenBox() != nullptr) {
+                leftClampTargetX = arm->getTakenBox()->getRect().p1.x;
+                rightClampTargetX = arm->getTakenBox()->getRect().p2.x;
+            }
+
+            leftClampPos.x = leftClampPos.x / 2 + leftClampTargetX / 2;
+            rightClampPos.x = rightClampPos.x / 2 + rightClampTargetX / 2;
+
+        }
     }
 
     void draw() override {
-        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/Base/main.png"), 20, 0.1);
+        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/Base/main.png"), 20, 0.1); // base
+
         if (arm) {
-            GraphicsEngine::instance()->drawBitmap(arm->getJointPosition(0),  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/Segment0/main.png"), 20, 0.05, Vector2d(20, 40), arm->getJointRotation(0));
-            GraphicsEngine::instance()->drawBitmap(arm->getJointPosition(1),  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/Segment1/main.png"), 20, 0.1, Vector2d(20, 40), arm->getJointRotation(0) + arm->getJointRotation(1));
+            GraphicsEngine::instance()->drawLine(arm->getLastJointPos(), leftClampPos, CommonValues::zArm, al_map_rgb(50, 60, 50), 0.2); // left clamp
+            GraphicsEngine::instance()->drawLine(arm->getLastJointPos(), leftClampPos, CommonValues::zArm, al_map_rgb(70, 80, 70), 0.1);
+            GraphicsEngine::instance()->drawBitmap(leftClampPos + Vector2d(0.2, 0),  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/End1/main.png"), 20, CommonValues::zArm, Vector2d(20, 20), Rotation::fromDegrees(180));
+
+            GraphicsEngine::instance()->drawLine(arm->getLastJointPos(), rightClampPos, CommonValues::zArm, al_map_rgb(50, 60, 50), 0.2); // right clamp
+            GraphicsEngine::instance()->drawLine(arm->getLastJointPos(), rightClampPos, CommonValues::zArm, al_map_rgb(70, 80, 70), 0.1); 
+            GraphicsEngine::instance()->drawBitmap(rightClampPos + Vector2d(-0.2, 0),  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/End1/main.png"), 20, CommonValues::zArm, Vector2d(20, 20));
+
+            GraphicsEngine::instance()->drawBitmap(arm->getLastJointPos(),  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/End0/main.png"), 20, CommonValues::zArm, Vector2d(20, 20)); // arm
+            GraphicsEngine::instance()->drawBitmap(arm->getJointPosition(1),  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/Segment1/main.png"), 20, CommonValues::zArm, Vector2d(20, 40), arm->getJointRotation(0) + arm->getJointRotation(1));
+            GraphicsEngine::instance()->drawBitmap(arm->getJointPosition(0),  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/Segment0/main.png"), 20, CommonValues::zArm, Vector2d(20, 40), arm->getJointRotation(0));
         }
     }
 

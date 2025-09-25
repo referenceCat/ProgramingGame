@@ -27,11 +27,10 @@ namespace CommonValues {
     constexpr double zModuleFarBackgroung = 0.7;
     constexpr double zModuleVeryFarBackgroung = 1.5;
     constexpr double zMachinery = 0.15;
-    constexpr double zMachineryFront = 0.1;
+    constexpr double zMachineryFront = -0.1;
     constexpr double zMachineryBack = 0.25;
-    constexpr double zBox = 0.2;
-    constexpr double zArmBack = 0;
-    constexpr double zArmFront = 0.01;
+    constexpr double zBox = 0.01;
+    constexpr double zArm = 0;
 };
 
 class GraphicsEngine {
@@ -75,13 +74,13 @@ class GraphicsEngine {
                    double r = 3);
 
     void drawRectangle(Rect2d aRect, double z, ALLEGRO_COLOR color,
-                       int thickness = 0);
+                       double thickness = 0);
 
     void drawLine(Vector2d aPoint0, Vector2d aPoint1, double z,
-                  ALLEGRO_COLOR color, int thickness = 0);
+                  ALLEGRO_COLOR color, double thickness = 0.1);
 
     void drawCircle(Vector2d aPoint, double r, double z, ALLEGRO_COLOR color,
-                    int thickness = 0);
+                    double thickness = 0);
 
     void drawPolygon(std::vector<Vector2d> vertices, double z,
                      ALLEGRO_COLOR color);

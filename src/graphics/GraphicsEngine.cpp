@@ -111,7 +111,7 @@ void GraphicsEngine::drawPoint(Vector2d aPoint, double z, ALLEGRO_COLOR color,
 }
 
 void GraphicsEngine::drawRectangle(Rect2d aRect, double z, ALLEGRO_COLOR color,
-                                   int thickness)
+                                   double thickness)
 {
     setLayerAsTargetBitmap(z);
     if (isnan(z))
@@ -128,19 +128,19 @@ void GraphicsEngine::drawRectangle(Rect2d aRect, double z, ALLEGRO_COLOR color,
 }
 
 void GraphicsEngine::drawLine(Vector2d aPoint0, Vector2d aPoint1, double z,
-                              ALLEGRO_COLOR color, int thickness)
+                              ALLEGRO_COLOR color, double thickness)
 {
     setLayerAsTargetBitmap(z);
     if (isnan(z))
         z = 0;
-
+    thickness = transformScalar(thickness, z);
     aPoint0 = transformPoint(aPoint0, z);
     aPoint1 = transformPoint(aPoint1, z);
     al_draw_line(aPoint0.x, aPoint0.y, aPoint1.x, aPoint1.y, color, thickness);
 }
 
 void GraphicsEngine::drawCircle(Vector2d aPoint, double r, double z,
-                                ALLEGRO_COLOR color, int thickness)
+                                ALLEGRO_COLOR color, double thickness)
 {
     setLayerAsTargetBitmap(z);
     if (isnan(z))

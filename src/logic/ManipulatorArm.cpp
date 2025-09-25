@@ -16,20 +16,23 @@ void ManipulatorArm::addToGameWorld()
 {
     GameWorld::instance()->addManipulatorArm(this);
 }
+Box *ManipulatorArm::getTakenBox()
+{
+    return takenBox;
+}
 void ManipulatorArm::drawDebug()
 {
     // draw target state
     for (int i = 0; i < jointsNumber; i++)
     {
-        GraphicsEngine::instance()->drawPoint(
-            jointsTargetPosition[i], CommonValues::zDebug, al_map_rgb(0, 100, 100));
+        GraphicsEngine::instance()->drawCircle(jointsTargetPosition[i], 0.2, CommonValues::zDebug, al_map_rgb(0, 100, 100));
     }
 
     for (int i = 1; i < jointsNumber; i++)
     {
         GraphicsEngine::instance()->drawLine(
             jointsTargetPosition[i - 1], jointsTargetPosition[i],
-            CommonValues::zDebug, al_map_rgb(0, 100, 100), 2);
+            CommonValues::zDebug, al_map_rgb(0, 100, 100), 0.1);
     }
 
     // draw current state
@@ -38,15 +41,15 @@ void ManipulatorArm::drawDebug()
         // TODO al_draw_text(GameObject::debugFont, al_map_rgb(255, 255, 255),
         // jointsPosition[i].x + 5, jointsPosition[i].y + 5, 0,
         // std::to_string(i).c_str());
-        GraphicsEngine::instance()->drawPoint(
-            jointsPosition[i], CommonValues::zDebug, al_map_rgb(255, 255, 255));
+        GraphicsEngine::instance()->drawCircle(
+            jointsPosition[i], 0.2, CommonValues::zDebug, al_map_rgb(255, 255, 255));
     }
 
     for (int i = 1; i < jointsNumber; i++)
     {
         GraphicsEngine::instance()->drawLine(
             jointsPosition[i - 1], jointsPosition[i], CommonValues::zDebug,
-            al_map_rgb(255, 255, 255), 2);
+            al_map_rgb(255, 255, 255), 0.1);
     }
 
     // draw active arm
