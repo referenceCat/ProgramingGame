@@ -51,19 +51,19 @@ class ManipulatorTier1: public Machinery {
         
         auto button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(90, 55), Vector2d(48, 48)));
         window->addLabel(button->getRect().center(), true, "up");
-        button->setOnClickCallback([this](){this->manualTarget = this->manualTarget + Vector2d(0, -1); setTarget(manualTarget);}); // dont do that if in automatic mode
+        button->setOnClickCallback([this](){setManualTarget(this->manualTarget + Vector2d(0, -1));}); // dont do that if in automatic mode
 
         button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(40, 105), Vector2d(48, 48)));
         window->addLabel(button->getRect().center(), true, "left");
-        button->setOnClickCallback([this](){this->manualTarget = this->manualTarget + Vector2d(-1, 0); setTarget(manualTarget);});
+        button->setOnClickCallback([this](){setManualTarget(this->manualTarget + Vector2d(-1, 0));});
 
         button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(90, 155), Vector2d(48, 48)));
         window->addLabel(button->getRect().center(), true, "down");
-        button->setOnClickCallback([this](){this->manualTarget = this->manualTarget + Vector2d(0, 1); setTarget(manualTarget);});
+        button->setOnClickCallback([this](){setManualTarget(this->manualTarget + Vector2d(0, 1));});
 
         button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(140, 105), Vector2d(48, 48)));
         window->addLabel(button->getRect().center(), true, "right");
-        button->setOnClickCallback([this](){this->manualTarget = this->manualTarget + Vector2d(1, 0); setTarget(manualTarget);});
+        button->setOnClickCallback([this](){setManualTarget(this->manualTarget + Vector2d(1, 0));});
 
         button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(90, 105), Vector2d(48, 48)));
         grabLabel = window->addLabel(button->getRect().center(), true, arm->isActive() ? "release" : "grab");
@@ -98,7 +98,14 @@ class ManipulatorTier1: public Machinery {
 
         if (manualMode) {
             manualTarget = arm->getLastJointPos();
+        } else {
+            arm->cleatTarget();
         }
+    }
+
+    void setManualTarget(Vector2d aPos) {
+        manualTarget = aPos;
+        if (manualMode) setTarget(manualTarget);
     }
 
 public:
@@ -108,6 +115,11 @@ public:
     void run() override {
         // TODO manipulator update here
         if (arm) {
+            if (leftClampPos == Vector2d() && rightClampPos == Vector2d()) { // on arm initialisation clamps located at 0, 0 and it causes ugly animation
+                leftClampPos = arm->getLastJointPos();
+                rightClampPos = arm->getLastJointPos();
+            }
+
             leftClampPos.y = arm->getLastJointPos().y;
             rightClampPos.y = arm->getLastJointPos().y;
             double leftClampTargetX = arm->getLastJointPos().x - 1;
@@ -143,9 +155,9 @@ public:
 
     void drawInfo() override {
         if (manualMode) {
-            GraphicsEngine::instance()->drawCircle(manualTarget, 1, CommonValues::zDebug, al_map_rgb(255, 255, 0), 2);
+            GraphicsEngine::instance()->drawCircle(manualTarget, 1, CommonValues::zDebug, al_map_rgb(255, 255, 255), 0.1);
             if (arm->isActive()) {
-                GraphicsEngine::instance()->drawCircle(manualTarget, 0.3, CommonValues::zDebug, al_map_rgb(255, 255, 0));
+                GraphicsEngine::instance()->drawCircle(manualTarget, 0.3, CommonValues::zDebug, al_map_rgb(255, 255, 255));
             }
         }
 

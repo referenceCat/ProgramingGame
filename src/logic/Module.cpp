@@ -240,7 +240,7 @@ void Module::drawInfo()
         if (node.attachedNode == nullptr)
             GraphicsEngine::instance()->drawCircle(
                 node.position.rotate(rotation) + position, 0.5, CommonValues::zDebug,
-                al_map_rgba(255, 255, 0, 100), 3);
+                al_map_rgba(255, 255, 0, 100), 0.2);
     }
 }
 void Module::drawDebug()

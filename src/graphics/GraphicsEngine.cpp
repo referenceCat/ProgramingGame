@@ -79,6 +79,7 @@ Vector2d GraphicsEngine::transformPointInverse(Vector2d originalPoint)
 
 double GraphicsEngine::transformScalar(double value, double z)
 {
+    if (value == 0) return 0;
     value /= (z - camera.z) / -camera.z;
     value /= camera.fov;
     value *= camera.displayDimensions.x;
@@ -148,7 +149,8 @@ void GraphicsEngine::drawCircle(Vector2d aPoint, double r, double z,
 
     aPoint = transformPoint(aPoint, z);
     r = transformScalar(r, z);
-    if (thickness <= 0)
+    thickness = transformScalar(thickness, z);
+    if (thickness <= 0.0)
         al_draw_filled_circle(aPoint.x, aPoint.y, r, color);
     else
         al_draw_circle(aPoint.x, aPoint.y, r, color, thickness);

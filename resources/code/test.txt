@@ -1,13 +1,37 @@
 delay 50
 delay 100
-send 135 0 180
-send 135 1 270
-delay 400
-send 135 200 0
-delay 10
-send 135 0 190
-send 135 1 100
-delay 400
-send 135 100 0
-delay 10
+
+send 13 0 353
+send 13 1 98 
+delay 200
+send 13 200 0
+
+send 13 0 80
+send 13 1 80 
+delay 200
+send 13 100 0
+
+send 13 0 353
+send 13 1 98 
+delay 200
+send 13 200 0
+
+send 13 0 80
+send 13 1 80 
+delay 200
+send 13 100 0
+
+send 13 0 101
+send 13 1 119 
+delay 200
+send 13 200 0
+send 13 0 134
+send 13 1 121 
+delay 200
+send 13 100 0
+delay 1000
+send 13 200 0
+send 13 0 101
+delay 200
+send 13 100 0
 goto 2

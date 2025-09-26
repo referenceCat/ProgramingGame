@@ -115,6 +115,10 @@ int Controller::execNextInstr()
         return 0;
     }
 
+    if (instructions.at(rInstr).size() == 0 || instructions.at(rInstr).at(0) == '#') {
+        rInstr++;
+    }
+
     std::vector<std::string> instr = split(instructions.at(rInstr), " ");
     if (instr.size() < 1)
     {

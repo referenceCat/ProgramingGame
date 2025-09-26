@@ -45,4 +45,8 @@ public:
     int getAddress();
 };
 
+// class AddressSelectionWindow {
+//     Window* window;
+// };
+
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_MACHINERY_HPP_
