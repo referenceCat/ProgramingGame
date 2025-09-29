@@ -4,10 +4,10 @@ file(GLOB_RECURSE SOURCES *.cpp )
 message(${SOURCES})
 add_executable(testBuild ${SOURCES})
 
-target_include_directories(testBuild PUBLIC ui)
+# target_include_directories(testBuild PUBLIC ui)
 target_include_directories(testBuild PUBLIC logic)
-target_include_directories(testBuild PUBLIC common)
-target_include_directories(testBuild PUBLIC collision)
+# target_include_directories(testBuild PUBLIC common)
+# target_include_directories(testBuild PUBLIC collision)
 
 
 target_link_libraries(testBuild ${ALLEGRO5_LIBRARIES})
@@ -18,3 +18,6 @@ target_link_libraries(testBuild nlohmann_json::nlohmann_json)
 
 target_link_libraries(testBuild libcollision)
 target_include_directories(testBuild PUBLIC ../libs/libcollision)
+
+target_link_libraries(testBuild core)
+# target_include_directories(testBuild PUBLIC ../libs/core/include)

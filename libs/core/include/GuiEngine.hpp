@@ -5,7 +5,7 @@
 #include "Button.hpp"
 #include "allegro5/allegro5.h"
 #include "allegro5/allegro_primitives.h"
-#include "../common/common.hpp"
+#include "common.hpp"
 #include "Window.hpp"
 #include "Text.hpp"
 
@@ -133,6 +133,24 @@ public:
         delete window;
         windows.erase(std::remove(windows.begin(), windows.end(), window), windows.end());
     }
+};
+
+// enum GuiElementAligment {
+
+// }
+
+class GuiElement {
+    Rect2d rect;
+    int id;
+    inline static int nextId;
+    Vector2d relativePos;
+
+    
+public:
+    void draw() {};
+    void click() {};
+    void release() {};
+    
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_ALLEGROGUI_SRC_GUIENGINE_HPP_

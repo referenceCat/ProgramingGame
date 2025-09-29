@@ -1,6 +1,6 @@
 #include "ManipulatorArm.hpp"
 #include "GameWorld.hpp"
-#include "../graphics/GraphicsEngine.hpp"
+#include "GraphicsEngine.hpp"
 
 void ManipulatorArm::grab() // TODO what if box is already grabbed?
 {

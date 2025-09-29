@@ -2,13 +2,10 @@
 #define __PROJECTS_PROGRAMINGGAME_SRC_BOX_HPP_
 
 #include <assert.h>
-#include <allegro5/allegro5.h>
-#include <allegro5/allegro_primitives.h>
-#include <allegro5/allegro_font.h>
-#include <allegro5/allegro_ttf.h>
-#include "../common/common.hpp"
+
+#include "common.hpp"
 #include "GameObject.hpp"
-#include "../graphics/GraphicsEngine.hpp"
+#include "GraphicsEngine.hpp"
 
 class GameWorld;
 

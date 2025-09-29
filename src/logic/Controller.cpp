@@ -1,8 +1,9 @@
-#include "Controller.hpp"
-#include "GameWorld.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
+
+#include "Controller.hpp"
+#include "GameWorld.hpp"
 
 void Controller::createWindow() {
     window = GuiEngine::instance()->addWindow(Rect2d::fromCenterAndDimensions(Vector2d(400, 400), Vector2d(400, 750)), true, true);

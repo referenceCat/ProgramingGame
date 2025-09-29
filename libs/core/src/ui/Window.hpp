@@ -7,7 +7,7 @@
 #include "allegro5/allegro_font.h"
 #include "allegro5/allegro_ttf.h"
 #include <functional>
-#include "../common/common.hpp"
+#include "common.hpp"
 #include "Button.hpp"
 #include <memory>
 #include <vector>

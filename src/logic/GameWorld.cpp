@@ -1,5 +1,5 @@
 #include "GameWorld.hpp"
-#include "../graphics/GraphicsEngine.hpp"
+#include "GraphicsEngine.hpp"
 #include <format>
 
 void GameWorld::addManipulatorArm(ManipulatorArm* arm) {

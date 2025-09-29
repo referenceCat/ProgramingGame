@@ -2,16 +2,15 @@
 #define __PROJECTS_PROGRAMINGGAME_SRC_CONTROLLER_HPP_
 
 #include <assert.h>
-#include <allegro5/allegro5.h>
-#include <allegro5/allegro_primitives.h>
-#include <allegro5/allegro_font.h>
-#include <allegro5/allegro_ttf.h>
+
 #include <string>
 #include <vector>
-#include "../common/common.hpp"
-#include "../ui/GuiEngine.hpp"
+
+#include "common.hpp"
+#include "GuiEngine.hpp"
+#include "GraphicsEngine.hpp"
+
 #include "Machinery.hpp"
-#include "../graphics/GraphicsEngine.hpp"
 
 // TODO change logic to be like irl programming languages?
 class Controller : public Machinery {

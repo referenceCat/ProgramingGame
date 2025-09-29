@@ -4,16 +4,16 @@
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>
-#include "common/common.hpp"
+#include <common.hpp>
 #include "logic/ManipulatorArm.hpp"
 #include "logic/Box.hpp"
 #include "logic/Controller.hpp"
 #include "logic/GameWorld.hpp"
-#include "ui/GuiEngine.hpp"
+#include "GuiEngine.hpp"
 #include <iostream>
 #include <chrono>
 #include "logic/CustomMachinery.hpp"
-#include "graphics/GraphicsEngine.hpp"
+#include "GraphicsEngine.hpp"
 #include "logic/MachineryBuilder.hpp"
 #include <format>
 
@@ -50,7 +50,7 @@ void redraw()
     al_clear_to_color(al_map_rgb(0, 0, 5));
 
     al_hold_bitmap_drawing(true);
-    GraphicsEngine::instance()->draw();
+    GraphicsEngine::instance()->drawLayers();
     al_hold_bitmap_drawing(false);
 
     // gameWorld.getController(6)->drawInstructions();

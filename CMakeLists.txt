@@ -9,5 +9,6 @@ project(ProgramingGame CXX)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(ALLEGRO5 REQUIRED allegro-5 allegro_font-5 allegro_primitives-5 allegro_ttf-5 allegro_image-5)
 
+add_subdirectory(libs/core)
 add_subdirectory(libs/libcollision)
 add_subdirectory(src)

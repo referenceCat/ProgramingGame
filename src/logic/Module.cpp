@@ -1,6 +1,6 @@
 #include "Module.hpp"
 #include "GameWorld.hpp"
-#include "../graphics/GraphicsEngine.hpp"
+#include "GraphicsEngine.hpp"
 
 Module::Module() {
 }

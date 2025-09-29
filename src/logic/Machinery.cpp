@@ -1,6 +1,6 @@
 #include "Machinery.hpp"
 #include "GameWorld.hpp"
-#include "../graphics/GraphicsEngine.hpp"
+#include "GraphicsEngine.hpp"
 
 void Machinery::destroyBox(Box* box) {
     GameWorld::instance()->removeBox(box->getId());

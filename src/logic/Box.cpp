@@ -1,6 +1,6 @@
-#include <Box.hpp>
-#include <GameWorld.hpp>
-#include "../graphics/GraphicsEngine.hpp"
+#include "Box.hpp"
+#include "GameWorld.hpp"
+#include "GraphicsEngine.hpp"
 
 void Box::addToGameWorld() {
     GameWorld::instance()->addBox(this);

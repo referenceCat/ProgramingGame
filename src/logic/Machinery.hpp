@@ -2,13 +2,9 @@
 #define __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_MACHINERY_HPP_
 
 #include <assert.h>
-#include <allegro5/allegro5.h>
-#include <allegro5/allegro_primitives.h>
-#include <allegro5/allegro_font.h>
-#include <allegro5/allegro_ttf.h>
 #include <string>
 #include <vector>
-#include "../common/common.hpp"
+#include "common.hpp"
 #include "ManipulatorArm.hpp"
 #include "Box.hpp"
 #include "GameObject.hpp"

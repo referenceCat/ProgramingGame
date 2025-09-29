@@ -2,14 +2,10 @@
 #define __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_MODULE_HPP_
 
 #include <assert.h>
-#include <allegro5/allegro5.h>
-#include <allegro5/allegro_primitives.h>
-#include <allegro5/allegro_font.h>
-#include <allegro5/allegro_ttf.h>
-#include "../common/common.hpp"
+#include "common.hpp"
 #include "GameObject.hpp"
 #include "GuiEngine.hpp"
-#include <collision.h>
+#include "collision.h"
 // #include <nlohmann/json.hpp>
 
 class GuiEngine;

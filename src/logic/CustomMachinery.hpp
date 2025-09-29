@@ -1,10 +1,12 @@
 #ifndef __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_CUSTOMMACHINERY_HPP_
 #define __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_CUSTOMMACHINERY_HPP_
 
-#include <cstdlib>
-#include "Machinery.hpp"
-#include "../graphics/GraphicsEngine.hpp"
 #include <math.h>
+#include <cstdlib>
+
+#include "Machinery.hpp"
+#include "GraphicsEngine.hpp"
+
 
 enum ProductionProcessStatus {
     Running,
