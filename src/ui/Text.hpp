@@ -23,22 +23,11 @@ class Label {
     ALLEGRO_COLOR backgroundColor = al_map_rgb(100, 100, 100);
 
 public:
-    Label (Vector2d aPos, bool isCentered, std::string text);
-
-    void setFlags(LabelFlags aFlags) {
-        flags = aFlags;
-    }
-
+    Label(Vector2d aPos, bool isCentered, std::string text);
+    void setFlags(LabelFlags aFlags);
     void draw();
-
-    Rect2d getRect() {
-        return rect;
-    }
-
+    Rect2d getRect();
     void setText(std::string aText);
-
-    void setBackgroundColor(ALLEGRO_COLOR aColor) {
-        backgroundColor = aColor;
-    }
+    void setBackgroundColor(ALLEGRO_COLOR aColor);
 };
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_UI_TEXT_HPP_

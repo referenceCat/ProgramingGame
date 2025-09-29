@@ -1,7 +1,7 @@
 #ifndef __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_CUSTOMMACHINERY_HPP_
 #define __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_CUSTOMMACHINERY_HPP_
 
-#include <cstdlib> 
+#include <cstdlib>
 #include "Machinery.hpp"
 #include "../graphics/GraphicsEngine.hpp"
 #include <math.h>
@@ -18,7 +18,7 @@ struct ProductionProcess {
     ProductionProcessStatus status = WaitingToStart;
 };
 
-class ManipulatorTier1: public Machinery {
+class ManipulatorTier1 : public Machinery {
     ManipulatorArm* arm = nullptr; // game logic
     Vector2d target;
     bool manualMode = false;
@@ -43,41 +43,42 @@ class ManipulatorTier1: public Machinery {
 
     void createWindow() {
         window = GuiEngine::instance()->addWindow(Rect2d::fromCenterAndDimensions(Vector2d(600, 600), Vector2d(680, 550)), true, true);
-        window->setOnCloseCallback([this](){this->onWindowClose();});
+        window->setOnCloseCallback([this]() { this->onWindowClose(); });
         manualControlButton = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(40, 55), Vector2d(48, 48)));
         manualControlLabel = window->addLabel(manualControlButton->getRect().center(), true, manualMode ? "manual" : "auto");
-        manualControlButton->setOnClickCallback([this](){this->onManualControlButtonClick();});
+        manualControlButton->setOnClickCallback([this]() { this->onManualControlButtonClick(); });
 
-        
         auto button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(90, 55), Vector2d(48, 48)));
         window->addLabel(button->getRect().center(), true, "up");
-        button->setOnClickCallback([this](){setManualTarget(this->manualTarget + Vector2d(0, -1));}); // dont do that if in automatic mode
+        button->setOnClickCallback([this]() { setManualTarget(this->manualTarget + Vector2d(0, -1)); }); // dont do that if in automatic mode
 
         button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(40, 105), Vector2d(48, 48)));
         window->addLabel(button->getRect().center(), true, "left");
-        button->setOnClickCallback([this](){setManualTarget(this->manualTarget + Vector2d(-1, 0));});
+        button->setOnClickCallback([this]() { setManualTarget(this->manualTarget + Vector2d(-1, 0)); });
 
         button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(90, 155), Vector2d(48, 48)));
         window->addLabel(button->getRect().center(), true, "down");
-        button->setOnClickCallback([this](){setManualTarget(this->manualTarget + Vector2d(0, 1));});
+        button->setOnClickCallback([this]() { setManualTarget(this->manualTarget + Vector2d(0, 1)); });
 
         button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(140, 105), Vector2d(48, 48)));
         window->addLabel(button->getRect().center(), true, "right");
-        button->setOnClickCallback([this](){setManualTarget(this->manualTarget + Vector2d(1, 0));});
+        button->setOnClickCallback([this]() { setManualTarget(this->manualTarget + Vector2d(1, 0)); });
 
         button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(90, 105), Vector2d(48, 48)));
         grabLabel = window->addLabel(button->getRect().center(), true, arm->isActive() ? "release" : "grab");
-        button->setOnClickCallback([this](){
-            if (this->arm->isActive()) this->arm->release();
-            else this->arm->grab();
+        button->setOnClickCallback([this]() {
+            if (this->arm->isActive())
+                this->arm->release();
+            else
+                this->arm->grab();
             this->grabLabel->setText(this->arm->isActive() ? "release" : "grab");
         });
 
-        addressLabel = window->addLabel(Vector2d(200, 30), false, std::format("Device address is: {}", getAddress())); 
+        addressLabel = window->addLabel(Vector2d(200, 30), false, std::format("Device address is: {}", getAddress()));
         for (int i = 0; i <= 255; i++) {
             button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(200.5, 60.5) + Vector2d((i % 16) * 30, (i / 16) * 30), Vector2d(26, 26)));
             window->addLabel(button->getRect().center(), true, std::to_string(i));
-            button->setOnClickCallback([this, i](){
+            button->setOnClickCallback([this, i]() {
                 this->setAddress(i);
                 this->addressLabel->setText(std::format("Device address is: {}", i));
             });
@@ -105,11 +106,13 @@ class ManipulatorTier1: public Machinery {
 
     void setManualTarget(Vector2d aPos) {
         manualTarget = aPos;
-        if (manualMode) setTarget(manualTarget);
+        if (manualMode)
+            setTarget(manualTarget);
     }
 
 public:
-    ManipulatorTier1(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(5, 3))) {
+    ManipulatorTier1(Vector2d aPos):
+        Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(5, 3))) {
     }
 
     void run() override {
@@ -131,25 +134,24 @@ public:
 
             leftClampPos.x = leftClampPos.x / 2 + leftClampTargetX / 2;
             rightClampPos.x = rightClampPos.x / 2 + rightClampTargetX / 2;
-
         }
     }
 
     void draw() override {
-        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/Base/main.png"), 20, 0.1); // base
+        GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/Base/main.png"), 20, 0.1); // base
 
         if (arm) {
             GraphicsEngine::instance()->drawLine(arm->getLastJointPos(), leftClampPos, CommonValues::zArm, al_map_rgb(50, 60, 50), 0.2); // left clamp
             GraphicsEngine::instance()->drawLine(arm->getLastJointPos(), leftClampPos, CommonValues::zArm, al_map_rgb(70, 80, 70), 0.1);
-            GraphicsEngine::instance()->drawBitmap(leftClampPos + Vector2d(0.2, 0),  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/End1/main.png"), 20, CommonValues::zArm, Vector2d(20, 20), Rotation::fromDegrees(180));
+            GraphicsEngine::instance()->drawBitmap(leftClampPos + Vector2d(0.2, 0), GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/End1/main.png"), 20, CommonValues::zArm, Vector2d(20, 20), Rotation::fromDegrees(180));
 
             GraphicsEngine::instance()->drawLine(arm->getLastJointPos(), rightClampPos, CommonValues::zArm, al_map_rgb(50, 60, 50), 0.2); // right clamp
-            GraphicsEngine::instance()->drawLine(arm->getLastJointPos(), rightClampPos, CommonValues::zArm, al_map_rgb(70, 80, 70), 0.1); 
-            GraphicsEngine::instance()->drawBitmap(rightClampPos + Vector2d(-0.2, 0),  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/End1/main.png"), 20, CommonValues::zArm, Vector2d(20, 20));
+            GraphicsEngine::instance()->drawLine(arm->getLastJointPos(), rightClampPos, CommonValues::zArm, al_map_rgb(70, 80, 70), 0.1);
+            GraphicsEngine::instance()->drawBitmap(rightClampPos + Vector2d(-0.2, 0), GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/End1/main.png"), 20, CommonValues::zArm, Vector2d(20, 20));
 
-            GraphicsEngine::instance()->drawBitmap(arm->getLastJointPos(),  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/End0/main.png"), 20, CommonValues::zArm, Vector2d(20, 20)); // arm
-            GraphicsEngine::instance()->drawBitmap(arm->getJointPosition(1),  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/Segment1/main.png"), 20, CommonValues::zArm, Vector2d(20, 40), arm->getJointRotation(0) + arm->getJointRotation(1));
-            GraphicsEngine::instance()->drawBitmap(arm->getJointPosition(0),  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/Segment0/main.png"), 20, CommonValues::zArm, Vector2d(20, 40), arm->getJointRotation(0));
+            GraphicsEngine::instance()->drawBitmap(arm->getLastJointPos(), GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/End0/main.png"), 20, CommonValues::zArm, Vector2d(20, 20)); // arm
+            GraphicsEngine::instance()->drawBitmap(arm->getJointPosition(1), GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/Segment1/main.png"), 20, CommonValues::zArm, Vector2d(20, 40), arm->getJointRotation(0) + arm->getJointRotation(1));
+            GraphicsEngine::instance()->drawBitmap(arm->getJointPosition(0), GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/Segment0/main.png"), 20, CommonValues::zArm, Vector2d(20, 40), arm->getJointRotation(0));
         }
     }
 
@@ -175,7 +177,7 @@ public:
 
     void setTarget(Vector2d pos) {
         pos = pos - arm->getJointPosition(0);
-        
+
         if (pos.lenght() >= 6 + 8) { // target is too far
             arm->setJointTargetRotation(0, pos.getDirection());
             arm->setJointTargetRotation(1, Rotation());
@@ -193,36 +195,37 @@ public:
     }
 
     void onCommandRecive(int cmd, int arg) override {
-        if (manualMode) return;
+        if (manualMode)
+            return;
         switch (cmd) {
-        case 0:
-            arm->setJointTargetRotation(0, Rotation::fromDegrees(arg));
-            target = rect.p2; // manipulator should ignore its last target
-            break;
-        case 1:
-            arm->setJointTargetRotation(1, Rotation::fromDegrees(arg));
-            target = rect.p2; // manipulator should ignore its last target
-            break;
-        case 2:
-            target.x = arg;
-            setTarget(target);
-            break;
-        case 3:
-            target.x = arg;
-            setTarget(target);
-            break;
-        case 100:
-            arm->release();
-            break;
-        case 200:
-            arm->grab();
-            break;
-        default:
-            break;
+            case 0:
+                arm->setJointTargetRotation(0, Rotation::fromDegrees(arg));
+                target = rect.p2; // manipulator should ignore its last target
+                break;
+            case 1:
+                arm->setJointTargetRotation(1, Rotation::fromDegrees(arg));
+                target = rect.p2; // manipulator should ignore its last target
+                break;
+            case 2:
+                target.x = arg;
+                setTarget(target);
+                break;
+            case 3:
+                target.x = arg;
+                setTarget(target);
+                break;
+            case 100:
+                arm->release();
+                break;
+            case 200:
+                arm->grab();
+                break;
+            default:
+                break;
         }
     }
 
-    void addToGameWorld() override {  // TODO 
+    void addToGameWorld() override { // TODO
         Machinery::addToGameWorld();
         arm = new ManipulatorArm(3);
         arm->setRootJointPosition(Vector2d(4, 2) + rect.p1);
@@ -235,11 +238,12 @@ public:
     }
 
     void onClick() override {
-        if (window == nullptr) createWindow();
+        if (window == nullptr)
+            createWindow();
     }
 };
 
-class Drill: public Machinery {
+class Drill : public Machinery {
     ProductionArea output0;
     ProductionArea output1;
     ProductionProcess miningProcess;
@@ -252,7 +256,8 @@ class Drill: public Machinery {
     }
 
 public:
-    Drill(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(10, 10))) {
+    Drill(Vector2d aPos):
+        Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(10, 10))) {
         miningProcess.duration = 500;
         output0 = ProductionArea(Rect2d::fromCenterAndDimensions(Vector2d(7.5, 2.5), Vector2d(5, 5)));
         areas.push_back(&output0);
@@ -289,8 +294,6 @@ public:
             }
             // else continue waiting
         }
-
-
     }
 
     void draw() override {
@@ -299,7 +302,7 @@ public:
         GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Drill/main.png"), 20, CommonValues::zMachinery);
         GraphicsEngine::instance()->drawBitmap(rect.p1 + detailShift * 0.5, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Drill/drill.png"), 20, CommonValues::zMachineryBack);
         GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Drill/background.png"), 20, CommonValues::zMachineryBack);
-        GraphicsEngine::instance()->drawArcProgressBar(rect.p1 + Vector2d(1.8, 1.8), static_cast<double> (miningProcess.progress) / miningProcess.duration, 0.7, CommonValues::zMachinery, al_map_rgb(255, 255, 255), 0.2);
+        GraphicsEngine::instance()->drawArcProgressBar(rect.p1 + Vector2d(1.8, 1.8), static_cast<double>(miningProcess.progress) / miningProcess.duration, 0.7, CommonValues::zMachinery, al_map_rgb(255, 255, 255), 0.2);
 
         for (int y = rect.p2.y; y < GameWorld::instance()->surfaceY + 10; y += 10) { // draw drill to the ground level
             GraphicsEngine::instance()->drawBitmap(Vector2d(rect.p1.x, y) + detailShift * 0.5, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Drill/drill.png"), 20, CommonValues::zMachineryBack);
@@ -307,7 +310,7 @@ public:
     }
 };
 
-class Electrolyzer: public Machinery {
+class Electrolyzer : public Machinery {
     ProductionArea input0;
     ProductionArea output0;
     ProductionArea output1;
@@ -315,7 +318,8 @@ class Electrolyzer: public Machinery {
     ProductionProcess process;
 
 public:
-    Electrolyzer(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(10, 10))) {
+    Electrolyzer(Vector2d aPos):
+        Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(10, 10))) {
         process.duration = 500;
         input0 = ProductionArea(Rect2d::fromCenterAndDimensions(Vector2d(2.5, 2.5), Vector2d(5, 5)));
         areas.push_back(&input0);
@@ -331,9 +335,12 @@ public:
         if (process.status == WaitingToStart) {
             if (getBoxesInside(input0).size()) {
                 auto box = getBoxesInside(input0).at(0);
-                if (box->isGrabbed()) return;
-                if (dynamic_cast<ResourceBoxPrototype*>(box) == nullptr) return; // check if box is resource box
-                if (dynamic_cast<ResourceBoxPrototype*>(box)->getResource() != Regolith) return;
+                if (box->isGrabbed())
+                    return;
+                if (dynamic_cast<ResourceBoxPrototype*>(box) == nullptr)
+                    return; // check if box is resource box
+                if (dynamic_cast<ResourceBoxPrototype*>(box)->getResource() != Regolith)
+                    return;
                 process.status = Running;
                 process.progress = 0;
                 destroyBox(box);
@@ -361,17 +368,16 @@ public:
             }
             // else continue waiting
         }
-
     }
 
     void draw() override {
         GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Electrolyzer/main.png"), 20, CommonValues::zMachinery);
         GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Electrolyzer/background.png"), 20, CommonValues::zMachineryBack);
-        GraphicsEngine::instance()->drawArcProgressBar(rect.p1 + Vector2d(6.6, 4.4), static_cast<double> (process.progress) / process.duration, 0.7, CommonValues::zMachinery, al_map_rgb(255, 255, 255), 0.2);
+        GraphicsEngine::instance()->drawArcProgressBar(rect.p1 + Vector2d(6.6, 4.4), static_cast<double>(process.progress) / process.duration, 0.7, CommonValues::zMachinery, al_map_rgb(255, 255, 255), 0.2);
     }
 };
 
-class Lab: public Machinery {
+class Lab : public Machinery {
     long tickCounter = 0;
     bool lamps[16][32] = {0};
 
@@ -380,9 +386,10 @@ class Lab: public Machinery {
     TapeBox* processedBox[6];
 
     void updateLamps() {
-        for (int i = 0; i < 16; i++) for (int j = 0; j < 32; j++) {
-            lamps[i][j] = (rand() % 3) == 0;
-        }
+        for (int i = 0; i < 16; i++)
+            for (int j = 0; j < 32; j++) {
+                lamps[i][j] = (rand() % 3) == 0;
+            }
     }
 
     void readPoints(TapeBox* box) {
@@ -398,9 +405,12 @@ class Lab: public Machinery {
         if (researchProcess[i].status == WaitingToStart) {
             if (getBoxesInside(researchArea[i]).size()) {
                 auto box = getBoxesInside(researchArea[i]).at(0);
-                if (box->isGrabbed()) return;
-                if (dynamic_cast<TapeBox*>(box) == nullptr) return; // check if box is resource box
-                if (dynamic_cast<TapeBox*>(box)->isDataPointsEmpty()) return;
+                if (box->isGrabbed())
+                    return;
+                if (dynamic_cast<TapeBox*>(box) == nullptr)
+                    return; // check if box is resource box
+                if (dynamic_cast<TapeBox*>(box)->isDataPointsEmpty())
+                    return;
                 researchProcess[i].status = Running;
                 researchProcess[i].progress = 0;
                 processedBox[i] = dynamic_cast<TapeBox*>(box);
@@ -430,7 +440,8 @@ class Lab: public Machinery {
     }
 
 public:
-    Lab(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(17, 17))) {
+    Lab(Vector2d aPos):
+        Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(17, 17))) {
         researchArea[0].rect = Rect2d::fromCenterAndDimensions(Vector2d(3, 2), Vector2d(5, 3));
         areas.push_back(&researchArea[0]);
         researchArea[1].rect = Rect2d::fromCenterAndDimensions(Vector2d(8.5, 2), Vector2d(5, 3));
@@ -447,42 +458,49 @@ public:
 
     void run() override {
         tickCounter++;
-        if (tickCounter % 30 == 0) updateLamps(); // update lamps every 0.5 seconds
+        if (tickCounter % 30 == 0)
+            updateLamps(); // update lamps every 0.5 seconds
         for (int i = 0; i < 6; i++) runResearch(i);
     }
 
     void draw() override {
-        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Lab/background.png"), 20, CommonValues::zMachineryBack);
-        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Lab/main.png"), 20, CommonValues::zMachinery);
-        
-        for (int i = 0; i < 16; i++) for (int j = 0; j < 32; j++) {
-            if (lamps[i][j] && !(Rect2d(Vector2d(24, 9), Vector2d(31, 15)).isInside(Vector2d(j, i)))) GraphicsEngine::instance()->drawCircle(Vector2d(j *  0.5, i * 0.5) + rect.p1 + Vector2d(0.75, 4.75), 0.1, CommonValues::zMachinery, al_map_rgba(255, 255, 100, 100));
-        }
+        GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Lab/background.png"), 20, CommonValues::zMachineryBack);
+        GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Lab/main.png"), 20, CommonValues::zMachinery);
+
+        for (int i = 0; i < 16; i++)
+            for (int j = 0; j < 32; j++) {
+                if (lamps[i][j] && !(Rect2d(Vector2d(24, 9), Vector2d(31, 15)).isInside(Vector2d(j, i))))
+                    GraphicsEngine::instance()->drawCircle(Vector2d(j * 0.5, i * 0.5) + rect.p1 + Vector2d(0.75, 4.75), 0.1, CommonValues::zMachinery, al_map_rgba(255, 255, 100, 100));
+            }
     }
 };
 
-class Analyzer: public Machinery {
+class Analyzer : public Machinery {
     ProductionArea tapeArea;
     ProductionArea sampleArea;
     ProductionProcess researchProcess;
     std::vector<DataPointType> resultingDataPoints = {};
 
     std::vector<DataPointType> getDataPoints(Resource resource) {
-        if (resource == Regolith) return {GeologyResearchData};
-        if (resource == Alloy) return {MaterialResearchData, MaterialResearchData};
-        if (resource == Silicon) return {MaterialResearchData};
+        if (resource == Regolith)
+            return {GeologyResearchData};
+        if (resource == Alloy)
+            return {MaterialResearchData, MaterialResearchData};
+        if (resource == Silicon)
+            return {MaterialResearchData};
         return {};
     }
 
     void writePointsToTapeBox(TapeBox* box) { // excesive data points are lost
-        for (auto point: resultingDataPoints) {
+        for (auto point : resultingDataPoints) {
             box->writePoint(point);
         }
         resultingDataPoints.clear();
     }
 
 public:
-    Analyzer(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(7, 10))) {
+    Analyzer(Vector2d aPos):
+        Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(7, 10))) {
         tapeArea = ProductionArea(Rect2d::fromCenterAndDimensions(Vector2d(2.2, 1.5), Vector2d(5, 3)));
         areas.push_back(&tapeArea);
         sampleArea = ProductionArea(Rect2d::fromCenterAndDimensions(Vector2d(3.5, 7.5), Vector2d(5, 5)));
@@ -493,8 +511,10 @@ public:
         if (researchProcess.status == WaitingToStart) {
             if (getBoxesInside(sampleArea).size()) {
                 auto box = getBoxesInside(sampleArea).at(0);
-                if (box->isGrabbed()) return;
-                if (dynamic_cast<ResourceBoxPrototype*>(box) == nullptr) return; // check if box is resource box
+                if (box->isGrabbed())
+                    return;
+                if (dynamic_cast<ResourceBoxPrototype*>(box) == nullptr)
+                    return; // check if box is resource box
                 researchProcess.status = Running;
                 researchProcess.progress = 0;
                 resultingDataPoints = getDataPoints(dynamic_cast<ResourceBoxPrototype*>(box)->getResource());
@@ -511,10 +531,13 @@ public:
         }
 
         if (researchProcess.status == WaitingToFinish) {
-            if (getBoxesInside(tapeArea).size() == 0) return;
+            if (getBoxesInside(tapeArea).size() == 0)
+                return;
             auto box = getBoxesInside(tapeArea).at(0);
-            if (box->isGrabbed()) return;
-            if (dynamic_cast<TapeBox*>(box) == nullptr) return; // check if box is resource box
+            if (box->isGrabbed())
+                return;
+            if (dynamic_cast<TapeBox*>(box) == nullptr)
+                return; // check if box is resource box
             researchProcess.status = WaitingToStart;
             researchProcess.progress = 0;
             writePointsToTapeBox(dynamic_cast<TapeBox*>(box));
@@ -522,13 +545,13 @@ public:
     }
 
     void draw() override {
-        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Analyzer/main.png"), 20, CommonValues::zMachineryFront);
-        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Analyzer/background.png"), 20, CommonValues::zMachineryBack);
-        GraphicsEngine::instance()->drawArcProgressBar(rect.p1 + Vector2d(5.4, 4.5), static_cast<double> (researchProcess.progress) / researchProcess.duration, 0.7, CommonValues::zMachineryFront, al_map_rgb(255, 255, 255), 0.2);
+        GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Analyzer/main.png"), 20, CommonValues::zMachineryFront);
+        GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Analyzer/background.png"), 20, CommonValues::zMachineryBack);
+        GraphicsEngine::instance()->drawArcProgressBar(rect.p1 + Vector2d(5.4, 4.5), static_cast<double>(researchProcess.progress) / researchProcess.duration, 0.7, CommonValues::zMachineryFront, al_map_rgb(255, 255, 255), 0.2);
     }
 };
 
-class ParticleDetector: public Machinery {
+class ParticleDetector : public Machinery {
     long tickCounter = 0;
     ProductionArea destroyingArea;
     int cooldown = 200;
@@ -543,16 +566,20 @@ class ParticleDetector: public Machinery {
     }
 
 public:
-    ParticleDetector(Vector2d aPos): Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(10, 10))) {}
+    ParticleDetector(Vector2d aPos):
+        Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(10, 10))) {
+    }
 
     void run() override {
         tickCounter++;
-        if (tickCounter % 15 == 0) createBlink(); // update lamps every 0.5 seconds
-        if (tickCounter % 15 == 5) clearBlink(); // update lamps every 0.5 seconds
+        if (tickCounter % 15 == 0)
+            createBlink(); // update lamps every 0.5 seconds
+        if (tickCounter % 15 == 5)
+            clearBlink(); // update lamps every 0.5 seconds
     }
 
     void draw() override {
-        GraphicsEngine::instance()->drawBitmap(rect.p1,  GraphicsEngine::instance()->getBitmap("resources/assets/machinery/ParticleResearch/main.png"), 20, CommonValues::zMachineryBack);
+        GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/ParticleResearch/main.png"), 20, CommonValues::zMachineryBack);
         if (blink) {
             GraphicsEngine::instance()->drawCircle(rect.p1 + Vector2d(4.6, 0.85) + Vector2d((blink % 7 * 0.73), (blink / 7) * 0.73), 0.2, CommonValues::zMachinery, al_map_rgb(255, 255, 255));
         }

@@ -1,6 +1,6 @@
- #include "Text.hpp"
- #include "GuiEngine.hpp"
- 
+#include "Text.hpp"
+#include "GuiEngine.hpp"
+
 void Label::draw() {
     Rect2d globalRect = Rect2d(rect.p1 + GuiEngine::drawingIndent, rect.p2 + GuiEngine::drawingIndent);
     if (flags.background) {
@@ -20,7 +20,8 @@ void Label::setText(std::string aText) {
     }
 };
 
-Label::Label(Vector2d aPos, bool isCentered, std::string text): text(text), isCentered(isCentered), flags(LabelFlags()) {
+Label::Label(Vector2d aPos, bool isCentered, std::string text):
+    text(text), isCentered(isCentered), flags(LabelFlags()) {
     double h = al_get_font_line_height(GuiEngine::debugFont) + 2;
     double w = al_get_text_width(GuiEngine::debugFont, text.c_str());
     if (isCentered) {
@@ -29,3 +30,15 @@ Label::Label(Vector2d aPos, bool isCentered, std::string text): text(text), isCe
         rect = Rect2d(aPos, Vector2d(aPos.x + w, aPos.y + h));
     }
 };
+
+void Label::setFlags(LabelFlags aFlags) {
+    flags = aFlags;
+}
+
+Rect2d Label::getRect() {
+    return rect;
+}
+
+void Label::setBackgroundColor(ALLEGRO_COLOR aColor) {
+    backgroundColor = aColor;
+}

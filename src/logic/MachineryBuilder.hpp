@@ -24,60 +24,61 @@ class MachineryBuilder {
     bool blocked = false;
 
     void selectType(MachineryType type) {
-        switch (type)
-        {
-        case TypeArm:
-            prototype = new ManipulatorTier1(Vector2d());
-            break;
-        case TypeController:
-            prototype = new Controller(Vector2d());
-            break;
-        case TypeDrill:
-            prototype = new Drill(Vector2d());
-            break;
-        case TypeElectrolyzer:
-            prototype = new Electrolyzer(Vector2d());
-            break;
-        case TypeLab:
-            prototype = new Lab(Vector2d());
-            break;
-        case TypeParticleResearch:
-            prototype = new ParticleDetector(Vector2d());
-            break;
-        case TypeAnalyzer:
-            prototype = new Analyzer(Vector2d());
-            break;
-        default:
-            break;
+        switch (type) {
+            case TypeArm:
+                prototype = new ManipulatorTier1(Vector2d());
+                break;
+            case TypeController:
+                prototype = new Controller(Vector2d());
+                break;
+            case TypeDrill:
+                prototype = new Drill(Vector2d());
+                break;
+            case TypeElectrolyzer:
+                prototype = new Electrolyzer(Vector2d());
+                break;
+            case TypeLab:
+                prototype = new Lab(Vector2d());
+                break;
+            case TypeParticleResearch:
+                prototype = new ParticleDetector(Vector2d());
+                break;
+            case TypeAnalyzer:
+                prototype = new Analyzer(Vector2d());
+                break;
+            default:
+                break;
         }
     }
 
 public:
-    static MachineryBuilder *instance()
-    {
+    static MachineryBuilder* instance() {
         static MachineryBuilder instance;
         return &instance;
     }
 
     bool checkBlocked() {
-        if (!prototype) return false;
-
+        if (!prototype)
+            return false;
 
         bool touchingBuildableArea = false;
-        for (auto module: GameWorld::instance()->getModules()) {
+        for (auto module : GameWorld::instance()->getModules()) {
             if (module->checkTouchesBuildableArea(prototype->getRect())) {
                 touchingBuildableArea = true;
                 break;
             }
         }
-        if (!touchingBuildableArea) return true;
+        if (!touchingBuildableArea)
+            return true;
 
-        for (auto machinery: GameWorld::instance()->getMachinery()) {
-            if (machinery->getRect().isIntersecting(prototype->getRect())) return true;
+        for (auto machinery : GameWorld::instance()->getMachinery()) {
+            if (machinery->getRect().isIntersecting(prototype->getRect()))
+                return true;
         }
 
-        for (auto module: GameWorld::instance()->getModules()) {
-            if (module->checkWallCollision(prototype->getRect())) return true;
+        for (auto module : GameWorld::instance()->getModules()) {
+            if (module->checkWallCollision(prototype->getRect()))
+                return true;
         }
 
         return false;
@@ -94,15 +95,17 @@ public:
         }
 
         blocked = checkBlocked();
-        if (blocked) return;
+        if (blocked)
+            return;
         prototype->addToGameWorld();
         prototype = nullptr;
     };
 
     void mousePos(Vector2d pos) {
-        if (!prototype) return;
+        if (!prototype)
+            return;
         Rect2d lastPos = prototype->getRect();
-        if (stickToGrid)  {
+        if (stickToGrid) {
             Vector2d roundedPos;
             roundedPos.x = std::round(pos.x - prototype->getRect().dimensions().x / 2) + prototype->getRect().dimensions().x / 2;
             roundedPos.y = std::round(pos.y - prototype->getRect().dimensions().y / 2) + prototype->getRect().dimensions().y / 2;
@@ -111,12 +114,13 @@ public:
             prototype->setCenter(pos);
         }
 
-        if (prototype->getRect() != lastPos) blocked = checkBlocked();
-        
+        if (prototype->getRect() != lastPos)
+            blocked = checkBlocked();
     };
 
     void drawGhost() {
-        if (!prototype) return;
+        if (!prototype)
+            return;
         prototype->draw();
         if (!blocked)
             GraphicsEngine::instance()->drawRectangle(prototype->getRect(), 0, al_map_rgba(50, 100, 100, 30));
@@ -124,42 +128,41 @@ public:
             GraphicsEngine::instance()->drawRectangle(prototype->getRect(), 0, al_map_rgba(100, 50, 50, 30));
     }
 
-    void createWindow()
-    {
+    void createWindow() {
         if (window)
             GuiEngine::instance()->closeWindow(window);
-        
-        window = GuiEngine::instance()->addWindow(Rect2d(Vector2d(150,700), 300, 220), true, false);
+
+        window = GuiEngine::instance()->addWindow(Rect2d(Vector2d(150, 700), 300, 220), true, false);
 
         window->addLabel(Vector2d(20, 40), false, "Build machinery:", 0);
 
-        Button *armButton = window->addButton(Rect2d(Vector2d(20, 60), Vector2d(200, 80)));
+        Button* armButton = window->addButton(Rect2d(Vector2d(20, 60), Vector2d(200, 80)));
         window->addLabel(armButton->getRect().center(), true, "Manipulator", 0);
-        armButton->setOnClickCallback([this](){this->selectType(TypeArm);});
+        armButton->setOnClickCallback([this]() { this->selectType(TypeArm); });
 
-        Button *controllerButton = window->addButton(Rect2d(Vector2d(20, 85), Vector2d(200, 105)));
+        Button* controllerButton = window->addButton(Rect2d(Vector2d(20, 85), Vector2d(200, 105)));
         window->addLabel(controllerButton->getRect().center(), true, "Controller", 0);
-        controllerButton->setOnClickCallback([this](){this->selectType(TypeController);});
+        controllerButton->setOnClickCallback([this]() { this->selectType(TypeController); });
 
-        Button *labButton = window->addButton(Rect2d(Vector2d(20, 110), Vector2d(200, 130)));
+        Button* labButton = window->addButton(Rect2d(Vector2d(20, 110), Vector2d(200, 130)));
         window->addLabel(labButton->getRect().center(), true, "Lab", 0);
-        labButton->setOnClickCallback([this](){this->selectType(TypeLab);});
+        labButton->setOnClickCallback([this]() { this->selectType(TypeLab); });
 
-        Button *drillButton = window->addButton(Rect2d(Vector2d(20, 135), Vector2d(200, 155)));
+        Button* drillButton = window->addButton(Rect2d(Vector2d(20, 135), Vector2d(200, 155)));
         window->addLabel(drillButton->getRect().center(), true, "Drill", 0);
-        drillButton->setOnClickCallback([this](){this->selectType(TypeDrill);});
+        drillButton->setOnClickCallback([this]() { this->selectType(TypeDrill); });
 
-        Button *electrolyzerButton = window->addButton(Rect2d(Vector2d(20, 160), Vector2d(200, 180)));
+        Button* electrolyzerButton = window->addButton(Rect2d(Vector2d(20, 160), Vector2d(200, 180)));
         window->addLabel(electrolyzerButton->getRect().center(), true, "Electrolyzer", 0);
-        electrolyzerButton->setOnClickCallback([this](){this->selectType(TypeElectrolyzer);});
+        electrolyzerButton->setOnClickCallback([this]() { this->selectType(TypeElectrolyzer); });
 
-        Button *particleButton = window->addButton(Rect2d(Vector2d(20, 185), Vector2d(200, 205)));
+        Button* particleButton = window->addButton(Rect2d(Vector2d(20, 185), Vector2d(200, 205)));
         window->addLabel(particleButton->getRect().center(), true, "Particle Detector", 0);
-        particleButton->setOnClickCallback([this](){this->selectType(TypeParticleResearch);});
+        particleButton->setOnClickCallback([this]() { this->selectType(TypeParticleResearch); });
 
-        Button *analyzerButton = window->addButton(Rect2d(Vector2d(20, 210), Vector2d(200, 230)));
+        Button* analyzerButton = window->addButton(Rect2d(Vector2d(20, 210), Vector2d(200, 230)));
         window->addLabel(analyzerButton->getRect().center(), true, "Analyzer", 0);
-        analyzerButton->setOnClickCallback([this](){this->selectType(TypeAnalyzer);});
+        analyzerButton->setOnClickCallback([this]() { this->selectType(TypeAnalyzer); });
     }
 };
 

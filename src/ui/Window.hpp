@@ -36,99 +36,20 @@ class Window { // TODO add close event handler + write callbacks for each thing,
 
 public:
     Window(Rect2d rect, bool movable, bool closable);
-
     void draw();
-
-    void setOnCloseCallback(std::function<void()> aCallback) {
-        onCloseCallback = aCallback;
-    }
-
-
+    void setOnCloseCallback(std::function<void()> aCallback);
     // returns true if clicked on some gui element
-    bool click(Vector2d aPos) {
-        if (movable && dragArea.isInside(aPos)) {
-            moving = true;
-            mouseDragPos = aPos;
-            return true;
-        }
-
-        for (auto item: buttons) {
-            if (item->getRect().isInside(aPos)) {
-                item->click();
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    void releaseMouse(Vector2d aPos) {
-        moving = false;
-    }
-
-    bool moveMouse(Vector2d aPos) {
-        if (moving) {
-            Vector2d movement = aPos - mouseDragPos;
-            rect.p1 = rect.p1 + movement;
-            rect.p2 = rect.p2 + movement;
-            return true;
-        }
-
-        for (auto item: buttons) {
-            item->setTinted(false);
-        }
-
-        for (auto item: buttons) {
-            if (item->getRect().isInside(aPos)) {
-                item->setTinted(true);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    Button* addButton(Rect2d aRect) {
-        buttons.push_back(new Button(aRect));
-        return buttons.back();
-    };
-
-    void deleteButton(Button* buttonToRemove) {
-        delete buttonToRemove;
-        buttons.erase(std::remove(buttons.begin(), buttons.end(), buttonToRemove), buttons.end());
-    };
-
-    void deleteIcon(Icon* iconToRemove) {
-        delete iconToRemove;
-        icons.erase(std::remove(icons.begin(), icons.end(), iconToRemove), icons.end());
-    };
-
-    void deleteLabel(Label* labelToRemove) {
-        delete labelToRemove;
-        labels.erase(std::remove(labels.begin(), labels.end(), labelToRemove), labels.end());
-    };
-
-    Label* addLabel(Vector2d aPos, bool centered, std::string text, int line = 0) {
-        aPos.y += line * 14;
-        labels.push_back(new Label(aPos, centered, text));
-        return labels.back();
-    };
-
-    Icon* addIcon(Vector2d aPos, ALLEGRO_BITMAP* bitmap) {
-        icons.push_back(new Icon(aPos, bitmap));
-        return icons.back();
-    };
-
-    Rect2d getRect() {
-        return rect;
-    }
-
-    ~Window() {
-        if(onCloseCallback) onCloseCallback();
-        for (auto item: buttons) {
-            delete item;
-        }
-    }
+    bool click(Vector2d aPos);
+    void releaseMouse(Vector2d aPos);
+    bool moveMouse(Vector2d aPos);
+    Button* addButton(Rect2d aRect);
+    void deleteButton(Button* buttonToRemove);
+    void deleteIcon(Icon* iconToRemove);
+    void deleteLabel(Label* labelToRemove);
+    Label* addLabel(Vector2d aPos, bool centered, std::string text, int line = 0);
+    Icon* addIcon(Vector2d aPos, ALLEGRO_BITMAP* bitmap);
+    Rect2d getRect();
+    ~Window();
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_UI_WINDOW_HPP_

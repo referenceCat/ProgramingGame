@@ -23,25 +23,26 @@ class GameWorld {
 
 public:
     constexpr static double surfaceY = 0;
+
     static GameWorld* instance() {
         static GameWorld instance;
         return &instance;
     }
 
-    void addManipulatorArm(ManipulatorArm *arm);
+    void addManipulatorArm(ManipulatorArm* arm);
     void addBox(Box* box);
     void addMachinery(Machinery* machine);
     void addModule(Module* module);
 
     void removeBox(int id);
 
-    ManipulatorArm *getManipulatorArm(int id);
-    Box *getBox(int id);
-    Box *getBox(Vector2d aPos);
+    ManipulatorArm* getManipulatorArm(int id);
+    Box* getBox(int id);
+    Box* getBox(Vector2d aPos);
     std::vector<Box*> getBoxes();
-    Machinery *getMachinery(int id);
+    Machinery* getMachinery(int id);
     std::vector<Machinery*> getMachinery();
-    Module *getModule(int id);
+    Module* getModule(int id);
     std::vector<Module*> getModules();
 
     void drawSurface();

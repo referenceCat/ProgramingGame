@@ -2,7 +2,9 @@
 #include <GameWorld.hpp>
 #include "../graphics/GraphicsEngine.hpp"
 
-void Box::addToGameWorld() { GameWorld::instance()->addBox(this); }
+void Box::addToGameWorld() {
+    GameWorld::instance()->addBox(this);
+}
 
 bool Box::isGrabbed() {
     return grabbed;
@@ -12,18 +14,25 @@ void Box::setGrabbed(bool value) {
     grabbed = value;
 }
 
-void Box::draw() {}
+void Box::draw() {
+}
 
-Rect2d Box::getRect() { return rect; }
+Rect2d Box::getRect() {
+    return rect;
+}
 
 void Box::update() {
     if (temperature > 0)
         temperature -= 0.1;
 }
 
-double Box::getTemperature() { return temperature; }
+double Box::getTemperature() {
+    return temperature;
+}
 
-void Box::setTemperature(double aTemperature) { temperature = aTemperature; }
+void Box::setTemperature(double aTemperature) {
+    temperature = aTemperature;
+}
 
 void Box::move(Vector2d position) {
     Vector2d dPosition = position - rect.center();
@@ -35,16 +44,9 @@ void Box::drawInfo() {
 }
 
 void Box::drawDebug() {
-    int r = (temperature < -255)
-                ? 0
-                : ((temperature > 0) ? 255 : (temperature + 255));
-    int g = (temperature > 255)
-                ? 0
-                : ((temperature < 0) ? 255 : (-temperature + 255));
-    int b =
-        (temperature < -255 || temperature > 255)
-            ? 0
-            : ((temperature >= 0) ? (-temperature + 255) : (temperature + 255));
+    int r = (temperature < -255) ? 0 : ((temperature > 0) ? 255 : (temperature + 255));
+    int g = (temperature > 255) ? 0 : ((temperature < 0) ? 255 : (-temperature + 255));
+    int b = (temperature < -255 || temperature > 255) ? 0 : ((temperature >= 0) ? (-temperature + 255) : (temperature + 255));
     ALLEGRO_COLOR color = al_map_rgb(r, g, b);
 
     GraphicsEngine::instance()->drawRectangle(rect, CommonValues::zDebug, color);
@@ -54,15 +56,17 @@ void ResourceBoxPrototype::draw() {
     GraphicsEngine::instance()->drawBitmap(getRect().p1, bitmap, 20, CommonValues::zBox);
 }
 
-Resource ResourceBoxPrototype::getResource()
-{
+Resource ResourceBoxPrototype::getResource() {
     return type;
 }
 
 ALLEGRO_COLOR TapeBox::lampColor(DataPointType type) {
-    if (type == MaterialResearchData) return al_map_rgb(255, 50, 50);
-    if (type == ParticleResearchData) return al_map_rgb(50, 255, 50);
-    if (type == GeologyResearchData) return al_map_rgb(50, 50, 255);
+    if (type == MaterialResearchData)
+        return al_map_rgb(255, 50, 50);
+    if (type == ParticleResearchData)
+        return al_map_rgb(50, 255, 50);
+    if (type == GeologyResearchData)
+        return al_map_rgb(50, 50, 255);
     return al_map_rgba(0, 0, 0, 30);
 }
 

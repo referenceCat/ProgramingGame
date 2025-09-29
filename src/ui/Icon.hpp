@@ -16,7 +16,8 @@ class Icon {
     ALLEGRO_BITMAP* bitmap = nullptr;
 
 public:
-    Icon (Vector2d aPos, ALLEGRO_BITMAP* aBitmap): bitmap(aBitmap) {
+    Icon(Vector2d aPos, ALLEGRO_BITMAP* aBitmap):
+        bitmap(aBitmap) {
         rect = Rect2d(aPos, al_get_bitmap_width(aBitmap), al_get_bitmap_width(aBitmap));
     };
 

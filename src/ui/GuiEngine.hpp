@@ -32,7 +32,7 @@ public:
     inline static Vector2d drawingIndent{};
 
     void draw() {
-        for (auto item: windows) {
+        for (auto item : windows) {
             item->draw();
         }
     };
@@ -74,14 +74,14 @@ public:
 
         emptyIcon = al_create_bitmap(14, 14);
 
-        breakpointIcon= al_create_bitmap(14, 14);
+        breakpointIcon = al_create_bitmap(14, 14);
         al_set_target_bitmap(breakpointIcon);
         al_draw_filled_circle(7, 7, 4, al_map_rgb(200, 0, 0));
     }
 
     // returns true if clicked on some gui element
     bool click(Vector2d aPos) {
-        for (auto item: windows) {
+        for (auto item : windows) {
             if (item->getRect().isInside(aPos)) {
                 Vector2d relativePos = aPos;
                 relativePos.x -= item->getRect().p1.x;
@@ -94,9 +94,9 @@ public:
         return false;
     }
 
-    bool moveMouse(Vector2d aPos)  {
+    bool moveMouse(Vector2d aPos) {
         bool result = false;
-        for (auto item: windows) {
+        for (auto item : windows) {
             if (item->getRect().isInside(aPos)) {
                 result = true;
             }
@@ -111,7 +111,7 @@ public:
 
     bool releaseMouse(Vector2d aPos) {
         bool result = false;
-        for (auto item: windows) {
+        for (auto item : windows) {
             if (item->getRect().isInside(aPos)) {
                 Vector2d relativePos = aPos;
                 relativePos.x -= item->getRect().p1.x;
@@ -134,6 +134,5 @@ public:
         windows.erase(std::remove(windows.begin(), windows.end(), window), windows.end());
     }
 };
-
 
 #endif // __PROJECTS_PROGRAMINGGAME_ALLEGROGUI_SRC_GUIENGINE_HPP_

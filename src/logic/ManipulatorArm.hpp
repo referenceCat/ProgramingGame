@@ -18,7 +18,7 @@ class ManipulatorArm : public GameObject { // TODO now supports rendering of 2 s
     static constexpr double segmentResizeSpeed = 1;
     const int jointsNumber;
 
-    // current state 
+    // current state
     Rotation jointsRotation[maxJointsNumber];
     Vector2d jointsPosition[maxJointsNumber];
     float segmentsLength[maxJointsNumber];
@@ -34,7 +34,7 @@ class ManipulatorArm : public GameObject { // TODO now supports rendering of 2 s
 
     void defaultInit();
 
-  public:
+public:
     ManipulatorArm(int aJointsNumber);
     Vector2d getJointPosition(int n);
     Rotation getJointRotation(int n);
@@ -46,9 +46,9 @@ class ManipulatorArm : public GameObject { // TODO now supports rendering of 2 s
     void setRootJointPosition(Vector2d position);
     void cleatTarget();
     void recalculate();
-    void drawInfo() {}
+    void drawInfo() { }
     void drawDebug();
-    void draw() {}
+    void draw() { }
     void rotateJointToTarget(int i);
     void resizeSegmentToTarget(int i);
     void moveToTarget();
@@ -57,12 +57,12 @@ class ManipulatorArm : public GameObject { // TODO now supports rendering of 2 s
     bool isActive();
     Vector2d getLastJointPos();
     void removeBox();
-    void removeBox(Box *aBox);
+    void removeBox(Box* aBox);
     void addToGameWorld() override;
     Box* getTakenBox();
 
-  private:
-    void takeBox(Box *aBox);
+private:
+    void takeBox(Box* aBox);
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_MANIPULATORARM_HPP_

@@ -18,7 +18,8 @@ class Button {
     bool hover = 0;
 
 public:
-    Button(Rect2d aRect): rect(aRect) {};
+    Button(Rect2d aRect):
+        rect(aRect) {};
 
     void setTinted(bool value) {
         hover = value;
@@ -31,7 +32,8 @@ public:
     }
 
     void click() {
-        if (onClickCallback) onClickCallback();
+        if (onClickCallback)
+            onClickCallback();
         tintLevel = 10;
     }
 

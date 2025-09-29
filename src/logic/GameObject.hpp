@@ -9,7 +9,8 @@ private:
     const int id;
 
 public:
-    GameObject(): id(++lastId) {};
+    GameObject():
+        id(++lastId) {};
 
     int getId() {
         return id;
