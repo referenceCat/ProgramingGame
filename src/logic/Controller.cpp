@@ -57,6 +57,7 @@ void Controller::updateWindow() {
         item.label->setFlags(LabelFlags());
     }
 
+    if (rInstr >= instructionsGui.size()) return; // TODO
     LabelFlags flags;
     flags.background = true;
     instructionsGui.at(rInstr).label->setFlags(flags);
@@ -95,6 +96,7 @@ int Controller::execNextInstr() {
 
     if (instructions.at(rInstr).size() == 0 || instructions.at(rInstr).at(0) == '#') {
         rInstr++;
+        return 0;
     }
 
     std::vector<std::string> instr = split(instructions.at(rInstr), " ");

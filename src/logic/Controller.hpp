@@ -31,7 +31,7 @@ class Controller : public Machinery {
     std::vector<InstructionLine> instructionsGui;
     Label* rInstrLabel;
     Label* rDelayLabel;
-    bool paused = false;
+    bool paused = true;
     int failure = false;
     Icon* pauseIcon = nullptr;
 

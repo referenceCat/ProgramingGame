@@ -70,17 +70,11 @@ class BasicModulePrototype : public Module {
 
 public:
     BasicModulePrototype(int nodesNumber);
-
     void addNode(Vector2d pos, Rotation rot);
-
     void addBitmap(ALLEGRO_BITMAP* bitmap, Vector2d pivot, double z);
-
     void addWall(Rect2d rect);
-
     void addBuildableArea(Rect2d rect);
-
     void addBlockingArea(Rect2d rect);
-
     void draw();
 };
 
