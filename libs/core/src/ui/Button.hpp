@@ -11,14 +11,14 @@
 
 class GuiEngine;
 
-class Button {
+class LegacyButton {
     Rect2d rect;
     std::function<void()> onClickCallback = nullptr;
     int tintLevel = 0;
     bool hover = 0;
 
 public:
-    Button(Rect2d aRect):
+    LegacyButton(Rect2d aRect):
         rect(aRect) {};
 
     void setTinted(bool value) {

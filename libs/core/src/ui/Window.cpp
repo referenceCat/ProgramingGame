@@ -1,13 +1,13 @@
 #include "Window.hpp"
 #include "GuiEngine.hpp"
 
-Window::Window(Rect2d rect, bool movable = false, bool closable = false):
+LegacyWindow::LegacyWindow(Rect2d rect, bool movable = false, bool closable = false):
     rect(rect), movable(movable), closable(closable) {
     if (movable) {
         dragArea = Rect2d(Vector2d(20, 4), Vector2d(70, 16));
     }
     if (closable) {
-        buttons.push_back(new Button(Rect2d(Vector2d(10, 10), 14, 14)));
+        buttons.push_back(new LegacyButton(Rect2d(Vector2d(10, 10), 14, 14)));
         buttons.back()->setOnClickCallback([this]() { GuiEngine::instance()->closeWindow(this); });
     }
     if (closable || movable) {
@@ -15,7 +15,7 @@ Window::Window(Rect2d rect, bool movable = false, bool closable = false):
     }
 };
 
-void Window::draw() {
+void LegacyWindow::draw() {
     al_draw_filled_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, backgroundColor);
     al_draw_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, primaryColor, 2);
     if (movable || closable) {
@@ -54,12 +54,12 @@ void Window::draw() {
     }
 };
 
-void Window::setOnCloseCallback(std::function<void()> aCallback) {
+void LegacyWindow::setOnCloseCallback(std::function<void()> aCallback) {
     onCloseCallback = aCallback;
 }
 
 // returns true if clicked on some gui element
-bool Window::click(Vector2d aPos) {
+bool LegacyWindow::click(Vector2d aPos) {
     if (movable && dragArea.isInside(aPos)) {
         moving = true;
         mouseDragPos = aPos;
@@ -76,11 +76,11 @@ bool Window::click(Vector2d aPos) {
     return false;
 }
 
-void Window::releaseMouse(Vector2d aPos) {
+void LegacyWindow::releaseMouse(Vector2d aPos) {
     moving = false;
 }
 
-bool Window::moveMouse(Vector2d aPos) {
+bool LegacyWindow::moveMouse(Vector2d aPos) {
     if (moving) {
         Vector2d movement = aPos - mouseDragPos;
         rect.p1 = rect.p1 + movement;
@@ -102,42 +102,42 @@ bool Window::moveMouse(Vector2d aPos) {
     return false;
 }
 
-Button* Window::addButton(Rect2d aRect) {
-    buttons.push_back(new Button(aRect));
+LegacyButton* LegacyWindow::addButton(Rect2d aRect) {
+    buttons.push_back(new LegacyButton(aRect));
     return buttons.back();
 };
 
-void Window::deleteButton(Button* buttonToRemove) {
+void LegacyWindow::deleteButton(LegacyButton* buttonToRemove) {
     delete buttonToRemove;
     buttons.erase(std::remove(buttons.begin(), buttons.end(), buttonToRemove), buttons.end());
 };
 
-void Window::deleteIcon(Icon* iconToRemove) {
+void LegacyWindow::deleteIcon(LegacyIcon* iconToRemove) {
     delete iconToRemove;
     icons.erase(std::remove(icons.begin(), icons.end(), iconToRemove), icons.end());
 };
 
-void Window::deleteLabel(Label* labelToRemove) {
+void LegacyWindow::deleteLabel(LegacyLabel* labelToRemove) {
     delete labelToRemove;
     labels.erase(std::remove(labels.begin(), labels.end(), labelToRemove), labels.end());
 };
 
-Label* Window::addLabel(Vector2d aPos, bool centered, std::string text, int line) {
+LegacyLabel* LegacyWindow::addLabel(Vector2d aPos, bool centered, std::string text, int line) {
     aPos.y += line * 14;
-    labels.push_back(new Label(aPos, centered, text));
+    labels.push_back(new LegacyLabel(aPos, centered, text));
     return labels.back();
 };
 
-Icon* Window::addIcon(Vector2d aPos, ALLEGRO_BITMAP* bitmap) {
-    icons.push_back(new Icon(aPos, bitmap));
+LegacyIcon* LegacyWindow::addIcon(Vector2d aPos, ALLEGRO_BITMAP* bitmap) {
+    icons.push_back(new LegacyIcon(aPos, bitmap));
     return icons.back();
 };
 
-Rect2d Window::getRect() {
+Rect2d LegacyWindow::getRect() {
     return rect;
 }
 
-Window::~Window() {
+LegacyWindow::~LegacyWindow() {
     if (onCloseCallback)
         onCloseCallback();
     for (auto item : buttons) {

@@ -1,7 +1,9 @@
-#ifndef __PROJECTS_PROGRAMINGGAME_ALLEGROGUI_SRC_GUIENGINE_HPP_
-#define __PROJECTS_PROGRAMINGGAME_ALLEGROGUI_SRC_GUIENGINE_HPP_
+#ifndef __PROJECTS_PROGRAMINGGAME_LIBS_CORE_INCLUDE_GUIENGINE_HPP_
+#define __PROJECTS_PROGRAMINGGAME_LIBS_CORE_INCLUDE_GUIENGINE_HPP_
 
 #include <vector>
+#include <iostream>
+#include <map>
 #include "Button.hpp"
 #include "allegro5/allegro5.h"
 #include "allegro5/allegro_primitives.h"
@@ -9,10 +11,248 @@
 #include "Window.hpp"
 #include "Text.hpp"
 
+class GuiEngine;
+
+struct Aligment {
+    Vector2d dimensions;
+    double marginLeft = -1;
+    double marginRight = -1;
+    double marginTop = -1;
+    double marginBottom = -1;
+
+    static Aligment byDimensions(Vector2d aDimensions) {
+        Aligment res;
+        res.dimensions = aDimensions;
+        return res;
+    }
+};
+
+enum MouseState {
+    None,
+    Held,
+    Hovered
+};
+
+enum MouseEventType {
+    Hover,
+    Hold,
+    Click,
+    Release
+};
+
+
+// button, text, layout, window, etc
+class GuiElement {
+    GuiElement* parent;
+    std::vector<GuiElement*> children;
+    MouseState mouseState = None;
+
+protected:
+    Rect2d rect;
+    Aligment aligment;
+
+    int drawPriority = 0;
+
+    std::function<void()> onCloseCallback = nullptr;
+    std::map<MouseEventType, std::function<void(Vector2d)>> mouseCallbacks;
+    bool interseptsMouseEvents = true;
+
+public:
+    friend class GuiEngine;
+
+    GuiElement(GuiElement* parent, Aligment aligment): parent{parent}, aligment{aligment} {
+        static int roots = 0; // check if only 1 root is present
+        if (parent == nullptr) {
+            assert(roots == 0);
+            roots++;
+        } else {
+            parent->children.push_back(this);
+        }
+
+        for (auto eventType: {Hover, Hold, Click,Release}) mouseCallbacks[eventType] = nullptr;
+    };
+
+    void setMouseCallback(MouseEventType type, std::function<void(Vector2d)> callback) {
+        mouseCallbacks[type] = callback;
+    }
+
+    MouseState getMouseState() {
+        return mouseState;
+    }
+
+    Rect2d getRect() {
+        return rect;
+    }
+
+    virtual void draw() {};
+
+    void setDrawPriority(int value) {
+        drawPriority = value;
+    } // element with higher ui will be drawn on top if overlaping
+
+    int getDrawPriority() {
+        return drawPriority;
+    } // element with higher ui will be drawn on top if overlaping
+
+    virtual void handleMouse(MouseEventType type, Vector2d mousePos) {
+        // do nothing by default
+    }
+
+    void setOnCloseCallback(std::function<void()> aCallback) {
+        onCloseCallback = aCallback;
+    }
+
+    ~GuiElement() {
+        if (onCloseCallback)
+            onCloseCallback();
+
+        for (auto child : children) {
+            child->parent = nullptr;
+            delete child;
+        }
+        children.clear();
+        if (parent != nullptr)
+            parent->children.erase(std::remove(parent->children.begin(), parent->children.end(), this), parent->children.end());
+    }
+};
+
+class DisplayArea : public GuiElement {
+public:
+    DisplayArea(): GuiElement(nullptr, Aligment()) {
+        interseptsMouseEvents = false;
+    }
+};
+
+class Button : public GuiElement {
+public:
+    Button(GuiElement* parent, Aligment aligment):
+        GuiElement(parent, aligment) {
+    }
+
+    void draw() override {
+        ALLEGRO_COLOR color = al_map_rgb(20, 20, 20);
+        if (getMouseState() == Hovered)
+            color = al_map_rgb(50, 50, 50);
+        if (getMouseState() == Held)
+            color = al_map_rgb(70, 70, 70);
+
+        al_draw_filled_rectangle(getRect().p1.x, getRect().p1.y, getRect().p2.x, getRect().p2.y, color);
+    }
+};
+
+class Label : public GuiElement {
+    std::string text = "";
+
+public:
+    Label(GuiElement* parent, Aligment aligment, std::string text):
+        GuiElement(parent, aligment), text{text} {
+    }
+
+    void draw() override;
+};
+
+class Window : public GuiElement {
+    Button* quitButton;
+    GuiElement* area;
+
+    inline static ALLEGRO_COLOR backgroundColor = al_map_rgb(30, 30, 30);
+    inline static ALLEGRO_COLOR primaryColor = al_map_rgb(200, 200, 200);
+
+public:
+    Window(GuiElement* parent, Aligment aligment):
+        GuiElement(parent, aligment) {
+
+        Aligment quitButtonAligment;
+        quitButtonAligment.marginLeft = 4;
+        quitButtonAligment.marginTop = 4;
+        quitButtonAligment.dimensions = Vector2d(22, 22);
+        quitButton = new Button(this, quitButtonAligment);
+
+        Aligment areaAligment;
+        areaAligment.marginLeft = 4;
+        areaAligment.marginRight = 4;
+        areaAligment.marginTop = 30;
+        areaAligment.marginBottom = 4;
+        area = new GuiElement(this, areaAligment);
+        drawPriority = 1;
+    }
+
+    GuiElement* getArea() {
+        return area;
+    }
+
+    void draw() override {
+        al_draw_filled_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, backgroundColor);
+        al_draw_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, primaryColor, 2);
+        al_draw_rectangle(area->getRect().p1.x, area->getRect().p1.y, area->getRect().p2.x, area->getRect().p2.y, primaryColor, 2);
+    }
+};
+
 class GuiEngine {
-    std::vector<Window*> windows;
+    GuiElement* rootElement = new DisplayArea();
+    std::vector<LegacyWindow*> windows;
     GuiEngine() {};
 
+    void drawRecursively(GuiElement* element) {
+        element->draw();
+        std::sort(element->children.begin(), element->children.end(), [](GuiElement* a, GuiElement* b) { return a->getDrawPriority() < b->getDrawPriority(); });
+        for (auto child : element->children) {
+            drawRecursively(child);
+        }
+    }
+
+    void updateRectsRecursively(GuiElement* element) {
+        if (element == rootElement) {
+            element->rect = Rect2d(Vector2d(0, 0), Vector2d(al_get_display_width(al_get_current_display()), al_get_display_height(al_get_current_display())));
+        } else {
+            element->rect.p1.x = element->aligment.marginLeft >= 0 ?
+                element->parent->rect.p1.x + element->aligment.marginLeft :
+                element->aligment.marginRight >= 0 ?
+                element->parent->rect.p2.x - element->aligment.marginRight - element->aligment.dimensions.x :
+                element->parent->rect.center().x - element->aligment.dimensions.x / 2;
+            element->rect.p2.x = element->aligment.marginRight >= 0 ?
+                element->parent->rect.p2.x - element->aligment.marginRight :
+                element->rect.p1.x + element->aligment.dimensions.x;
+
+            element->rect.p1.y = element->aligment.marginTop >= 0 ?
+                element->parent->rect.p1.y + element->aligment.marginTop :
+                element->aligment.marginBottom >= 0 ?
+                element->parent->rect.p2.y - element->aligment.marginBottom - element->aligment.dimensions.y :
+                element->parent->rect.center().y - element->aligment.dimensions.y / 2;
+            element->rect.p2.y = element->aligment.marginBottom >= 0 ?
+                element->parent->rect.p2.y - element->aligment.marginBottom :
+                element->rect.p1.y + element->aligment.dimensions.y;
+
+            assert(element->parent->rect.isInside(element->rect)); // check if any element is outside its parent
+        }
+
+        for (auto child : element->children) {
+            updateRectsRecursively(child);
+        }
+    }
+
+    void clearMouseStateRecursively(GuiElement* element) {
+        element->mouseState = None;
+        for (auto child : element->children) {
+            clearMouseStateRecursively(child);
+        }
+    }
+
+    bool applyEventRecursively(GuiElement* element, MouseEventType type, Vector2d mousePos) {
+        if (!element->rect.isInside(mousePos)) {
+            return false;
+        }
+
+        std::sort(element->children.begin(), element->children.end(), [](GuiElement* a, GuiElement* b) { return a->getDrawPriority() > b->getDrawPriority(); });
+        for (auto child : element->children) {
+            if (applyEventRecursively(child, type, mousePos))
+                return true;
+        }
+        if (type == Hover) element->mouseState = Hovered;
+        if (type == Hold) element->mouseState = Held;
+        if (element->mouseCallbacks[type]) element->mouseCallbacks[type](mousePos);
+        return element->interseptsMouseEvents;
+    }
 public:
     static GuiEngine* instance() {
         static GuiEngine instance;
@@ -32,10 +272,17 @@ public:
     inline static Vector2d drawingIndent{};
 
     void draw() {
-        for (auto item : windows) {
+        for (auto item : windows) { // TODO remove
             item->draw();
         }
+
+        updateRectsRecursively(rootElement);
+        drawRecursively(rootElement);
     };
+
+    GuiElement* getDisplayArea() {
+        return rootElement;
+    }
 
     void init() {
         createProceduralIcons();
@@ -91,7 +338,31 @@ public:
             }
         }
 
+        applyEventRecursively(rootElement, Click, aPos);
+
         return false;
+    }
+
+    bool releaseMouse(Vector2d aPos) {
+        bool result = false;
+        for (auto item : windows) {
+            if (item->getRect().isInside(aPos)) {
+                Vector2d relativePos = aPos;
+                relativePos.x -= item->getRect().p1.x;
+                relativePos.y -= item->getRect().p1.y;
+                item->releaseMouse(relativePos);
+                result = true;
+            }
+        }
+
+        applyEventRecursively(rootElement, Release, aPos);
+
+        return result;
+    }
+
+    bool updateMousePos(Vector2d aPos, bool clicked) {
+        clearMouseStateRecursively(rootElement);
+        return applyEventRecursively(rootElement, clicked ? Hold : Hover, aPos);
     }
 
     bool moveMouse(Vector2d aPos) {
@@ -109,27 +380,14 @@ public:
         return result;
     }
 
-    bool releaseMouse(Vector2d aPos) {
-        bool result = false;
-        for (auto item : windows) {
-            if (item->getRect().isInside(aPos)) {
-                Vector2d relativePos = aPos;
-                relativePos.x -= item->getRect().p1.x;
-                relativePos.y -= item->getRect().p1.y;
-                item->releaseMouse(relativePos);
-                result = true;
-            }
-        }
 
-        return result;
-    }
 
-    Window* addWindow(Rect2d aRect, bool movable, bool closable) {
-        windows.push_back(new Window(aRect, movable, closable));
+    LegacyWindow* addWindow(Rect2d aRect, bool movable, bool closable) {
+        windows.push_back(new LegacyWindow(aRect, movable, closable));
         return windows.back();
     };
 
-    void closeWindow(Window* window) {
+    void closeWindow(LegacyWindow* window) {
         delete window;
         windows.erase(std::remove(windows.begin(), windows.end(), window), windows.end());
     }
@@ -138,19 +396,4 @@ public:
 // enum GuiElementAligment {
 
 // }
-
-class GuiElement {
-    Rect2d rect;
-    int id;
-    inline static int nextId;
-    Vector2d relativePos;
-
-    
-public:
-    void draw() {};
-    void click() {};
-    void release() {};
-    
-};
-
-#endif // __PROJECTS_PROGRAMINGGAME_ALLEGROGUI_SRC_GUIENGINE_HPP_
+#endif // __PROJECTS_PROGRAMINGGAME_LIBS_CORE_INCLUDE_GUIENGINE_HPP_

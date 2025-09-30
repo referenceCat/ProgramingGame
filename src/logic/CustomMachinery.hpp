@@ -26,11 +26,11 @@ class ManipulatorTier1 : public Machinery {
     bool manualMode = false;
     Vector2d manualTarget;
 
-    Window* window = nullptr; // gui
-    Button* manualControlButton = nullptr;
-    Label* manualControlLabel = nullptr;
-    Label* grabLabel = nullptr;
-    Label* addressLabel = nullptr;
+    LegacyWindow* window = nullptr; // gui
+    LegacyButton* manualControlButton = nullptr;
+    LegacyLabel* manualControlLabel = nullptr;
+    LegacyLabel* grabLabel = nullptr;
+    LegacyLabel* addressLabel = nullptr;
 
     Vector2d leftClampPos, rightClampPos;
 

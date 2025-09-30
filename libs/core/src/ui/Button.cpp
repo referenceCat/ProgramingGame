@@ -1,7 +1,7 @@
 #include "Button.hpp"
 #include "GuiEngine.hpp"
 
-void Button::draw() {
+void LegacyButton::draw() {
     ALLEGRO_COLOR color = al_map_rgb(20 + tintLevel * 15, 20 + tintLevel * 15, 20 + tintLevel * 15);
     if (hover && tintLevel <= 5) {
         tintLevel = 5;

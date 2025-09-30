@@ -15,9 +15,9 @@
 // TODO change logic to be like irl programming languages?
 class Controller : public Machinery {
     struct InstructionLine {
-        Label* label;
-        Button* breakpointButton;
-        Icon* breakpointIcon;
+        LegacyLabel* label;
+        LegacyButton* breakpointButton;
+        LegacyIcon* breakpointIcon;
     };
 
     std::vector<std::string> instructions;
@@ -27,13 +27,13 @@ class Controller : public Machinery {
     int r2 = 0;
     int rDelay = 0;
 
-    Window* window = nullptr;
+    LegacyWindow* window = nullptr;
     std::vector<InstructionLine> instructionsGui;
-    Label* rInstrLabel;
-    Label* rDelayLabel;
+    LegacyLabel* rInstrLabel;
+    LegacyLabel* rDelayLabel;
     bool paused = true;
     int failure = false;
-    Icon* pauseIcon = nullptr;
+    LegacyIcon* pauseIcon = nullptr;
 
     void openFile();
 

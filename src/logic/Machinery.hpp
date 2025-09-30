@@ -28,9 +28,9 @@ protected:
 
 public:
     Machinery(Rect2d rect): rect(rect) {};
-    virtual void drawInfo() {}
+    virtual void drawInfo() {};
     virtual void drawDebug();
-    virtual void draw() {}
+    virtual void draw() {};
     Rect2d getRect();
     virtual void run() {};
     virtual void onCommandRecive(int command, int argument) {}
@@ -42,7 +42,7 @@ public:
 };
 
 // class AddressSelectionWindow {
-//     Window* window;
+//     LegacyWindow* window;
 // };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_MACHINERY_HPP_

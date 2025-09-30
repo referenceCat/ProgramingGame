@@ -1,7 +1,7 @@
 #include "Text.hpp"
 #include "GuiEngine.hpp"
 
-void Label::draw() {
+void LegacyLabel::draw() {
     Rect2d globalRect = Rect2d(rect.p1 + GuiEngine::drawingIndent, rect.p2 + GuiEngine::drawingIndent);
     if (flags.background) {
         al_draw_filled_rectangle(globalRect.p1.x - 4, globalRect.p1.y - 2, globalRect.p2.x + 2, globalRect.p2.y + 1, backgroundColor);
@@ -9,7 +9,7 @@ void Label::draw() {
     al_draw_text(GuiEngine::debugFont, al_map_rgb(255, 255, 255), globalRect.p1.x, globalRect.p1.y, 0, text.c_str());
 };
 
-void Label::setText(std::string aText) {
+void LegacyLabel::setText(std::string aText) {
     text = aText;
     double h = al_get_font_line_height(GuiEngine::debugFont) + 2;
     double w = al_get_text_width(GuiEngine::debugFont, text.c_str());
@@ -20,7 +20,7 @@ void Label::setText(std::string aText) {
     }
 };
 
-Label::Label(Vector2d aPos, bool isCentered, std::string text):
+LegacyLabel::LegacyLabel(Vector2d aPos, bool isCentered, std::string text):
     text(text), isCentered(isCentered), flags(LabelFlags()) {
     double h = al_get_font_line_height(GuiEngine::debugFont) + 2;
     double w = al_get_text_width(GuiEngine::debugFont, text.c_str());
@@ -31,14 +31,14 @@ Label::Label(Vector2d aPos, bool isCentered, std::string text):
     }
 };
 
-void Label::setFlags(LabelFlags aFlags) {
+void LegacyLabel::setFlags(LabelFlags aFlags) {
     flags = aFlags;
 }
 
-Rect2d Label::getRect() {
+Rect2d LegacyLabel::getRect() {
     return rect;
 }
 
-void Label::setBackgroundColor(ALLEGRO_COLOR aColor) {
+void LegacyLabel::setBackgroundColor(ALLEGRO_COLOR aColor) {
     backgroundColor = aColor;
 }

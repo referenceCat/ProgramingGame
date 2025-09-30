@@ -15,7 +15,7 @@ struct LabelFlags {
     bool background : 1;
 };
 
-class Label {
+class LegacyLabel {
     Rect2d rect;
     bool isCentered;
     std::string text;
@@ -23,7 +23,7 @@ class Label {
     ALLEGRO_COLOR backgroundColor = al_map_rgb(100, 100, 100);
 
 public:
-    Label(Vector2d aPos, bool isCentered, std::string text);
+    LegacyLabel(Vector2d aPos, bool isCentered, std::string text);
     void setFlags(LabelFlags aFlags);
     void draw();
     Rect2d getRect();

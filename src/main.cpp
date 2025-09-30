@@ -20,8 +20,8 @@
 long long tick = 0;
 long long eventCounter = 0;
 bool drawDebug = false, drawInfo = false;
-void init()
-{
+
+void init() {
     GuiEngine::instance()->init();
 
     CameraParameters parameters;
@@ -38,10 +38,28 @@ void init()
 
     auto box = new TapeBox(Vector2d(10, -10));
     GameWorld::instance()->addBox(box);
+
+    auto window = new Window(GuiEngine::instance()->getDisplayArea(), Aligment::byDimensions(Vector2d(400, 600)));
+    auto button1 = new Button(window->getArea(), Aligment::byDimensions(Vector2d(50, 50)));
+    Aligment custom;
+    custom.marginLeft = 30;
+    custom.marginRight = 30;
+    custom.marginBottom = 30;
+    custom.dimensions = Vector2d(100, 100);
+    auto button2 = new Button(GuiEngine::instance()->getDisplayArea(), custom);
+    auto button3 = new Button(window->getArea(), custom);
+    button3->setMouseCallback(Click, [](auto pos){ std::cout << "Click" << std::endl;});
+    button3->setMouseCallback(Release, [](auto pos){ std::cout << "Release" << std::endl;});
+    button3->setMouseCallback(Hold, [](auto pos){ std::cout << "Hold" << std::endl;});
+    button3->setMouseCallback(Hover, [](auto pos){ std::cout << "Hover" << std::endl;});
+    auto button4 = new Button(button2, Aligment::byDimensions(Vector2d(30, 30)));
+
+    auto label1 = new Label(button3, Aligment(), "text");
+    auto label2 = new Label(button2, Aligment(), "text");
+
 }
 
-void redraw()
-{
+void redraw() {
     // auto start = std::chrono::system_clock::now();
     GameWorld::instance()->drawAll(drawInfo, drawDebug);
     MachineryBuilder::instance()->drawGhost();
@@ -85,11 +103,11 @@ void redraw()
 void updateMouse() {
     ALLEGRO_MOUSE_STATE mouseState;
     al_get_mouse_state(&mouseState);
-    MachineryBuilder::instance()->mousePos(GraphicsEngine::instance()->transformPointInverse(Vector2d(mouseState.x, mouseState.y)));
+    if (!GuiEngine::instance()->updateMousePos(Vector2d(mouseState.x, mouseState.y), al_mouse_button_down(&mouseState, 1))); // working only with LMB for now
+        MachineryBuilder::instance()->mousePos(GraphicsEngine::instance()->transformPointInverse(Vector2d(mouseState.x, mouseState.y)));
 }
 
-void update()
-{
+void update() {
     tick++;
     ALLEGRO_KEYBOARD_STATE keyboardState;
     al_get_keyboard_state(&keyboardState);
@@ -103,13 +121,11 @@ void update()
         camera.position.x -= 1;
     if (al_key_down(&keyboardState, ALLEGRO_KEY_D))
         camera.position.x += 1;
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_EQUALS))
-    {
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_EQUALS)) {
         camera.z /= 1.01;
         camera.fov /= 1.01;
     }
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_MINUS))
-    {
+    if (al_key_down(&keyboardState, ALLEGRO_KEY_MINUS)) {
         camera.z *= 1.01;
         camera.fov *= 1.01;
     }
@@ -118,24 +134,22 @@ void update()
     GameWorld::instance()->run();
 }
 
-void onKeyDown(int keycode)
-{
-    switch (keycode)
-    {
-    case ALLEGRO_KEY_R:
-        GraphicsEngine::instance()->loadBitmaps();
-        break;
-    case ALLEGRO_KEY_ESCAPE:
-        MachineryBuilder::instance()->clearItem();
-        break;
-    case ALLEGRO_KEY_F1:
-        drawDebug = !drawDebug;
-        break;
-     case ALLEGRO_KEY_ALT:
-        drawInfo = !drawInfo;
-        break;
-    default:
-        break;
+void onKeyDown(int keycode) {
+    switch (keycode) {
+        case ALLEGRO_KEY_R:
+            GraphicsEngine::instance()->loadBitmaps();
+            break;
+        case ALLEGRO_KEY_ESCAPE:
+            MachineryBuilder::instance()->clearItem();
+            break;
+        case ALLEGRO_KEY_F1:
+            drawDebug = !drawDebug;
+            break;
+        case ALLEGRO_KEY_ALT:
+            drawInfo = !drawInfo;
+            break;
+        default:
+            break;
     }
 }
 
@@ -150,9 +164,9 @@ void onMouseClick(double x, double y) {
         return;
     }
 
-    for (auto module: GameWorld::instance()->getModules()) {
+    for (auto module : GameWorld::instance()->getModules()) {
         std::vector<ModuleNode*> nodes = module->getNodes();
-        for (auto node: nodes) {
+        for (auto node : nodes) {
             if ((GraphicsEngine::instance()->transformPoint(module->getPosition() + node->position.rotate(module->getRotation()), 0) - Vector2d(x, y)).lenght() < 20) {
                 onNodeClick(node);
                 return;
@@ -165,99 +179,96 @@ void onMouseClick(double x, double y) {
     MachineryBuilder::instance()->onClick();
 }
 
-void mainLoop(ALLEGRO_EVENT_QUEUE *event_queue)
-{
+void onMouseRelease(double x, double y) {
+    std::cout << "mouse release" << std::endl;
+    if (GuiEngine::instance()->releaseMouse(Vector2d(x, y))) { // check if clicking on windows, buttons, etc
+        return;
+    }
+}
+
+void mainLoop(ALLEGRO_EVENT_QUEUE* event_queue) {
     bool running = true;
-    while (running)
-    {
+    while (running) {
         ALLEGRO_EVENT event;
         // ALLEGRO_TIMEOUT timeout;
         // al_init_timeout(&timeout, 0.06);
         // bool get_event = al_wait_for_event_until(event_queue, &event, &timeout);
         al_wait_for_event(event_queue, &event);
         eventCounter++;
-        switch (event.type)
-        {
-        case ALLEGRO_EVENT_DISPLAY_CLOSE:
-            running = false;
-            break;
-        case ALLEGRO_EVENT_TIMER:
-            update();
-            redraw();
-            break;
-        case ALLEGRO_EVENT_KEY_DOWN:
-            std::cout << event.keyboard.keycode << std::endl;
-            onKeyDown(event.keyboard.keycode);
-            break;
-        case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-            onMouseClick(event.mouse.x, event.mouse.y);
-            
-            break;
-        case ALLEGRO_EVENT_DISPLAY_RESIZE:
-            GraphicsEngine::instance()->changeDisplayDimensions(Vector2d(event.display.width, event.display.height));
-            redraw();
-            al_acknowledge_resize(event.display.source);
-            break;
-        case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
-            GuiEngine::instance()->releaseMouse(Vector2d(event.mouse.x, event.mouse.y));
-            break;
-        case ALLEGRO_EVENT_MOUSE_AXES:
-        case ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY:
-        case ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY:
-            GuiEngine::instance()->moveMouse(Vector2d(event.mouse.x, event.mouse.y));
-            break;
+        switch (event.type) {
+            case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                running = false;
+                break;
+            case ALLEGRO_EVENT_TIMER:
+                update();
+                redraw();
+                break;
+            case ALLEGRO_EVENT_KEY_DOWN:
+                std::cout << event.keyboard.keycode << std::endl;
+                onKeyDown(event.keyboard.keycode);
+                break;
+            case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+                onMouseClick(event.mouse.x, event.mouse.y);
 
-        default:
-            // fprintf(stderr, "Unsupported event received: %d\n", event.type);
-            break;
+                break;
+            case ALLEGRO_EVENT_DISPLAY_RESIZE:
+                GraphicsEngine::instance()->changeDisplayDimensions(Vector2d(event.display.width, event.display.height));
+                redraw();
+                al_acknowledge_resize(event.display.source);
+                break;
+            case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
+                onMouseRelease(event.mouse.x, event.mouse.y);
+                break;
+            case ALLEGRO_EVENT_MOUSE_AXES:
+            case ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY:
+            case ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY:
+                GuiEngine::instance()->moveMouse(Vector2d(event.mouse.x, event.mouse.y));
+                break;
+
+            default:
+                // fprintf(stderr, "Unsupported event received: %d\n", event.type);
+                break;
         }
     }
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char** argv) {
     const int UPS = 60;
 
     // Initialize allegro
-    if (!al_init())
-    {
+    if (!al_init()) {
         fprintf(stderr, "Failed to initialize allegro.\n");
         return 1;
     }
 
     // Initialize allegro font addon
-    if (!al_init_font_addon())
-    {
+    if (!al_init_font_addon()) {
         fprintf(stderr, "Failed to initialize allegro font addon.\n");
         return 1;
     }
 
     // Initialize allegro ttf addon
-    if (!al_init_ttf_addon())
-    {
+    if (!al_init_ttf_addon()) {
         fprintf(stderr, "Failed to initialize allegro ttf addon.\n");
         return 1;
     }
 
     // Initialize allegro image addon
-    if (!al_init_image_addon())
-    {
+    if (!al_init_image_addon()) {
         fprintf(stderr, "Failed to initialize allegro image addon.\n");
         return 1;
     }
 
     // Initialize allegro primitives addon
-    if (!al_init_primitives_addon())
-    {
+    if (!al_init_primitives_addon()) {
         fprintf(stderr, "Failed to primitives allegro ttf addon.\n");
         return 1;
     }
 
     // Create the event queue
-    ALLEGRO_EVENT_QUEUE *event_queue = nullptr;
+    ALLEGRO_EVENT_QUEUE* event_queue = nullptr;
     event_queue = al_create_event_queue();
-    if (!event_queue)
-    {
+    if (!event_queue) {
         fprintf(stderr, "Failed to create event queue.");
         return 1;
     }
@@ -274,12 +285,12 @@ int main(int argc, char **argv)
     al_register_event_source(event_queue, al_get_mouse_event_source());
 
     // Initialize the timers
-    ALLEGRO_TIMER *update_timer = al_create_timer(1.0 / UPS);
+    ALLEGRO_TIMER* update_timer = al_create_timer(1.0 / UPS);
     al_register_event_source(event_queue, al_get_timer_event_source(update_timer));
     al_start_timer(update_timer);
 
     // Initialize the display
-    ALLEGRO_DISPLAY *display = nullptr;
+    ALLEGRO_DISPLAY* display = nullptr;
     al_set_new_display_option(ALLEGRO_VSYNC, 2, ALLEGRO_REQUIRE);
     al_set_new_display_flags(ALLEGRO_RESIZABLE);
     display = al_create_display(1920, 1080);

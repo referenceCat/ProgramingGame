@@ -460,9 +460,9 @@ void ModuleBuilder::updateNodeNumberSelection() {
 
     int i = 0;
     for (auto node : modulePrototype->getNodes()) {
-        Button* newButton = window->addButton(Rect2d::fromTwoCorners(
+        LegacyButton* newButton = window->addButton(Rect2d::fromTwoCorners(
             Vector2d(220, 60 + i * 25), Vector2d(420, 80 + i * 25)));
-        Label* newLabel = window->addLabel(newButton->getRect().center(), true,
+        LegacyLabel* newLabel = window->addLabel(newButton->getRect().center(), true,
             std::to_string(i), 0);
         newButton->setOnClickCallback(
             [this, n = i]() { this->selectNewNodeNumber(n); });
@@ -496,7 +496,7 @@ void ModuleBuilder::createWindow() {
         Rect2d(Vector2d(400, 400), 400, 440), true, true);
     window->setOnCloseCallback([this]() { onWindowClose(); });
 
-    Button* createButton = window->addButton(Rect2d(Vector2d(10, 340), Vector2d(210, 390)));
+    LegacyButton* createButton = window->addButton(Rect2d(Vector2d(10, 340), Vector2d(210, 390)));
     window->addLabel(createButton->getRect().center(), true, "Create module", 0);
     createButton->setOnClickCallback([this, &window = window]() {
     bool result = this->buildModule();
@@ -522,7 +522,7 @@ void ModuleBuilder::createModuleSelectionButtons() {
     int n = 11;
 
     for (int i = 0; i < n; i++) {
-        Button* corridorButton = window->addButton(Rect2d(Vector2d(20, 60) + Vector2d(0, i * 25),
+        LegacyButton* corridorButton = window->addButton(Rect2d(Vector2d(20, 60) + Vector2d(0, i * 25),
             Vector2d(200, 80) + Vector2d(0, i * 25)));
         window->addLabel(corridorButton->getRect().center(), true, labels[i], 0);
         corridorButton->setOnClickCallback(

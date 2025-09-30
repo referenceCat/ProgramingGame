@@ -99,9 +99,9 @@ class ModuleBuilder {
     int newModuleNodeNumber;
     Module* modulePrototype = nullptr;
 
-    Window* window;
-    std::vector<Button*> nodeNumberButtons;
-    std::vector<Label*> nodeNumberLabels;
+    LegacyWindow* window;
+    std::vector<LegacyButton*> nodeNumberButtons;
+    std::vector<LegacyLabel*> nodeNumberLabels;
 
     void updateNodeNumberSelection();
     void onWindowClose();

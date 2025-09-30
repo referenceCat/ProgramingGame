@@ -16,7 +16,7 @@
 
 class GuiEngine;
 
-class Window { // TODO add close event handler + write callbacks for each thing, what creates windows
+class LegacyWindow { // TODO add close event handler + write callbacks for each thing, what creates windows
     Rect2d rect;
     int z = 0;
 
@@ -29,27 +29,27 @@ class Window { // TODO add close event handler + write callbacks for each thing,
     Rect2d dragArea{};
     Vector2d mouseDragPos{};
 
-    std::vector<Button*> buttons;
-    std::vector<Label*> labels;
-    std::vector<Icon*> icons;
+    std::vector<LegacyButton*> buttons;
+    std::vector<LegacyLabel*> labels;
+    std::vector<LegacyIcon*> icons;
     std::function<void()> onCloseCallback = nullptr;
 
 public:
-    Window(Rect2d rect, bool movable, bool closable);
+    LegacyWindow(Rect2d rect, bool movable, bool closable);
     void draw();
     void setOnCloseCallback(std::function<void()> aCallback);
     // returns true if clicked on some gui element
     bool click(Vector2d aPos);
     void releaseMouse(Vector2d aPos);
     bool moveMouse(Vector2d aPos);
-    Button* addButton(Rect2d aRect);
-    void deleteButton(Button* buttonToRemove);
-    void deleteIcon(Icon* iconToRemove);
-    void deleteLabel(Label* labelToRemove);
-    Label* addLabel(Vector2d aPos, bool centered, std::string text, int line = 0);
-    Icon* addIcon(Vector2d aPos, ALLEGRO_BITMAP* bitmap);
+    LegacyButton* addButton(Rect2d aRect);
+    void deleteButton(LegacyButton* buttonToRemove);
+    void deleteIcon(LegacyIcon* iconToRemove);
+    void deleteLabel(LegacyLabel* labelToRemove);
+    LegacyLabel* addLabel(Vector2d aPos, bool centered, std::string text, int line = 0);
+    LegacyIcon* addIcon(Vector2d aPos, ALLEGRO_BITMAP* bitmap);
     Rect2d getRect();
-    ~Window();
+    ~LegacyWindow();
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_UI_WINDOW_HPP_
