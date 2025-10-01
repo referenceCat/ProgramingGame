@@ -6,24 +6,24 @@
 #include "GameWorld.hpp"
 
 void Controller::createWindow() {
-    window = GuiEngine::instance()->addWindow(Rect2d::fromCenterAndDimensions(Vector2d(400, 400), Vector2d(400, 750)), true, true);
+    // window = GuiEngine::instance()->addWindow(Rect2d::fromCenterAndDimensions(Vector2d(400, 400), Vector2d(400, 750)), true, true);
 
-    rInstrLabel = window->addLabel(Vector2d(20, 30), false, "rInstr: " + std::to_string(rInstr), 0);
-    rDelayLabel = window->addLabel(Vector2d(20, 30), false, "rDelay: " + std::to_string(rDelay), 1);
+    // rInstrLabel = window->addLabel(Vector2d(20, 30), false, "rInstr: " + std::to_string(rInstr), 0);
+    // rDelayLabel = window->addLabel(Vector2d(20, 30), false, "rDelay: " + std::to_string(rDelay), 1);
 
-    window->addLabel(Vector2d(270, 40), true, "open");
-    window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(270, 40), Vector2d(60, 18)))->setOnClickCallback([this]() { this->openFile(); });
+    // window->addLabel(Vector2d(270, 40), true, "open");
+    // window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(270, 40), Vector2d(60, 18)))->setOnClickCallback([this]() { this->openFile(); });
 
-    pauseIcon = window->addIcon(Vector2d(315, 40), GuiEngine::unpauseIcon);
-    window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(315, 40), Vector2d(18, 18)))->setOnClickCallback([this]() { this->pauseUnpause(); });
-    window->addIcon(Vector2d(335, 40), GuiEngine::downIcon);
-    window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(335, 40), Vector2d(18, 18)))->setOnClickCallback([this]() { this->down(); });
-    window->addIcon(Vector2d(355, 40), GuiEngine::upIcon);
-    window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(355, 40), Vector2d(18, 18)))->setOnClickCallback([this]() { this->up(); });
-    window->addIcon(Vector2d(375, 40), GuiEngine::nextIcon);
-    window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(375, 40), Vector2d(18, 18)))->setOnClickCallback([this]() { this->next(); });
-    window->setOnCloseCallback([this]() {this->window = nullptr; instructionsGui.clear(); });
-    updateWindow();
+    // pauseIcon = window->addIcon(Vector2d(315, 40), GuiEngine::unpauseIcon);
+    // window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(315, 40), Vector2d(18, 18)))->setOnClickCallback([this]() { this->pauseUnpause(); });
+    // window->addIcon(Vector2d(335, 40), GuiEngine::downIcon);
+    // window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(335, 40), Vector2d(18, 18)))->setOnClickCallback([this]() { this->down(); });
+    // window->addIcon(Vector2d(355, 40), GuiEngine::upIcon);
+    // window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(355, 40), Vector2d(18, 18)))->setOnClickCallback([this]() { this->up(); });
+    // window->addIcon(Vector2d(375, 40), GuiEngine::nextIcon);
+    // window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(375, 40), Vector2d(18, 18)))->setOnClickCallback([this]() { this->next(); });
+    // window->setOnCloseCallback([this]() {this->window = nullptr; instructionsGui.clear(); });
+    // updateWindow();
 }
 
 void Controller::updateWindow() {

@@ -18,7 +18,7 @@ enum MachineryType {
 };
 
 class MachineryBuilder {
-    LegacyWindow* window;
+    Window* window;
     Machinery* prototype;
     bool stickToGrid = true;
     bool blocked = false;
@@ -130,39 +130,34 @@ public:
 
     void createWindow() {
         if (window)
-            GuiEngine::instance()->closeWindow(window);
+            delete window;
 
-        window = GuiEngine::instance()->addWindow(Rect2d(Vector2d(150, 700), 300, 220), true, false);
+        Aligment windowAligment;
+        windowAligment.marginLeft = 10;
+        windowAligment.marginBottom = 10;
+        windowAligment.dimensions = Vector2d(300, 300);
+        window = new Window(GuiEngine::instance()->getDisplayArea(), windowAligment, false);
 
-        window->addLabel(Vector2d(20, 40), false, "Build machinery:", 0);
+        Aligment labelAligment;
+        labelAligment.marginTop = 4;
+        labelAligment.marginLeft = 4;
+        labelAligment.marginRight = 4;
+        labelAligment.dimensions = Vector2d(0, 20);
+        new Label(window->getArea(), labelAligment, "Build machinery: ");
 
-        LegacyButton* armButton = window->addButton(Rect2d(Vector2d(20, 60), Vector2d(200, 80)));
-        window->addLabel(armButton->getRect().center(), true, "Manipulator", 0);
-        armButton->setOnClickCallback([this]() { this->selectType(TypeArm); });
+        std::string labels[] = {"Arm", "Controller", "Lab", "Drill", "Electrolyzer", "Particle Detector", "Analyzer"};
+        MachineryType types[] = {TypeArm, TypeController, TypeLab, TypeDrill, TypeElectrolyzer, TypeParticleResearch, TypeAnalyzer};
 
-        LegacyButton* controllerButton = window->addButton(Rect2d(Vector2d(20, 85), Vector2d(200, 105)));
-        window->addLabel(controllerButton->getRect().center(), true, "Controller", 0);
-        controllerButton->setOnClickCallback([this]() { this->selectType(TypeController); });
-
-        LegacyButton* labButton = window->addButton(Rect2d(Vector2d(20, 110), Vector2d(200, 130)));
-        window->addLabel(labButton->getRect().center(), true, "Lab", 0);
-        labButton->setOnClickCallback([this]() { this->selectType(TypeLab); });
-
-        LegacyButton* drillButton = window->addButton(Rect2d(Vector2d(20, 135), Vector2d(200, 155)));
-        window->addLabel(drillButton->getRect().center(), true, "Drill", 0);
-        drillButton->setOnClickCallback([this]() { this->selectType(TypeDrill); });
-
-        LegacyButton* electrolyzerButton = window->addButton(Rect2d(Vector2d(20, 160), Vector2d(200, 180)));
-        window->addLabel(electrolyzerButton->getRect().center(), true, "Electrolyzer", 0);
-        electrolyzerButton->setOnClickCallback([this]() { this->selectType(TypeElectrolyzer); });
-
-        LegacyButton* particleButton = window->addButton(Rect2d(Vector2d(20, 185), Vector2d(200, 205)));
-        window->addLabel(particleButton->getRect().center(), true, "Particle Detector", 0);
-        particleButton->setOnClickCallback([this]() { this->selectType(TypeParticleResearch); });
-
-        LegacyButton* analyzerButton = window->addButton(Rect2d(Vector2d(20, 210), Vector2d(200, 230)));
-        window->addLabel(analyzerButton->getRect().center(), true, "Analyzer", 0);
-        analyzerButton->setOnClickCallback([this]() { this->selectType(TypeAnalyzer); });
+        for (int i = 0; i < 7; i++) {
+            Aligment buttonAligment;
+            buttonAligment.marginLeft = 4;
+            buttonAligment.marginRight = 4;
+            buttonAligment.marginTop = 25 + i * 25;
+            buttonAligment.dimensions = Vector2d(0, 20);
+            auto button = new Button(window->getArea(), buttonAligment);
+            button->setMouseCallback(Release, [this, type = types[i]](auto pos) { this->selectType(type); });
+            new Label(button, Aligment(), labels[i]);
+        }
     }
 };
 

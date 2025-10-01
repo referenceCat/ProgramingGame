@@ -8,7 +8,7 @@ LegacyWindow::LegacyWindow(Rect2d rect, bool movable = false, bool closable = fa
     }
     if (closable) {
         buttons.push_back(new LegacyButton(Rect2d(Vector2d(10, 10), 14, 14)));
-        buttons.back()->setOnClickCallback([this]() { GuiEngine::instance()->closeWindow(this); });
+        buttons.back()->setOnClickCallback([this]() { delete this; });
     }
     if (closable || movable) {
         // indent.y = 24;

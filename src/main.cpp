@@ -22,8 +22,6 @@ long long eventCounter = 0;
 bool drawDebug = false, drawInfo = false;
 
 void init() {
-    GuiEngine::instance()->init();
-
     CameraParameters parameters;
     parameters.fov = 90;
     parameters.displayDimensions = Vector2d(900, 900);
@@ -38,24 +36,6 @@ void init() {
 
     auto box = new TapeBox(Vector2d(10, -10));
     GameWorld::instance()->addBox(box);
-
-    auto window = new Window(GuiEngine::instance()->getDisplayArea(), Aligment::byDimensions(Vector2d(400, 600)));
-    auto button1 = new Button(window->getArea(), Aligment::byDimensions(Vector2d(50, 50)));
-    Aligment custom;
-    custom.marginLeft = 30;
-    custom.marginRight = 30;
-    custom.marginBottom = 30;
-    custom.dimensions = Vector2d(100, 100);
-    auto button2 = new Button(GuiEngine::instance()->getDisplayArea(), custom);
-    auto button3 = new Button(window->getArea(), custom);
-    button3->setMouseCallback(Click, [](auto pos){ std::cout << "Click" << std::endl;});
-    button3->setMouseCallback(Release, [](auto pos){ std::cout << "Release" << std::endl;});
-    button3->setMouseCallback(Hold, [](auto pos){ std::cout << "Hold" << std::endl;});
-    button3->setMouseCallback(Hover, [](auto pos){ std::cout << "Hover" << std::endl;});
-    auto button4 = new Button(button2, Aligment::byDimensions(Vector2d(30, 30)));
-
-    auto label1 = new Label(button3, Aligment(), "text");
-    auto label2 = new Label(button2, Aligment(), "text");
 }
 
 void redraw() {
@@ -143,25 +123,10 @@ void onKeyDown(int keycode) {
     }
 }
 
-void onNodeClick(ModuleNode* node) {
-    ModuleBuilder::instance()->setParentNode(node);
-    ModuleBuilder::instance()->createWindow();
-}
-
 void onMouseClick(double x, double y) {
     std::cout << "mouse click" << std::endl;
     if (GuiEngine::instance()->click(Vector2d(x, y))) { // check if clicking on windows, buttons, etc
         return;
-    }
-
-    for (auto module : GameWorld::instance()->getModules()) {
-        std::vector<ModuleNode*> nodes = module->getNodes();
-        for (auto node : nodes) {
-            if ((GraphicsEngine::instance()->transformPoint(module->getPosition() + node->position.rotate(module->getRotation()), 0) - Vector2d(x, y)).lenght() < 20) {
-                onNodeClick(node);
-                return;
-            }
-        }
     }
 
     Vector2d gameWorldClickPos = GraphicsEngine::instance()->transformPointInverse(Vector2d(x, y));
@@ -212,7 +177,6 @@ void mainLoop(ALLEGRO_EVENT_QUEUE* event_queue) {
             case ALLEGRO_EVENT_MOUSE_AXES:
             case ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY:
             case ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY:
-                GuiEngine::instance()->moveMouse(Vector2d(event.mouse.x, event.mouse.y));
                 break;
 
             default:

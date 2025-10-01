@@ -445,33 +445,6 @@ void BasicModulePrototype::draw() {
     }
 }
 
-void ModuleBuilder::updateNodeNumberSelection() {
-    if (!window)
-        return;
-    for (auto button : nodeNumberButtons) {
-        window->deleteButton(button);
-    }
-    nodeNumberButtons.clear();
-
-    for (auto label : nodeNumberLabels) {
-        window->deleteLabel(label);
-    }
-    nodeNumberLabels.clear();
-
-    int i = 0;
-    for (auto node : modulePrototype->getNodes()) {
-        LegacyButton* newButton = window->addButton(Rect2d::fromTwoCorners(
-            Vector2d(220, 60 + i * 25), Vector2d(420, 80 + i * 25)));
-        LegacyLabel* newLabel = window->addLabel(newButton->getRect().center(), true,
-            std::to_string(i), 0);
-        newButton->setOnClickCallback(
-            [this, n = i]() { this->selectNewNodeNumber(n); });
-        nodeNumberButtons.push_back(newButton);
-        nodeNumberLabels.push_back(newLabel);
-        i++;
-    }
-}
-
 void ModuleBuilder::onWindowClose() {
     window = nullptr;
     nodeNumberButtons.clear();
@@ -488,30 +461,53 @@ void ModuleBuilder::setParentNode(ModuleNode* node) {
 }
 
 void ModuleBuilder::createWindow() {
-    if (window)
-        GuiEngine::instance()->closeWindow(window);
     if (parentModuleNode->attachedNode != nullptr)
         return;
-    window = GuiEngine::instance()->addWindow(
-        Rect2d(Vector2d(400, 400), 400, 440), true, true);
-    window->setOnCloseCallback([this]() { onWindowClose(); });
+    if (window)
+        delete window;
 
-    LegacyButton* createButton = window->addButton(Rect2d(Vector2d(10, 340), Vector2d(210, 390)));
-    window->addLabel(createButton->getRect().center(), true, "Create module", 0);
-    createButton->setOnClickCallback([this, &window = window]() {
-    bool result = this->buildModule();
-    if (result)
-      GuiEngine::instance()->closeWindow(window); });
+    window = new Window(GuiEngine::instance()->getDisplayArea(), Aligment::byDimensionsAndCentered(Vector2d(600, 400)), true);
+    window->setOnCloseCallback([this](){this->onWindowClose();});
 
-    window->addLabel(Vector2d(20, 40), false, "Module type:", 0);
-    window->addLabel(Vector2d(220, 40), false, "Node number:", 0);
+    Aligment createButtonAligment;
+    createButtonAligment.marginLeft = 10;
+    createButtonAligment.marginBottom = 10;
+    createButtonAligment.dimensions = Vector2d(100, 40);
+    auto createButton = new Button(window->getArea(), createButtonAligment);
+    createButton->setMouseCallback(Release, [this](auto pos) {
+        bool result = this->buildModule();
+        if (result) delete window;
+    });
+    new Label(createButton, Aligment(), "Create module");
 
-    createModuleSelectionButtons();
+    Aligment typeSelectionZoneAligment;
+    typeSelectionZoneAligment.marginTop = 1;
+    typeSelectionZoneAligment.marginLeft = 1;
+    typeSelectionZoneAligment.marginBottom = 60;
+    typeSelectionZoneAligment.dimensions = Vector2d(280, -1);
+    auto typeSelectionZone = new GuiElement(window->getArea(), typeSelectionZoneAligment);
 
-    createModulePrototype(Corridor);
-}
+    Aligment typeSelectionZoneLabelAligment;
+    typeSelectionZoneLabelAligment.marginTop = 3;
+    typeSelectionZoneLabelAligment.marginLeft = 10;
+    typeSelectionZoneLabelAligment.marginRight = 10;
+    typeSelectionZoneLabelAligment.dimensions = Vector2d(-1, 20);
+    new Label(typeSelectionZone, typeSelectionZoneLabelAligment, "Select type: ");
 
-void ModuleBuilder::createModuleSelectionButtons() {
+    Aligment nodeSelectionZoneAligment;
+    nodeSelectionZoneAligment.marginTop = 1;
+    nodeSelectionZoneAligment.marginRight = 1;
+    nodeSelectionZoneAligment.marginBottom = 1;
+    nodeSelectionZoneAligment.dimensions = Vector2d(280, -1);
+    nodeSelectionZone = new GuiElement(window->getArea(), nodeSelectionZoneAligment);
+
+    Aligment nodeSelectionZoneLabelAligment;
+    nodeSelectionZoneLabelAligment.marginTop = 3;
+    nodeSelectionZoneLabelAligment.marginLeft = 10;
+    nodeSelectionZoneLabelAligment.marginRight = 10;
+    nodeSelectionZoneLabelAligment.dimensions = Vector2d(-1, 20);
+    new Label(nodeSelectionZone, nodeSelectionZoneLabelAligment, "Select node: ");
+
     std::string labels[] = {"Corridor", "Cross Connector", "3 Way Connector",
         "T Connector", "Deadend", "Frame",
         "Square Frame", "Triangle Frame", "Utility Module",
@@ -522,10 +518,45 @@ void ModuleBuilder::createModuleSelectionButtons() {
     int n = 11;
 
     for (int i = 0; i < n; i++) {
-        LegacyButton* corridorButton = window->addButton(Rect2d(Vector2d(20, 60) + Vector2d(0, i * 25),
-            Vector2d(200, 80) + Vector2d(0, i * 25)));
-        window->addLabel(corridorButton->getRect().center(), true, labels[i], 0);
-        corridorButton->setOnClickCallback(
-            [this, type = types[i]]() { createModulePrototype(type); });
+        Aligment buttonAligment;
+        buttonAligment.marginLeft = 4;
+        buttonAligment.marginRight = 4;
+        buttonAligment.marginTop = 25 + i * 25;
+        buttonAligment.dimensions = Vector2d(-1, 20);
+        auto button = new Button(typeSelectionZone, buttonAligment);
+        button->setMouseCallback(Release, [this, type = types[i]](auto pos) { createModulePrototype(type); });
+        new Label(button, Aligment(), labels[i]);
+    }
+
+    createModulePrototype(Corridor);
+}
+
+void ModuleBuilder::createModuleSelectionButtons() {
+    
+}
+
+void ModuleBuilder::updateNodeNumberSelection() {
+    if (!window)
+        return;
+    for (auto button : nodeNumberButtons) {
+        delete button;
+    }
+    nodeNumberButtons.clear();
+    nodeNumberLabels.clear();
+
+    int i = 0;
+    for (auto node : modulePrototype->getNodes()) {
+        Aligment buttonAligment;
+        buttonAligment.marginLeft = 4;
+        buttonAligment.marginRight = 4;
+        buttonAligment.marginTop = 25 + i * 25;
+        buttonAligment.dimensions = Vector2d(0, 20);
+        auto button = new Button(nodeSelectionZone, buttonAligment);
+        button->setMouseCallback(Release, [this, n = i](auto pos) { this->selectNewNodeNumber(n); });
+        auto label = new Label(button, Aligment(), std::to_string(i));
+
+        nodeNumberButtons.push_back(button);
+        nodeNumberLabels.push_back(label);
+        i++;
     }
 }
