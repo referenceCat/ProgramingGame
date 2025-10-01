@@ -223,7 +223,7 @@ class GuiEngine {
                 element->parent->rect.p2.y - element->aligment.marginBottom :
                 element->rect.p1.y + element->aligment.dimensions.y;
 
-            assert(element->parent->rect.isInside(element->rect)); // check if any element is outside its parent
+            assert(element->parent->rect.isInside(element->rect) || element->parent == rootElement); // check if any element is outside its parent (it is okay for windows to be outside display tho)
         }
 
         for (auto child : element->children) {
