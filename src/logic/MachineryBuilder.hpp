@@ -135,7 +135,7 @@ public:
         Aligment windowAligment;
         windowAligment.marginLeft = 10;
         windowAligment.marginBottom = 10;
-        windowAligment.dimensions = Vector2d(300, 300);
+        windowAligment.dimensions = Vector2d(300, 150);
         window = new Window(GuiEngine::instance()->getDisplayArea(), windowAligment, false);
 
         Aligment labelAligment;
@@ -143,7 +143,6 @@ public:
         labelAligment.marginLeft = 4;
         labelAligment.marginRight = 4;
         labelAligment.dimensions = Vector2d(0, 20);
-        new Label(window->getInternalArea(), labelAligment, "Build machinery: ");
 
         std::string labels[] = {"Arm", "Controller", "Lab", "Drill", "Electrolyzer", "Particle Detector", "Analyzer"};
         MachineryType types[] = {TypeArm, TypeController, TypeLab, TypeDrill, TypeElectrolyzer, TypeParticleResearch, TypeAnalyzer};
@@ -152,8 +151,12 @@ public:
             Aligment buttonAligment;
             buttonAligment.marginLeft = 4;
             buttonAligment.marginRight = 4;
-            buttonAligment.marginTop = 25 + i * 25;
-            buttonAligment.dimensions = Vector2d(0, 20);
+            buttonAligment.marginTop = 4;
+            buttonAligment.marginBottom = 4;
+            buttonAligment.tableColumns = 2;
+            buttonAligment.tableRows = 4;
+            buttonAligment.ownRow = i / 2;
+            buttonAligment.ownColumn = i % 2;
             auto button = new Button(window->getInternalArea(), buttonAligment);
             button->setMouseCallback(Release, [this, type = types[i]](auto pos) { this->selectType(type); });
             new Label(button, Aligment(), labels[i]);

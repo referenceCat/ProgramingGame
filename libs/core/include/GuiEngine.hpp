@@ -19,6 +19,10 @@ struct Aligment {
     double marginRight = -1;
     double marginTop = -1;
     double marginBottom = -1;
+    unsigned int tableColumns = 1;
+    unsigned int tableRows = 1;
+    unsigned int ownColumn = 0;
+    unsigned int ownRow = 0;
 
     static Aligment byDimensionsAndCentered(Vector2d aDimensions) {
         Aligment res;
@@ -227,22 +231,26 @@ class GuiEngine {
         if (element == rootElement) {
             element->rect = Rect2d(Vector2d(0, 0), Vector2d(al_get_display_width(al_get_current_display()), al_get_display_height(al_get_current_display())));
         } else {
+
+            auto cell = element->parent->rect; // cell == parent if table (h/w == 0)
+            cell.p1 = cell.p1 + Vector2d(element->parent->rect.dimensions().x / element->aligment.tableColumns * element->aligment.ownColumn,element->parent->rect.dimensions().y / element->aligment.tableRows * element->aligment.ownRow);
+            cell.p2 = cell.p1 + Vector2d(element->parent->rect.dimensions().x / element->aligment.tableColumns, element->parent->rect.dimensions().y / element->aligment.tableRows);
             element->rect.p1.x = element->aligment.marginLeft >= 0 ?
-                element->parent->rect.p1.x + element->aligment.marginLeft :
+                cell.p1.x + element->aligment.marginLeft :
                 element->aligment.marginRight >= 0 ?
-                element->parent->rect.p2.x - element->aligment.marginRight - element->aligment.dimensions.x :
-                element->parent->rect.center().x - element->aligment.dimensions.x / 2;
+                cell.p2.x - element->aligment.marginRight - element->aligment.dimensions.x :
+                cell.center().x - element->aligment.dimensions.x / 2;
             element->rect.p2.x = element->aligment.marginRight >= 0 ?
-                element->parent->rect.p2.x - element->aligment.marginRight :
+                cell.p2.x - element->aligment.marginRight :
                 element->rect.p1.x + element->aligment.dimensions.x;
 
             element->rect.p1.y = element->aligment.marginTop >= 0 ?
-                element->parent->rect.p1.y + element->aligment.marginTop :
+                cell.p1.y + element->aligment.marginTop :
                 element->aligment.marginBottom >= 0 ?
-                element->parent->rect.p2.y - element->aligment.marginBottom - element->aligment.dimensions.y :
-                element->parent->rect.center().y - element->aligment.dimensions.y / 2;
+                cell.p2.y - element->aligment.marginBottom - element->aligment.dimensions.y :
+                cell.center().y - element->aligment.dimensions.y / 2;
             element->rect.p2.y = element->aligment.marginBottom >= 0 ?
-                element->parent->rect.p2.y - element->aligment.marginBottom :
+                cell.p2.y - element->aligment.marginBottom :
                 element->rect.p1.y + element->aligment.dimensions.y;
 
             assert(element->parent->rect.isInside(element->rect) || element->parent == rootElement); // check if any element is outside its parent (it is okay for windows to be outside display tho)
