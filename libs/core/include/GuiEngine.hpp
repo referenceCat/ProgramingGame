@@ -146,7 +146,8 @@ class Label : public GuiElement {
 
 public:
     Label(GuiElement* parent, Aligment aligment, std::string text):
-        GuiElement(parent, aligment), text{text} {}
+        GuiElement(parent, aligment), text{text} {
+    }
 
     void draw() override;
 };
@@ -157,7 +158,7 @@ class Icon : public GuiElement {
 public:
     Icon(GuiElement* parent, Aligment aligment, ALLEGRO_BITMAP* bitmap):
         GuiElement(parent, aligment), bitmap{bitmap} {
-            interseptsMouseEvents = false;
+        interseptsMouseEvents = false;
     }
 
     void draw() override;
@@ -173,7 +174,7 @@ class Window : public GuiElement {
 public:
     Window(GuiElement* parent, Aligment aligment, bool closable);
 
-    GuiElement* getArea() {
+    GuiElement* getInternalArea() {
         return area;
     }
 
@@ -184,10 +185,35 @@ public:
     }
 };
 
+class NamedArea : public GuiElement {
+    std::string text = "";
+    GuiElement* area;
+
+public:
+    NamedArea(GuiElement* parent, Aligment aligment, std::string text):
+        GuiElement(parent, aligment), text{text} {
+        Aligment areaAligment;
+        areaAligment.marginLeft = 2;
+        areaAligment.marginRight = 2;
+        areaAligment.marginTop = 12;
+        areaAligment.marginBottom = 2;
+        area = new GuiElement(this, areaAligment);
+    }
+
+    void draw() override;
+
+    GuiElement* getInternalArea() {
+        return area;
+    }
+};
+
 class GuiEngine {
     GuiElement* rootElement = new DisplayArea();
     GuiElement* clickedElement = nullptr;
-    GuiEngine() {createProceduralIcons();};
+
+    GuiEngine() {
+        createProceduralIcons();
+    };
 
     void drawRecursively(GuiElement* element) {
         element->draw();

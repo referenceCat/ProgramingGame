@@ -19,7 +19,7 @@ Window::Window(GuiElement* parent, Aligment aligment, bool closable):
         quitButtonAligment.marginTop = 4;
         quitButtonAligment.dimensions = Vector2d(22, 22);
         quitButton = new Button(this, quitButtonAligment);
-        quitButton->setMouseCallback(Click, [this](Vector2d pos){delete this;});
+        quitButton->setMouseCallback(Click, [this](Vector2d pos) { delete this; });
         auto closeIcon = new Icon(quitButton, Aligment::byDimensionsAndCentered(Vector2d(20, 20)), GuiEngine::instance()->breakpointIcon);
     }
 
@@ -30,4 +30,15 @@ Window::Window(GuiElement* parent, Aligment aligment, bool closable):
     areaAligment.marginBottom = 4;
     area = new GuiElement(this, areaAligment);
     drawPriority = 1;
+}
+
+void NamedArea::draw() {
+    auto color = al_map_rgb(150, 150, 150);
+    al_draw_line(rect.p1.x, rect.p1.y + 5, rect.p1.x + 18, rect.p1.y + 5, color, 2);
+    al_draw_line(rect.p1.x + 20 + 2 + al_get_text_width(GuiEngine::instance()->debugFont, text.c_str()), rect.p1.y + 5, rect.p2.x, rect.p1.y + 5, color, 2);
+    al_draw_line(rect.p2.x, rect.p1.y + 5,rect.p2.x, rect.p2.y, color, 2);
+    al_draw_line(rect.p1.x, rect.p2.y, rect.p2.x, rect.p2.y, color, 2);
+    al_draw_line(rect.p1.x, rect.p1.y + 5, rect.p1.x, rect.p2.y, color, 2);
+    al_draw_text(GuiEngine::instance()->debugFont, color, rect.p1.x + 20, rect.p1.y, 0, text.c_str());
+    
 }

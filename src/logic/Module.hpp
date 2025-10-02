@@ -100,7 +100,7 @@ class ModuleBuilder {
     Module* modulePrototype = nullptr;
 
     Window* window;
-    GuiElement* nodeSelectionZone;
+    NamedArea* nodeSelectionZone;
     std::vector<Button*> nodeNumberButtons;
     std::vector<Label*> nodeNumberLabels;
 

@@ -143,7 +143,7 @@ public:
         labelAligment.marginLeft = 4;
         labelAligment.marginRight = 4;
         labelAligment.dimensions = Vector2d(0, 20);
-        new Label(window->getArea(), labelAligment, "Build machinery: ");
+        new Label(window->getInternalArea(), labelAligment, "Build machinery: ");
 
         std::string labels[] = {"Arm", "Controller", "Lab", "Drill", "Electrolyzer", "Particle Detector", "Analyzer"};
         MachineryType types[] = {TypeArm, TypeController, TypeLab, TypeDrill, TypeElectrolyzer, TypeParticleResearch, TypeAnalyzer};
@@ -154,7 +154,7 @@ public:
             buttonAligment.marginRight = 4;
             buttonAligment.marginTop = 25 + i * 25;
             buttonAligment.dimensions = Vector2d(0, 20);
-            auto button = new Button(window->getArea(), buttonAligment);
+            auto button = new Button(window->getInternalArea(), buttonAligment);
             button->setMouseCallback(Release, [this, type = types[i]](auto pos) { this->selectType(type); });
             new Label(button, Aligment(), labels[i]);
         }

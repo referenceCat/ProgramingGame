@@ -466,14 +466,14 @@ void ModuleBuilder::createWindow() {
     if (window)
         delete window;
 
-    window = new Window(GuiEngine::instance()->getDisplayArea(), Aligment::byDimensionsAndCentered(Vector2d(600, 400)), true);
+    window = new Window(GuiEngine::instance()->getDisplayArea(), Aligment::byDimensionsAndCentered(Vector2d(600, 460)), true);
     window->setOnCloseCallback([this](){this->onWindowClose();});
 
     Aligment createButtonAligment;
     createButtonAligment.marginLeft = 10;
     createButtonAligment.marginBottom = 10;
     createButtonAligment.dimensions = Vector2d(100, 40);
-    auto createButton = new Button(window->getArea(), createButtonAligment);
+    auto createButton = new Button(window->getInternalArea(), createButtonAligment);
     createButton->setMouseCallback(Release, [this](auto pos) {
         bool result = this->buildModule();
         if (result) delete window;
@@ -481,32 +481,18 @@ void ModuleBuilder::createWindow() {
     new Label(createButton, Aligment(), "Create module");
 
     Aligment typeSelectionZoneAligment;
-    typeSelectionZoneAligment.marginTop = 1;
-    typeSelectionZoneAligment.marginLeft = 1;
-    typeSelectionZoneAligment.marginBottom = 60;
-    typeSelectionZoneAligment.dimensions = Vector2d(280, -1);
-    auto typeSelectionZone = new GuiElement(window->getArea(), typeSelectionZoneAligment);
-
-    Aligment typeSelectionZoneLabelAligment;
-    typeSelectionZoneLabelAligment.marginTop = 3;
-    typeSelectionZoneLabelAligment.marginLeft = 10;
-    typeSelectionZoneLabelAligment.marginRight = 10;
-    typeSelectionZoneLabelAligment.dimensions = Vector2d(-1, 20);
-    new Label(typeSelectionZone, typeSelectionZoneLabelAligment, "Select type: ");
+    typeSelectionZoneAligment.marginTop = 30;
+    typeSelectionZoneAligment.marginLeft = 30;
+    typeSelectionZoneAligment.marginBottom = 100;
+    typeSelectionZoneAligment.dimensions = Vector2d(250, -1);
+    auto typeSelectionZone = new NamedArea(window->getInternalArea(), typeSelectionZoneAligment, "Type selection");
 
     Aligment nodeSelectionZoneAligment;
-    nodeSelectionZoneAligment.marginTop = 1;
-    nodeSelectionZoneAligment.marginRight = 1;
-    nodeSelectionZoneAligment.marginBottom = 1;
-    nodeSelectionZoneAligment.dimensions = Vector2d(280, -1);
-    nodeSelectionZone = new GuiElement(window->getArea(), nodeSelectionZoneAligment);
-
-    Aligment nodeSelectionZoneLabelAligment;
-    nodeSelectionZoneLabelAligment.marginTop = 3;
-    nodeSelectionZoneLabelAligment.marginLeft = 10;
-    nodeSelectionZoneLabelAligment.marginRight = 10;
-    nodeSelectionZoneLabelAligment.dimensions = Vector2d(-1, 20);
-    new Label(nodeSelectionZone, nodeSelectionZoneLabelAligment, "Select node: ");
+    nodeSelectionZoneAligment.marginTop = 30;
+    nodeSelectionZoneAligment.marginRight = 30;
+    nodeSelectionZoneAligment.marginBottom = 30;
+    nodeSelectionZoneAligment.dimensions = Vector2d(250, -1);
+    nodeSelectionZone = new NamedArea(window->getInternalArea(), nodeSelectionZoneAligment, "Node selection");
 
     std::string labels[] = {"Corridor", "Cross Connector", "3 Way Connector",
         "T Connector", "Deadend", "Frame",
@@ -519,11 +505,11 @@ void ModuleBuilder::createWindow() {
 
     for (int i = 0; i < n; i++) {
         Aligment buttonAligment;
-        buttonAligment.marginLeft = 4;
-        buttonAligment.marginRight = 4;
-        buttonAligment.marginTop = 25 + i * 25;
+        buttonAligment.marginLeft = 5;
+        buttonAligment.marginRight = 5;
+        buttonAligment.marginTop = 5 + i * 25;
         buttonAligment.dimensions = Vector2d(-1, 20);
-        auto button = new Button(typeSelectionZone, buttonAligment);
+        auto button = new Button(typeSelectionZone->getInternalArea(), buttonAligment);
         button->setMouseCallback(Release, [this, type = types[i]](auto pos) { createModulePrototype(type); });
         new Label(button, Aligment(), labels[i]);
     }
@@ -547,11 +533,11 @@ void ModuleBuilder::updateNodeNumberSelection() {
     int i = 0;
     for (auto node : modulePrototype->getNodes()) {
         Aligment buttonAligment;
-        buttonAligment.marginLeft = 4;
-        buttonAligment.marginRight = 4;
-        buttonAligment.marginTop = 25 + i * 25;
-        buttonAligment.dimensions = Vector2d(0, 20);
-        auto button = new Button(nodeSelectionZone, buttonAligment);
+        buttonAligment.marginLeft = 5;
+        buttonAligment.marginRight = 5;
+        buttonAligment.marginTop = 5 + i * 25;
+        buttonAligment.dimensions = Vector2d(-1, 20);
+        auto button = new Button(nodeSelectionZone->getInternalArea(), buttonAligment);
         button->setMouseCallback(Release, [this, n = i](auto pos) { this->selectNewNodeNumber(n); });
         auto label = new Label(button, Aligment(), std::to_string(i));
 
