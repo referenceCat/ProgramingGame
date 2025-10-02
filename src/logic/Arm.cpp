@@ -1,8 +1,8 @@
-#include "ManipulatorArm.hpp"
+#include "Arm.hpp"
 #include "GameWorld.hpp"
 #include "GraphicsEngine.hpp"
 
-void ManipulatorArm::grab() // TODO what if box is already grabbed?
+void Arm::grab() // TODO what if box is already grabbed?
 {
     active = true;
     Box* box = GameWorld::instance()->getBox(jointsPosition[jointsNumber - 1]);
@@ -11,15 +11,15 @@ void ManipulatorArm::grab() // TODO what if box is already grabbed?
     }
 }
 
-void ManipulatorArm::addToGameWorld() {
+void Arm::addToGameWorld() {
     GameWorld::instance()->addManipulatorArm(this);
 }
 
-Box* ManipulatorArm::getTakenBox() {
+Box* Arm::getTakenBox() {
     return takenBox;
 }
 
-void ManipulatorArm::drawDebug() {
+void Arm::drawDebug() {
     // draw target state
     for (int i = 0; i < jointsNumber; i++) {
         GraphicsEngine::instance()->drawCircle(jointsTargetPosition[i], 0.2, CommonValues::zDebug, al_map_rgb(0, 100, 100));
@@ -54,7 +54,7 @@ void ManipulatorArm::drawDebug() {
     }
 }
 
-void ManipulatorArm::rotateJointToTarget(
+void Arm::rotateJointToTarget(
     int i) { // TODO stop after reacing target rotation
     double dRotation = std::fmod(
         jointsTargetRotation[i].radians - jointsRotation[i].radians, M_PI * 2);
@@ -69,7 +69,7 @@ void ManipulatorArm::rotateJointToTarget(
     }
 }
 
-void ManipulatorArm::resizeSegmentToTarget(
+void Arm::resizeSegmentToTarget(
     int i) { // TODO stop after reacing target size
     double dLenght = segmentsTargetLength[i] - segmentsLength[i];
     if (dLenght > 0) {
@@ -79,7 +79,7 @@ void ManipulatorArm::resizeSegmentToTarget(
     }
 }
 
-void ManipulatorArm::moveToTarget() { // TODO PID???
+void Arm::moveToTarget() { // TODO PID???
     for (int i = 0; i < jointsNumber; i++) {
         rotateJointToTarget(i);
     }
@@ -89,7 +89,7 @@ void ManipulatorArm::moveToTarget() { // TODO PID???
     }
 }
 
-void ManipulatorArm::release() {
+void Arm::release() {
     active = false;
     if (takenBox) {
         takenBox->setGrabbed(false);
@@ -99,31 +99,31 @@ void ManipulatorArm::release() {
     relativeBoxPosition = Vector2d();
 }
 
-bool ManipulatorArm::isActive() {
+bool Arm::isActive() {
     return active;
 }
 
-Vector2d ManipulatorArm::getLastJointPos() {
+Vector2d Arm::getLastJointPos() {
     return jointsPosition[jointsNumber - 1];
 }
 
-void ManipulatorArm::removeBox() {
+void Arm::removeBox() {
     takenBox = nullptr;
 }
 
-void ManipulatorArm::removeBox(Box* aBox) {
+void Arm::removeBox(Box* aBox) {
     if (takenBox == aBox) {
         removeBox();
     }
 }
 
-void ManipulatorArm::takeBox(Box* aBox) {
+void Arm::takeBox(Box* aBox) {
     takenBox = aBox;
     relativeBoxPosition = takenBox->getRect().center() - jointsPosition[jointsNumber - 1];
     takenBox->setGrabbed(true);
 }
 
-void ManipulatorArm::recalculate() {
+void Arm::recalculate() {
     Rotation lastJointTargetRotation{};
     jointsTargetPosition[0] = jointsPosition[0];
     for (int i = 1; i < jointsNumber; i++) {
@@ -142,57 +142,57 @@ void ManipulatorArm::recalculate() {
     }
 }
 
-void ManipulatorArm::cleatTarget() {
+void Arm::cleatTarget() {
     memcpy(jointsTargetRotation, jointsRotation, maxJointsNumber);
     memcpy(segmentsTargetLength, segmentsLength, maxJointsNumber);
 }
 
-void ManipulatorArm::setRootJointPosition(Vector2d position) {
+void Arm::setRootJointPosition(Vector2d position) {
     jointsPosition[0] = position;
 }
 
-void ManipulatorArm::rotateJoint(int aJoint, Rotation aRotation) {
+void Arm::rotateJoint(int aJoint, Rotation aRotation) {
     assert(("incorrect bone number", aJoint <= jointsNumber));
     jointsRotation[aJoint] = jointsRotation[aJoint] + aRotation;
 }
 
-void ManipulatorArm::setSegmentTargetLength(int aSegment, double aLenght) {
+void Arm::setSegmentTargetLength(int aSegment, double aLenght) {
     assert(("incorrect bone number", aSegment <= jointsNumber));
     segmentsTargetLength[aSegment] = aLenght;
 }
 
-void ManipulatorArm::setJointTargetRotation(int aJoint, Rotation aRotation) {
+void Arm::setJointTargetRotation(int aJoint, Rotation aRotation) {
     assert(("incorrect bone number", aJoint <= jointsNumber));
     jointsTargetRotation[aJoint] = aRotation;
 }
 
-void ManipulatorArm::setJointRotation(int aJoint, Rotation aRotation) {
+void Arm::setJointRotation(int aJoint, Rotation aRotation) {
     assert(("incorrect bone number", aJoint <= jointsNumber));
     jointsRotation[aJoint] = aRotation;
 }
 
-void ManipulatorArm::setSegmentLength(int aSegment, double aLenght) {
+void Arm::setSegmentLength(int aSegment, double aLenght) {
     assert(("incorrect bone number", aSegment <= jointsNumber));
     segmentsLength[aSegment] = aLenght;
 }
 
-Rotation ManipulatorArm::getJointRotation(int n) {
+Rotation Arm::getJointRotation(int n) {
     assert(("incorrect bone number", n < jointsNumber));
     return jointsRotation[n];
 }
 
-Vector2d ManipulatorArm::getJointPosition(int n) {
+Vector2d Arm::getJointPosition(int n) {
     assert(("incorrect bone number", n < jointsNumber));
     return jointsPosition[n];
 }
 
-ManipulatorArm::ManipulatorArm(int aJointsNumber):
+Arm::Arm(int aJointsNumber):
     jointsNumber(aJointsNumber) {
     assert(("incorrect number of joints", 1 <= aJointsNumber <= maxJointsNumber));
     defaultInit();
 }
 
-void ManipulatorArm::defaultInit() {
+void Arm::defaultInit() {
     for (int i = 0; i < jointsNumber; i++) {
         setSegmentLength(i, 10);
         setJointRotation(i, Rotation(0.1));

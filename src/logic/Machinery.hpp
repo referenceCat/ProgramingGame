@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 #include "common.hpp"
-#include "ManipulatorArm.hpp"
+#include "Arm.hpp"
 #include "Box.hpp"
 #include "GameObject.hpp"
 

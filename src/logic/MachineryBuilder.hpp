@@ -26,7 +26,7 @@ class MachineryBuilder {
     void selectType(MachineryType type) {
         switch (type) {
             case TypeArm:
-                prototype = new ManipulatorTier1(Vector2d());
+                prototype = new Manipulator(Vector2d());
                 break;
             case TypeController:
                 prototype = new Controller(Vector2d());

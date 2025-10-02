@@ -2,7 +2,7 @@
 #include "GraphicsEngine.hpp"
 #include <format>
 
-void GameWorld::addManipulatorArm(ManipulatorArm* arm) {
+void GameWorld::addManipulatorArm(Arm* arm) {
     arms.push_back(arm);
 }
 
@@ -27,7 +27,7 @@ void GameWorld::removeBox(int id) {
     boxes.erase(std::remove(boxes.begin(), boxes.end(), boxToRemove), boxes.end());
 }
 
-ManipulatorArm* GameWorld::getManipulatorArm(int id) {
+Arm* GameWorld::getManipulatorArm(int id) {
     for (auto item : arms) {
         if (item->getId() == id)
             return item;

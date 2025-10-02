@@ -8,7 +8,7 @@
 
 class GameWorld;
 
-class ManipulatorArm : public GameObject { // TODO now supports rendering of 2 segment manipulator only
+class Arm : public GameObject { // TODO now supports rendering of 2 segment manipulator only
     static constexpr int maxJointsNumber = 256;
     static constexpr double jointRotationSpeed = 0.01;
     static constexpr double segmentResizeSpeed = 1;
@@ -31,7 +31,7 @@ class ManipulatorArm : public GameObject { // TODO now supports rendering of 2 s
     void defaultInit();
 
 public:
-    ManipulatorArm(int aJointsNumber);
+    Arm(int aJointsNumber);
     Vector2d getJointPosition(int n);
     Rotation getJointRotation(int n);
     void setSegmentLength(int aSegment, double aLenght);

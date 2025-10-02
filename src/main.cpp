@@ -5,7 +5,7 @@
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>
 #include <common.hpp>
-#include "logic/ManipulatorArm.hpp"
+#include "logic/Arm.hpp"
 #include "logic/Box.hpp"
 #include "logic/Controller.hpp"
 #include "logic/GameWorld.hpp"

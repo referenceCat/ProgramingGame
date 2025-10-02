@@ -5,14 +5,14 @@
 #include <vector>
 
 #include "common.hpp"
-#include "ManipulatorArm.hpp"
+#include "Arm.hpp"
 #include "Box.hpp"
 #include "GameObject.hpp"
 #include "Machinery.hpp"
 #include "Module.hpp"
 
 class GameWorld {
-    std::vector<ManipulatorArm*> arms{};
+    std::vector<Arm*> arms{};
     std::vector<Box*> boxes{};
     std::vector<Machinery*> machines{};
     std::vector<Module*> modules{};
@@ -25,14 +25,14 @@ public:
         return &instance;
     }
 
-    void addManipulatorArm(ManipulatorArm* arm);
+    void addManipulatorArm(Arm* arm);
     void addBox(Box* box);
     void addMachinery(Machinery* machine);
     void addModule(Module* module);
 
     void removeBox(int id);
 
-    ManipulatorArm* getManipulatorArm(int id);
+    Arm* getManipulatorArm(int id);
     Box* getBox(int id);
     Box* getBox(Vector2d aPos);
     std::vector<Box*> getBoxes();

@@ -20,8 +20,8 @@ struct ProductionProcess {
     ProductionProcessStatus status = WaitingToStart;
 };
 
-class ManipulatorTier1 : public Machinery {
-    ManipulatorArm* arm = nullptr; // game logic
+class Manipulator : public Machinery {
+    Arm* arm = nullptr; // game logic
     Vector2d target;
     bool manualMode = false;
     Vector2d manualTarget;
@@ -113,7 +113,7 @@ class ManipulatorTier1 : public Machinery {
     }
 
 public:
-    ManipulatorTier1(Vector2d aPos):
+    Manipulator(Vector2d aPos):
         Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(5, 3))) {
     }
 
@@ -229,7 +229,7 @@ public:
 
     void addToGameWorld() override { // TODO
         Machinery::addToGameWorld();
-        arm = new ManipulatorArm(3);
+        arm = new Arm(3);
         arm->setRootJointPosition(Vector2d(4, 2) + rect.p1);
         arm->setSegmentLength(0, 8);
         arm->setSegmentTargetLength(0, 8);
