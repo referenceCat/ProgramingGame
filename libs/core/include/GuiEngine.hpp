@@ -233,7 +233,7 @@ class GuiEngine {
         } else {
 
             auto cell = element->parent->rect; // cell == parent if table (h/w == 0)
-            cell.p1 = cell.p1 + Vector2d(element->parent->rect.dimensions().x / element->aligment.tableColumns * element->aligment.ownColumn,element->parent->rect.dimensions().y / element->aligment.tableRows * element->aligment.ownRow);
+            cell.p1 = cell.p1 + Vector2d(element->parent->rect.dimensions().x / element->aligment.tableColumns * element->aligment.ownColumn, element->parent->rect.dimensions().y / element->aligment.tableRows * element->aligment.ownRow);
             cell.p2 = cell.p1 + Vector2d(element->parent->rect.dimensions().x / element->aligment.tableColumns, element->parent->rect.dimensions().y / element->aligment.tableRows);
             element->rect.p1.x = element->aligment.marginLeft >= 0 ?
                 cell.p1.x + element->aligment.marginLeft :
@@ -308,6 +308,7 @@ public:
     inline static ALLEGRO_BITMAP* nextIcon = nullptr;
     inline static ALLEGRO_BITMAP* emptyIcon = nullptr;
     inline static ALLEGRO_BITMAP* breakpointIcon = nullptr;
+    inline static ALLEGRO_BITMAP* closeWindowIcon = nullptr;
 
     inline static ALLEGRO_FONT* debugFont = nullptr;
     inline static Vector2d drawingIndent{};
@@ -357,6 +358,11 @@ public:
         breakpointIcon = al_create_bitmap(14, 14);
         al_set_target_bitmap(breakpointIcon);
         al_draw_filled_circle(7, 7, 4, al_map_rgb(200, 0, 0));
+
+        closeWindowIcon = al_create_bitmap(14, 14);
+        al_set_target_bitmap(closeWindowIcon);
+        al_draw_line(2, 2, 12, 12, al_map_rgb(200, 200, 200), 2);
+        al_draw_line(12, 2, 2, 12, al_map_rgb(200, 200, 200), 2);
     }
 
     // returns true if clicked on some gui element

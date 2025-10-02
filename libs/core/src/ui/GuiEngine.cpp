@@ -20,7 +20,7 @@ Window::Window(GuiElement* parent, Aligment aligment, bool closable):
         quitButtonAligment.dimensions = Vector2d(22, 22);
         quitButton = new Button(this, quitButtonAligment);
         quitButton->setMouseCallback(Click, [this](Vector2d pos) { delete this; });
-        auto closeIcon = new Icon(quitButton, Aligment::byDimensionsAndCentered(Vector2d(20, 20)), GuiEngine::instance()->breakpointIcon);
+        auto closeIcon = new Icon(quitButton, Aligment::byDimensionsAndCentered(Vector2d(20, 20)), GuiEngine::instance()->closeWindowIcon);
     }
 
     Aligment areaAligment;
