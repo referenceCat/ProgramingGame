@@ -26,11 +26,9 @@ class Manipulator : public Machinery {
     bool manualMode = false;
     Vector2d manualTarget;
 
-    LegacyWindow* window = nullptr; // gui
-    LegacyButton* manualControlButton = nullptr;
-    LegacyLabel* manualControlLabel = nullptr;
-    LegacyLabel* grabLabel = nullptr;
-    LegacyLabel* addressLabel = nullptr;
+    Window* window = nullptr; // gui
+    Label* manualLabel = nullptr;
+    Label* grabLabel = nullptr;
 
     Vector2d leftClampPos, rightClampPos;
 
@@ -44,66 +42,74 @@ class Manipulator : public Machinery {
     }
 
     void createWindow() {
-        // window = GuiEngine::instance()->addWindow(Rect2d::fromCenterAndDimensions(Vector2d(600, 600), Vector2d(680, 550)), true, true);
-        // window->setOnCloseCallback([this]() { this->onWindowClose(); });
-        // manualControlButton = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(40, 55), Vector2d(48, 48)));
-        // manualControlLabel = window->addLabel(manualControlButton->getRect().center(), true, manualMode ? "manual" : "auto");
-        // manualControlButton->setOnClickCallback([this]() { this->onManualControlButtonClick(); });
+        window = new Window(GuiEngine::instance()->getDisplayArea(), Aligment::byDimensionsAndCentered(Vector2d(300, 300)), true);
+        auto manualControlArea = new NamedArea(window->getInternalArea(), Aligment::byMargin(20, 20, 20, 20), "Manual control");
+        
+        Aligment buttonAligment = Aligment::byMargin(5, 5, 5, 5);
+        buttonAligment.tableColumns = 3;
+        buttonAligment.tableRows = 3;
 
-        // auto button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(90, 55), Vector2d(48, 48)));
-        // window->addLabel(button->getRect().center(), true, "up");
-        // button->setOnClickCallback([this]() { setManualTarget(this->manualTarget + Vector2d(0, -1)); }); // dont do that if in automatic mode
+        buttonAligment.ownColumn = 0;
+        buttonAligment.ownRow = 0;
+        auto manualButton = new Button(manualControlArea->getInternalArea(), buttonAligment);
+        manualButton->setMouseCallback(Release, [this](auto pos){ this->onManualControlButtonClick(); });
+        manualLabel = new Label(manualButton, Aligment(), manualMode ? "manual" : "auto");
 
-        // button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(40, 105), Vector2d(48, 48)));
-        // window->addLabel(button->getRect().center(), true, "left");
-        // button->setOnClickCallback([this]() { setManualTarget(this->manualTarget + Vector2d(-1, 0)); });
+        buttonAligment.ownColumn = 1;
+        buttonAligment.ownRow = 1;
+        auto grabButton = new Button(manualControlArea->getInternalArea(), buttonAligment);
+        grabButton->setMouseCallback(Release, [this](auto pos){ this->onGrabButtonClick(); });
+        grabLabel = new Label(grabButton, Aligment(), arm->isActive() ? "release" : "grab");
 
-        // button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(90, 155), Vector2d(48, 48)));
-        // window->addLabel(button->getRect().center(), true, "down");
-        // button->setOnClickCallback([this]() { setManualTarget(this->manualTarget + Vector2d(0, 1)); });
+        buttonAligment.ownColumn = 1;
+        buttonAligment.ownRow = 0;
+        auto moveButton = new Button(manualControlArea->getInternalArea(), buttonAligment);
+        moveButton->setMouseCallback(Hold, [this](auto pos){setManualTarget(this->manualTarget + Vector2d(0, -0.1));  });
+        new Label(moveButton, Aligment(), "up");
 
-        // button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(140, 105), Vector2d(48, 48)));
-        // window->addLabel(button->getRect().center(), true, "right");
-        // button->setOnClickCallback([this]() { setManualTarget(this->manualTarget + Vector2d(1, 0)); });
+        buttonAligment.ownColumn = 1;
+        buttonAligment.ownRow = 2;
+        moveButton = new Button(manualControlArea->getInternalArea(), buttonAligment);
+        moveButton->setMouseCallback(Hold, [this](auto pos){setManualTarget(this->manualTarget + Vector2d(0, 0.1));  });
+        new Label(moveButton, Aligment(), "down");
 
-        // button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(90, 105), Vector2d(48, 48)));
-        // grabLabel = window->addLabel(button->getRect().center(), true, arm->isActive() ? "release" : "grab");
-        // button->setOnClickCallback([this]() {
-        //     if (this->arm->isActive())
-        //         this->arm->release();
-        //     else
-        //         this->arm->grab();
-        //     this->grabLabel->setText(this->arm->isActive() ? "release" : "grab");
-        // });
+        buttonAligment.ownColumn = 0;
+        buttonAligment.ownRow = 1;
+        moveButton = new Button(manualControlArea->getInternalArea(), buttonAligment);
+        moveButton->setMouseCallback(Hold, [this](auto pos){setManualTarget(this->manualTarget + Vector2d(-0.1, 0));  });
+        new Label(moveButton, Aligment(), "left");
 
-        // addressLabel = window->addLabel(Vector2d(200, 30), false, std::format("Device address is: {}", getAddress()));
-        // for (int i = 0; i <= 255; i++) {
-        //     button = window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(200.5, 60.5) + Vector2d((i % 16) * 30, (i / 16) * 30), Vector2d(26, 26)));
-        //     window->addLabel(button->getRect().center(), true, std::to_string(i));
-        //     button->setOnClickCallback([this, i]() {
-        //         this->setAddress(i);
-        //         this->addressLabel->setText(std::format("Device address is: {}", i));
-        //     });
-        // }
+        buttonAligment.ownColumn = 2;
+        buttonAligment.ownRow = 1;
+        moveButton = new Button(manualControlArea->getInternalArea(), buttonAligment);
+        moveButton->setMouseCallback(Hold, [this](auto pos){setManualTarget(this->manualTarget + Vector2d(0.1, 0));  });
+        new Label(moveButton, Aligment(), "right");
+
+        
     }
 
     void onWindowClose() {
         window = nullptr;
-        manualControlButton = nullptr;
-        manualControlLabel = nullptr;
-        grabLabel = nullptr;
-        addressLabel = nullptr;
     }
 
     void onManualControlButtonClick() {
         manualMode = !manualMode;
-        manualControlLabel->setText(manualMode ? "manual" : "auto");
+        manualLabel->setText(manualMode ? "manual" : "auto");
 
         if (manualMode) {
             manualTarget = arm->getLastJointPos();
         } else {
             arm->cleatTarget();
         }
+    }
+
+    void onGrabButtonClick() {
+        if (arm->isActive()) {
+            arm->release();
+        } else {
+            arm->grab();
+        }
+        grabLabel->setText(arm->isActive() ? "release" : "grab");
     }
 
     void setManualTarget(Vector2d aPos) {

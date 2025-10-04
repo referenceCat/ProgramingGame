@@ -29,6 +29,15 @@ struct Aligment {
         res.dimensions = aDimensions;
         return res;
     }
+
+    static Aligment byMargin(double left, double top, double right, double bottom) {
+        Aligment res;
+        res.marginLeft = left;
+        res.marginRight = right;
+        res.marginTop = top;
+        res.marginBottom = bottom;
+        return res;
+    }
 };
 
 enum MouseState {
@@ -154,6 +163,10 @@ public:
     }
 
     void draw() override;
+
+    void setText(std::string text) {
+        this->text = text;
+    }
 };
 
 class Icon : public GuiElement {
