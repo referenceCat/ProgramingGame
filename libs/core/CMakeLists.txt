@@ -7,4 +7,3 @@ add_library(core OBJECT ${SOURCES})
 
 target_include_directories(core PUBLIC include)
 target_include_directories(core PUBLIC src)
-target_include_directories(core PUBLIC src/ui)

@@ -6,12 +6,12 @@
 #include <string>
 #include <map>
 #include <chrono>
-#include "Button.hpp"
-#include "allegro5/allegro5.h"
-#include "allegro5/allegro_primitives.h"
+#include <functional>
+#include <allegro5/allegro5.h>
+#include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_color.h>
+#include <allegro5/allegro_font.h>
 #include "common.hpp"
-#include "Window.hpp"
-#include "Text.hpp"
 
 class GuiEngine;
 
@@ -63,7 +63,7 @@ public:
         return AligmentBuilder(newAligment);
     }
 
-    AligmentBuilder margin(unsigned int left = -1, unsigned int top = -1, unsigned int right = -1, unsigned int bottom = -1) {
+    AligmentBuilder margin(int left = -1, int top = -1, int right = -1, int bottom = -1) {
         Aligment newAligment = aligment;
         newAligment.marginLeft = left;
         newAligment.marginRight = right;

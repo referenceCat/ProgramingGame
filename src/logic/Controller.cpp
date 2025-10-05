@@ -6,74 +6,14 @@
 #include "GameWorld.hpp"
 
 void Controller::createWindow() {
-    // window = GuiEngine::instance()->addWindow(Rect2d::fromCenterAndDimensions(Vector2d(400, 400), Vector2d(400, 750)), true, true);
-
-    // rInstrLabel = window->addLabel(Vector2d(20, 30), false, "rInstr: " + std::to_string(rInstr), 0);
-    // rDelayLabel = window->addLabel(Vector2d(20, 30), false, "rDelay: " + std::to_string(rDelay), 1);
-
-    // window->addLabel(Vector2d(270, 40), true, "open");
-    // window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(270, 40), Vector2d(60, 18)))->setOnClickCallback([this]() { this->openFile(); });
-
-    // pauseIcon = window->addIcon(Vector2d(315, 40), GuiEngine::unpauseIcon);
-    // window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(315, 40), Vector2d(18, 18)))->setOnClickCallback([this]() { this->pauseUnpause(); });
-    // window->addIcon(Vector2d(335, 40), GuiEngine::downIcon);
-    // window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(335, 40), Vector2d(18, 18)))->setOnClickCallback([this]() { this->down(); });
-    // window->addIcon(Vector2d(355, 40), GuiEngine::upIcon);
-    // window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(355, 40), Vector2d(18, 18)))->setOnClickCallback([this]() { this->up(); });
-    // window->addIcon(Vector2d(375, 40), GuiEngine::nextIcon);
-    // window->addButton(Rect2d::fromCenterAndDimensions(Vector2d(375, 40), Vector2d(18, 18)))->setOnClickCallback([this]() { this->next(); });
-    // window->setOnCloseCallback([this]() {this->window = nullptr; instructionsGui.clear(); });
-    // updateWindow();
+    if (window) return;
+    
+    window = new Window(GuiEngine::instance()->getDisplayArea(), AligmentBuilder().dimensions(Vector2d(700, 700)).margin(-1, 50, 50, 50), true);
+    new Console(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(0, 0).margin(10, 10, 10, 10));
+    new Console(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(1, 0).margin(10, 10, 10, 10));
 }
 
 void Controller::updateWindow() {
-    if (!window) {
-        return;
-    }
-
-    for (auto line : instructionsGui) {
-        window->deleteButton(line.breakpointButton);
-        window->deleteIcon(line.breakpointIcon);
-        window->deleteLabel(line.label);
-    }
-
-    instructionsGui.clear();
-
-    int line = 0;
-    for (auto item : instructions) {
-        InstructionLine instructionLine;
-        instructionLine.label = window->addLabel(Vector2d(40, 80), false, item, line);
-        instructionLine.breakpointButton = window->addButton(Rect2d::fromTwoCorners(Vector2d(18, 80 + line * 14), Vector2d(32, 94 + line * 14)));
-        instructionLine.breakpointIcon = window->addIcon(Vector2d(18 + 7, 80 + line * 14 + 7), GuiEngine::emptyIcon);
-        instructionLine.breakpointButton->setOnClickCallback([this, line]() { this->toggle(line); });
-        instructionsGui.push_back(instructionLine);
-        line++;
-    }
-
-    rInstrLabel->setText("rInstr: " + std::to_string(rInstr));
-    rDelayLabel->setText("rDelay: " + std::to_string(rDelay));
-
-    for (auto item : instructionsGui) {
-        item.label->setFlags(LabelFlags());
-    }
-
-    if (rInstr >= instructionsGui.size()) return; // TODO
-    LabelFlags flags;
-    flags.background = true;
-    instructionsGui.at(rInstr).label->setFlags(flags);
-    if (failure) {
-        instructionsGui.at(rInstr).label->setBackgroundColor(al_map_rgb(150, 0, 0));
-    } else if (paused) {
-        instructionsGui.at(rInstr).label->setBackgroundColor(al_map_rgb(150, 150, 0));
-    } else {
-        instructionsGui.at(rInstr).label->setBackgroundColor(al_map_rgb(100, 100, 100));
-    }
-
-    if (paused) {
-        pauseIcon->setBitmap(GuiEngine::unpauseIcon);
-    } else {
-        pauseIcon->setBitmap(GuiEngine::pauseIcon);
-    }
 }
 
 int Controller::execNextInstr() {
@@ -136,12 +76,6 @@ int Controller::execNextInstr() {
 void Controller::toggle(int line) {
     assert(line < instructions.size());
     breakpoints.at(line) = !breakpoints.at(line);
-    if (window) {
-        if (breakpoints.at(line))
-            instructionsGui.at(line).breakpointIcon->setBitmap(GuiEngine::breakpointIcon);
-        else
-            instructionsGui.at(line).breakpointIcon->setBitmap(GuiEngine::emptyIcon);
-    }
 }
 
 void Controller::openFile() {
@@ -210,7 +144,7 @@ std::vector<std::string> Controller::split(const std::string& s,
 
 void Controller::drawInstructions() {
     for (int i = 0; i < instructions.size(); i++) {
-        al_draw_text(GuiEngine::debugFont, al_map_rgb(255, 255, 255), 30,
+        al_draw_text(GuiEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 30,
             40 + i * 10, 0, instructions.at(i).c_str());
     }
     al_draw_line(10, 43 + rInstr * 10 + 5, 20, 40 + rInstr * 10 + 5,
