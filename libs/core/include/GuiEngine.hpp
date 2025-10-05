@@ -40,6 +40,53 @@ struct Aligment {
     }
 };
 
+class AligmentBuilder {
+    Aligment aligment;
+
+public:
+    AligmentBuilder() {
+    }
+
+    AligmentBuilder(Aligment initial):
+        aligment{initial} {
+    }
+
+    Aligment build() {
+        return aligment;
+    }
+
+    AligmentBuilder dimensions(Vector2d dimensions) {
+        Aligment newAligment = aligment;
+        newAligment.dimensions = dimensions;
+        return AligmentBuilder(newAligment);
+    }
+
+    AligmentBuilder margin(unsigned int left = -1, unsigned int top = -1, unsigned int right = -1, unsigned int bottom = -1) {
+        Aligment newAligment = aligment;
+        newAligment.marginLeft = left;
+        newAligment.marginRight = right;
+        newAligment.marginTop = top;
+        newAligment.marginBottom = bottom;
+        return AligmentBuilder(newAligment);
+    }
+
+    AligmentBuilder tableDimensions(unsigned int columns = 1, unsigned int rows = 1) {
+        assert(columns != 0 && rows != 0);
+        Aligment newAligment = aligment;
+        newAligment.tableColumns = columns;
+        newAligment.tableRows = rows;
+        return AligmentBuilder(newAligment);
+    }
+
+    AligmentBuilder tableCell(unsigned int column = 0, unsigned int row = 0) {
+        assert(column < aligment.tableColumns && row < aligment.tableRows);
+        Aligment newAligment = aligment;
+        newAligment.ownColumn = column;
+        newAligment.ownRow = row;
+        return AligmentBuilder(newAligment);
+    }
+};
+
 enum MouseState {
     None,
     Held,
