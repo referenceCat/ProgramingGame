@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <iostream>
+#include <string>
 #include <map>
 #include "Button.hpp"
 #include "allegro5/allegro5.h"
@@ -51,7 +52,9 @@ public:
         aligment{initial} {
     }
 
-    operator Aligment() const { return aligment; }
+    operator Aligment() const {
+        return aligment;
+    }
 
     AligmentBuilder dimensions(Vector2d dimensions) {
         Aligment newAligment = aligment;
@@ -95,7 +98,9 @@ enum MouseEventType {
     Hover,
     Hold,
     Click,
-    Release
+    Release,
+    WheelMoveUp,
+    WheelMoveDown
 };
 
 // button, text, layout, window, etc
@@ -269,6 +274,30 @@ public:
     }
 };
 
+class Console : public GuiElement {
+    std::vector<std::string> lines;
+    int lineFrom = 0;
+    int linesMax = 10;
+
+public:
+    Console(GuiElement* parent, Aligment aligment):
+        GuiElement(parent, aligment) {
+            this->setMouseCallback(WheelMoveDown, [this](auto pos){scrollLines(1);});
+            this->setMouseCallback(WheelMoveUp, [this](auto pos){scrollLines(-1);});
+        };
+
+    void addLine(std::string line) {
+        lines.push_back(line);
+    }
+
+    void scrollLines(int n) {
+        if (lineFrom + n < 0 || lineFrom + n >= lines.size()) return;
+        lineFrom += n;
+    }
+
+    void draw() override;
+};
+
 class GuiEngine {
     GuiElement* rootElement = new DisplayArea();
     GuiElement* clickedElement = nullptr;
@@ -431,6 +460,11 @@ public:
     // returns true if released on some gui element
     bool releaseMouse(Vector2d aPos) {
         return applyEventRecursively(rootElement, Release, aPos);
+    }
+
+    // returns true if on some gui element
+    bool moveMouseWheel(Vector2d aPos, bool up) {
+        return applyEventRecursively(rootElement, up ? WheelMoveUp : WheelMoveDown, aPos);
     }
 
     // returns true if released on some gui element

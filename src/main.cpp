@@ -36,6 +36,14 @@ void init() {
 
     auto box = new TapeBox(Vector2d(10, -10));
     GameWorld::instance()->addBox(box);
+
+    auto window = new Window(GuiEngine::instance()->getDisplayArea(), Aligment::byDimensionsAndCentered(Vector2d(500, 500)), true);
+    auto console = new Console(window->getInternalArea(), Aligment::byMargin(10, 10, 10, 10));
+    console->addLine("12313254");
+    console->addLine("Hello, world!");
+    for (int i = 0; i < 120; i++) {
+        console->addLine("Hello, world! Line: " + std::to_string(i));
+    }
 }
 
 void redraw() {
@@ -73,8 +81,9 @@ void redraw() {
 void updateMouse() {
     ALLEGRO_MOUSE_STATE mouseState;
     al_get_mouse_state(&mouseState);
-    if (!GuiEngine::instance()->updateMousePos(Vector2d(mouseState.x, mouseState.y), al_mouse_button_down(&mouseState, 1))); // working only with LMB for now
-        MachineryBuilder::instance()->mousePos(GraphicsEngine::instance()->transformPointInverse(Vector2d(mouseState.x, mouseState.y)));
+    if (!GuiEngine::instance()->updateMousePos(Vector2d(mouseState.x, mouseState.y), al_mouse_button_down(&mouseState, 1)))
+        ; // working only with LMB for now
+    MachineryBuilder::instance()->mousePos(GraphicsEngine::instance()->transformPointInverse(Vector2d(mouseState.x, mouseState.y)));
 }
 
 void update() {
@@ -124,7 +133,6 @@ void onKeyDown(int keycode) {
 }
 
 void onMouseClick(double x, double y) {
-    std::cout << "mouse click" << std::endl;
     if (GuiEngine::instance()->click(Vector2d(x, y))) { // check if clicking on windows, buttons, etc
         return;
     }
@@ -135,8 +143,13 @@ void onMouseClick(double x, double y) {
 }
 
 void onMouseRelease(double x, double y) {
-    std::cout << "mouse release" << std::endl;
     if (GuiEngine::instance()->releaseMouse(Vector2d(x, y))) { // check if clicking on windows, buttons, etc
+        return;
+    }
+}
+
+void onMouseWheel(double x, double y, bool up) {
+    if (GuiEngine::instance()->moveMouseWheel(Vector2d(x, y), up)) { // check if clicking on windows, buttons, etc
         return;
     }
 }
@@ -162,14 +175,13 @@ void mainLoop(ALLEGRO_EVENT_QUEUE* event_queue) {
                 std::cout << event.keyboard.keycode << std::endl;
                 onKeyDown(event.keyboard.keycode);
                 break;
-            case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-                onMouseClick(event.mouse.x, event.mouse.y);
-
-                break;
             case ALLEGRO_EVENT_DISPLAY_RESIZE:
                 GraphicsEngine::instance()->changeDisplayDimensions(Vector2d(event.display.width, event.display.height));
                 redraw();
                 al_acknowledge_resize(event.display.source);
+                break;
+            case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+                onMouseClick(event.mouse.x, event.mouse.y);
                 break;
             case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
                 onMouseRelease(event.mouse.x, event.mouse.y);
@@ -177,6 +189,8 @@ void mainLoop(ALLEGRO_EVENT_QUEUE* event_queue) {
             case ALLEGRO_EVENT_MOUSE_AXES:
             case ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY:
             case ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY:
+                if (event.mouse.dz)
+                    onMouseWheel(event.mouse.x, event.mouse.y, event.mouse.dz > 0);
                 break;
 
             default:

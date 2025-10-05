@@ -1,4 +1,5 @@
 #include "GuiEngine.hpp"
+#include <algorithm>
 
 void Label::draw() {
     auto pos = rect.center() - Vector2d(al_get_text_width(GuiEngine::debugFont, text.c_str()) / 2, al_get_font_line_height(GuiEngine::debugFont) / 2);
@@ -36,9 +37,19 @@ void NamedArea::draw() {
     auto color = al_map_rgb(150, 150, 150);
     al_draw_line(rect.p1.x, rect.p1.y + 5, rect.p1.x + 18, rect.p1.y + 5, color, 2);
     al_draw_line(rect.p1.x + 20 + 2 + al_get_text_width(GuiEngine::instance()->debugFont, text.c_str()), rect.p1.y + 5, rect.p2.x, rect.p1.y + 5, color, 2);
-    al_draw_line(rect.p2.x, rect.p1.y + 5,rect.p2.x, rect.p2.y, color, 2);
+    al_draw_line(rect.p2.x, rect.p1.y + 5, rect.p2.x, rect.p2.y, color, 2);
     al_draw_line(rect.p1.x, rect.p2.y, rect.p2.x, rect.p2.y, color, 2);
     al_draw_line(rect.p1.x, rect.p1.y + 5, rect.p1.x, rect.p2.y, color, 2);
     al_draw_text(GuiEngine::instance()->debugFont, color, rect.p1.x + 20, rect.p1.y, 0, text.c_str());
-    
+}
+
+void Console::draw() {
+    al_draw_filled_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, al_map_rgb(20, 20, 20));
+    al_draw_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, al_map_rgb(200, 200, 200), 2);
+
+    linesMax = (getRect().dimensions().y - 10) / 15;
+    for (int i = lineFrom; i < (lineFrom + linesMax < lines.size() ? lineFrom + linesMax : lines.size()); i++) {
+        al_draw_text(GuiEngine::instance()->debugFont, al_map_rgb(100, 100, 100), rect.p1.x + 10, rect.p1.y + 10.1 + (i - lineFrom) * 15, 0, std::to_string(i).c_str());
+        al_draw_text(GuiEngine::instance()->debugFont, al_map_rgb(255, 255, 255), rect.p1.x + 50, rect.p1.y + 10.1 + (i - lineFrom) * 15, 0, lines.at(i).c_str());
+    }
 }
