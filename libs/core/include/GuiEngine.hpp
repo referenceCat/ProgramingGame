@@ -51,9 +51,7 @@ public:
         aligment{initial} {
     }
 
-    Aligment build() {
-        return aligment;
-    }
+    operator Aligment() const { return aligment; }
 
     AligmentBuilder dimensions(Vector2d dimensions) {
         Aligment newAligment = aligment;
