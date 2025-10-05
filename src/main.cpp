@@ -39,11 +39,11 @@ void init() {
 
     auto window = new Window(GuiEngine::instance()->getDisplayArea(), Aligment::byDimensionsAndCentered(Vector2d(500, 500)), true);
     auto console = new Console(window->getInternalArea(), Aligment::byMargin(10, 10, 10, 10));
-    console->addLine("12313254");
-    console->addLine("Hello, world!");
-    for (int i = 0; i < 120; i++) {
-        console->addLine("Hello, world! Line: " + std::to_string(i));
-    }
+    // console->addLine("12313254");
+    // console->addLine("Hello, world!");
+    // for (int i = 0; i < 120; i++) {
+    //     console->addLine("Hello, world! Line: " + std::to_string(i));
+    // }
 }
 
 void redraw() {
@@ -81,8 +81,8 @@ void redraw() {
 void updateMouse() {
     ALLEGRO_MOUSE_STATE mouseState;
     al_get_mouse_state(&mouseState);
-    if (!GuiEngine::instance()->updateMousePos(Vector2d(mouseState.x, mouseState.y), al_mouse_button_down(&mouseState, 1)))
-        ; // working only with LMB for now
+    if (!GuiEngine::instance()->updateMousePos(Vector2d(mouseState.x, mouseState.y), al_mouse_button_down(&mouseState, 1))) // working only with LMB for now
+        ; 
     MachineryBuilder::instance()->mousePos(GraphicsEngine::instance()->transformPointInverse(Vector2d(mouseState.x, mouseState.y)));
 }
 

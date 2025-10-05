@@ -54,6 +54,7 @@ Console::Console(GuiElement* parent, Aligment aligment):
 
     auto duration = std::chrono::system_clock::now().time_since_epoch(); // TODO do it normaly
     lastTimeCursorMovedMillis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+    lines.push_back(""); // must be at least line
 }
 
 void Console::moveCursor(Vector2d mousePos) {
@@ -67,13 +68,34 @@ void Console::draw() {
     linesMax = (getRect().dimensions().y - 10) / 15;
     for (int i = lineFrom; i < (lineFrom + linesMax < lines.size() ? lineFrom + linesMax : lines.size()); i++) {
         al_draw_text(GuiEngine::instance()->debugFont, al_map_rgb(100, 100, 100), rect.p1.x + 10, rect.p1.y + 10.1 + (i - lineFrom) * 15, 0, std::to_string(i).c_str());
-        al_draw_text(GuiEngine::instance()->debugFont, al_map_rgb(255, 255, 255), rect.p1.x + 50, rect.p1.y + 10.1 + (i - lineFrom) * 15, 0, lines.at(i).c_str());
+        int maxStringLength = (rect.dimensions().x - 50) / al_get_text_width(GuiEngine::instance()->debugFont, "a");
+        auto displayedLine = (char*)malloc(maxStringLength + 1);
+        strncpy(displayedLine, lines.at(i).c_str(), maxStringLength);
+        displayedLine[maxStringLength] = 0;
+        al_draw_text(GuiEngine::instance()->debugFont, al_map_rgb(255, 255, 255), rect.p1.x + 50, rect.p1.y + 10.1 + (i - lineFrom) * 15, 0, displayedLine);
     }
 
     auto duration = std::chrono::system_clock::now().time_since_epoch(); // TODO do it normaly
     long long millisNow = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
     if (cursorLine >= lineFrom && cursorLine < lineFrom + linesMax && ((millisNow % 1000 < 500) || (millisNow - lastTimeCursorMovedMillis) < 500)) {
         double x = 50 + rect.p1.x + cursorColumn * al_get_text_width(GuiEngine::instance()->debugFont, "a");
+        if (x >= rect.p2.x)
+            return; // check if cursor is outiside of console
         al_draw_line(x, rect.p1.y + 8 + (cursorLine - lineFrom) * 15, x, rect.p1.y + 22 + (cursorLine - lineFrom) * 15, al_map_rgb(255, 255, 255), 2);
     }
+}
+
+GuiElement::~GuiElement() {
+    if (onCloseCallback)
+        onCloseCallback();
+
+    for (auto child : children) {
+        child->parent = nullptr;
+        delete child;
+    }
+    children.clear();
+    if (parent != nullptr)
+        parent->children.erase(std::remove(parent->children.begin(), parent->children.end(), this), parent->children.end());
+
+    GuiEngine::instance()->clearKeyboardInputHandler();
 }

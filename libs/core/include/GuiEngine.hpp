@@ -174,18 +174,7 @@ public:
         onCloseCallback = aCallback;
     }
 
-    ~GuiElement() {
-        if (onCloseCallback)
-            onCloseCallback();
-
-        for (auto child : children) {
-            child->parent = nullptr;
-            delete child;
-        }
-        children.clear();
-        if (parent != nullptr)
-            parent->children.erase(std::remove(parent->children.begin(), parent->children.end(), this), parent->children.end());
-    }
+    ~GuiElement();
 };
 
 class DisplayArea : public GuiElement {
@@ -284,7 +273,7 @@ public:
 };
 
 class Console : public GuiElement {
-    std::vector<std::string> lines;
+    std::vector<std::string> lines; 
     int lineFrom = 0;
     int linesMax = 10;
 
@@ -583,6 +572,10 @@ public:
 
     void setKeyboardInputHandler(GuiElement* element) {
         keyboardInputElement = element;
+    }
+
+    void clearKeyboardInputHandler() {
+        keyboardInputElement = nullptr;
     }
 };
 
