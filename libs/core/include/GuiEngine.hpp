@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <chrono>
 #include "Button.hpp"
 #include "allegro5/allegro5.h"
 #include "allegro5/allegro_primitives.h"
@@ -161,6 +162,14 @@ public:
         // do nothing by default
     }
 
+    virtual void handleKeyChar(char ch) {
+        // do nothing by default
+    }
+
+    virtual void handleKeyDown(int keycode) {
+        // do nothing by default
+    }
+
     void setOnCloseCallback(std::function<void()> aCallback) {
         onCloseCallback = aCallback;
     }
@@ -279,20 +288,100 @@ class Console : public GuiElement {
     int lineFrom = 0;
     int linesMax = 10;
 
+    bool editable = true;
+    bool cursor = true;
+    int cursorLine = 0;
+    int cursorColumn = 0;
+
+    long long int lastTimeCursorMovedMillis = 0;
+
 public:
-    Console(GuiElement* parent, Aligment aligment):
-        GuiElement(parent, aligment) {
-            this->setMouseCallback(WheelMoveDown, [this](auto pos){scrollLines(1);});
-            this->setMouseCallback(WheelMoveUp, [this](auto pos){scrollLines(-1);});
-        };
+    Console(GuiElement* parent, Aligment aligment);
 
     void addLine(std::string line) {
         lines.push_back(line);
     }
 
+    void moveCursor(Vector2d mousePos);
+
+    void moveCursor(int line, int column) {
+        cursorLine = line;
+        cursorColumn = column;
+
+        if (cursorLine < 0)
+            cursorLine = 0;
+        if (cursorColumn < 0)
+            cursorColumn = 0;
+        if (cursorLine >= lines.size())
+            cursorLine = lines.size() - 1;
+        if (cursorColumn > lines.at(cursorLine).size())
+            cursorColumn = lines.at(cursorLine).size();
+
+        auto duration = std::chrono::system_clock::now().time_since_epoch(); // TODO do it normaly
+        lastTimeCursorMovedMillis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+
+        if (cursorLine < lineFrom)
+            lineFrom = cursorLine;
+        if (cursorLine >= lineFrom + linesMax)
+            lineFrom = cursorLine - linesMax + 1;
+    }
+
     void scrollLines(int n) {
-        if (lineFrom + n < 0 || lineFrom + n >= lines.size()) return;
+        if (lineFrom + n < 0 || lineFrom + n >= lines.size())
+            return;
         lineFrom += n;
+    }
+
+    virtual void handleKeyChar(char ch) override {
+        if (!cursor) {
+            return;
+        }
+        if (!editable) {
+            return;
+        }
+        if (ch == '\b') { // backspace
+            if (cursorColumn != 0) { // clear char
+                lines.at(cursorLine).erase(cursorColumn - 1, 1);
+                moveCursor(cursorLine, cursorColumn - 1);
+            } else if (cursorLine != 0) { // clear line separation (cant clear first line)
+                auto newColumn = lines.at(cursorLine - 1).size(); // TODO move lineFrom if cursor goes out of screen
+                lines.at(cursorLine - 1) += lines.at(cursorLine);
+                lines.erase(lines.begin() + cursorLine);
+                moveCursor(cursorLine - 1, newColumn);
+            }
+        } else if (ch == '\r') { // handle ENTER
+            if (cursorColumn == lines.at(cursorLine).size()) {
+                lines.insert(lines.begin() + cursorLine + 1, "");
+                moveCursor(cursorLine + 1, 0);
+            } else {
+                lines.insert(lines.begin() + cursorLine + 1, lines.at(cursorLine).substr(cursorColumn));
+                lines.at(cursorLine).erase(lines.at(cursorLine).begin() + cursorColumn, lines.at(cursorLine).end());
+                moveCursor(cursorLine + 1, 0);
+            }
+        } else {
+            lines.at(cursorLine).insert(cursorColumn, 1, ch);
+            moveCursor(cursorLine, cursorColumn + 1);
+        }
+    }
+
+    virtual void handleKeyDown(int keycode) override {
+        switch (keycode) {
+            case ALLEGRO_KEY_LEFT:
+                moveCursor(cursorLine, cursorColumn - 1);
+                break;
+            case ALLEGRO_KEY_RIGHT:
+                moveCursor(cursorLine, cursorColumn + 1);
+                break;
+            case ALLEGRO_KEY_UP:
+                moveCursor(cursorLine - 1, cursorColumn);
+                break;
+            case ALLEGRO_KEY_DOWN:
+                moveCursor(cursorLine + 1, cursorColumn);
+                break;
+
+            default:
+                break;
+        }
     }
 
     void draw() override;
@@ -301,6 +390,7 @@ public:
 class GuiEngine {
     GuiElement* rootElement = new DisplayArea();
     GuiElement* clickedElement = nullptr;
+    GuiElement* keyboardInputElement = nullptr;
 
     GuiEngine() {
         createProceduralIcons();
@@ -471,6 +561,28 @@ public:
     bool updateMousePos(Vector2d aPos, bool clicked) {
         clearMouseStateRecursively(rootElement);
         return applyEventRecursively(rootElement, clicked ? Hold : Hover, aPos);
+    }
+
+    bool handlingKeyboardInput() {
+        return keyboardInputElement != nullptr;
+    }
+
+    void keyboardKeyPress(int keycode) {
+        if (keyboardInputElement == nullptr)
+            return;
+
+        keyboardInputElement->handleKeyDown(keycode);
+    }
+
+    void keyboardCharPress(char ch) {
+        if (keyboardInputElement == nullptr)
+            return;
+
+        keyboardInputElement->handleKeyChar(ch);
+    }
+
+    void setKeyboardInputHandler(GuiElement* element) {
+        keyboardInputElement = element;
     }
 };
 

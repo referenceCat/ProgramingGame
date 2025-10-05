@@ -88,32 +88,40 @@ void updateMouse() {
 
 void update() {
     tick++;
-    ALLEGRO_KEYBOARD_STATE keyboardState;
-    al_get_keyboard_state(&keyboardState);
 
-    CameraParameters camera = GraphicsEngine::instance()->getCameraParameters();
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_W))
-        camera.position.y -= 1;
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_S))
-        camera.position.y += 1;
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_A))
-        camera.position.x -= 1;
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_D))
-        camera.position.x += 1;
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_EQUALS)) {
-        camera.z /= 1.01;
-        camera.fov /= 1.01;
+    if (!GuiEngine::instance()->handlingKeyboardInput()) {
+        ALLEGRO_KEYBOARD_STATE keyboardState;
+        al_get_keyboard_state(&keyboardState);
+
+        CameraParameters camera = GraphicsEngine::instance()->getCameraParameters();
+        if (al_key_down(&keyboardState, ALLEGRO_KEY_W))
+            camera.position.y -= 1;
+        if (al_key_down(&keyboardState, ALLEGRO_KEY_S))
+            camera.position.y += 1;
+        if (al_key_down(&keyboardState, ALLEGRO_KEY_A))
+            camera.position.x -= 1;
+        if (al_key_down(&keyboardState, ALLEGRO_KEY_D))
+            camera.position.x += 1;
+        if (al_key_down(&keyboardState, ALLEGRO_KEY_EQUALS)) {
+            camera.z /= 1.01;
+            camera.fov /= 1.01;
+        }
+        if (al_key_down(&keyboardState, ALLEGRO_KEY_MINUS)) {
+            camera.z *= 1.01;
+            camera.fov *= 1.01;
+        }
+        GraphicsEngine::instance()->setCameraParameters(camera);
     }
-    if (al_key_down(&keyboardState, ALLEGRO_KEY_MINUS)) {
-        camera.z *= 1.01;
-        camera.fov *= 1.01;
-    }
-    GraphicsEngine::instance()->setCameraParameters(camera);
+
     updateMouse();
     GameWorld::instance()->run();
 }
 
 void onKeyDown(int keycode) {
+    if (GuiEngine::instance()->handlingKeyboardInput()) {
+        GuiEngine::instance()->keyboardKeyPress(keycode);
+        return;
+    }
     switch (keycode) {
         case ALLEGRO_KEY_R:
             GraphicsEngine::instance()->loadBitmaps();
@@ -129,6 +137,13 @@ void onKeyDown(int keycode) {
             break;
         default:
             break;
+    }
+}
+
+void onKeyChar(char ch) {
+    if (GuiEngine::instance()->handlingKeyboardInput()) {
+        GuiEngine::instance()->keyboardCharPress(ch);
+        return;
     }
 }
 
@@ -172,8 +187,11 @@ void mainLoop(ALLEGRO_EVENT_QUEUE* event_queue) {
                 redraw();
                 break;
             case ALLEGRO_EVENT_KEY_DOWN:
-                std::cout << event.keyboard.keycode << std::endl;
                 onKeyDown(event.keyboard.keycode);
+                break;
+            case ALLEGRO_EVENT_KEY_CHAR:
+                if (event.keyboard.unichar > 0)
+                    onKeyChar(event.keyboard.unichar);
                 break;
             case ALLEGRO_EVENT_DISPLAY_RESIZE:
                 GraphicsEngine::instance()->changeDisplayDimensions(Vector2d(event.display.width, event.display.height));
@@ -241,8 +259,8 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    GraphicsEngine::instance()->debugFont = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
-    GuiEngine::debugFont = al_load_ttf_font("./resources/clacon2.ttf", 14, 0);
+    GraphicsEngine::instance()->debugFont = al_load_ttf_font("./resources/clacon2.ttf", 16, 0);
+    GuiEngine::debugFont = al_load_ttf_font("./resources/clacon2.ttf", 16, 0);
     GraphicsEngine::instance()->loadBitmaps();
 
     // Initialize user inputs
