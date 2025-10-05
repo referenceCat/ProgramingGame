@@ -186,6 +186,16 @@ Vector2d Arm::getJointPosition(int n) {
     return jointsPosition[n];
 }
 
+Rotation Arm::getJointTargetRotation(int n) {
+    assert(("incorrect bone number", n < jointsNumber));
+    return jointsTargetRotation[n];
+}
+
+Vector2d Arm::getJointTargetPosition(int n) {
+    assert(("incorrect bone number", n < jointsNumber));
+    return jointsTargetPosition[n];
+}
+
 Arm::Arm(int aJointsNumber):
     jointsNumber(aJointsNumber) {
     assert(("incorrect number of joints", 1 <= aJointsNumber <= maxJointsNumber));

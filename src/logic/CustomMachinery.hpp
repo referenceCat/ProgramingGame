@@ -3,10 +3,11 @@
 
 #include <math.h>
 #include <cstdlib>
-
+#include <format>
+#include <string>
+#include <functional>
 #include "Machinery.hpp"
 #include "GraphicsEngine.hpp"
-
 
 enum ProductionProcessStatus {
     Running,
@@ -20,6 +21,51 @@ struct ProductionProcess {
     ProductionProcessStatus status = WaitingToStart;
 };
 
+class AddressSelectionWindow {
+    Window* window = nullptr;
+    Button* addressButtons[16][16] = {nullptr};
+    Label* addressLabels[16][16] = {nullptr};
+    int address = 0;
+    std::function<void(int)> onAddressButtonClicked = nullptr;
+
+public:
+    AddressSelectionWindow(int selectedAddress, std::function<void(int)> onAddressButtonClicked):
+        onAddressButtonClicked{onAddressButtonClicked} {
+        window = new Window(GuiEngine::instance()->getDisplayArea(), Aligment::byDimensionsAndCentered(Vector2d(640, 640)), true);
+        window->setDrawPriority(2);
+        for (int i = 0; i < 256; i++) {
+            Aligment buttonAligment = Aligment::byMargin(3, 3, 3, 3);
+            buttonAligment.tableColumns = 16;
+            buttonAligment.tableRows = 16;
+            buttonAligment.ownColumn = i % 16;
+            buttonAligment.ownRow = i / 16;
+            addressButtons[i / 16][i % 16] = new Button(window->getInternalArea(), buttonAligment);
+            addressButtons[i / 16][i % 16]->setMouseCallback(Release, [this, i](auto pos) { this->onAddressButtonClick(i); });
+            addressLabels[i / 16][i % 16] = new Label(addressButtons[i / 16][i % 16], Aligment(), std::to_string(i));
+        }
+        setSelectedAddress(selectedAddress);
+    };
+
+    ~AddressSelectionWindow() {
+        delete window;
+    }
+
+    void setSelectedAddress(int address) {
+        assert(address >= 0 && address <= 255);
+        this->address = address;
+        for (int i = 0; i < 256; i++) {
+            addressLabels[i / 16][i % 16]->setText(std::to_string(i));
+        }
+        addressLabels[address / 16][address % 16]->setText(std::format("({})", address));
+    };
+
+    void onAddressButtonClick(int address) {
+        setSelectedAddress(address);
+        onAddressButtonClicked(address);
+        // delete this;
+    }
+};
+
 class Manipulator : public Machinery {
     Arm* arm = nullptr; // game logic
     Vector2d target;
@@ -29,6 +75,7 @@ class Manipulator : public Machinery {
     Window* window = nullptr; // gui
     Label* manualLabel = nullptr;
     Label* grabLabel = nullptr;
+    Label* addressLabel = nullptr;
 
     Vector2d leftClampPos, rightClampPos;
 
@@ -42,9 +89,30 @@ class Manipulator : public Machinery {
     }
 
     void createWindow() {
-        window = new Window(GuiEngine::instance()->getDisplayArea(), Aligment::byDimensionsAndCentered(Vector2d(300, 300)), true);
-        auto manualControlArea = new NamedArea(window->getInternalArea(), Aligment::byMargin(20, 20, 20, 20), "Manual control");
-        
+        if (window)
+            return;
+        window = new Window(GuiEngine::instance()->getDisplayArea(), Aligment::byDimensionsAndCentered(Vector2d(500, 300)), true);
+        window->setOnCloseCallback([this]() { this->onWindowClose(); });
+
+        auto manualControlAreaAligment = Aligment::byDimensionsAndCentered(Vector2d(200, -1));
+        manualControlAreaAligment.marginLeft = 20;
+        manualControlAreaAligment.marginTop = 20;
+        manualControlAreaAligment.marginBottom = 20;
+        auto manualControlArea = new NamedArea(window->getInternalArea(), manualControlAreaAligment, "Manual control");
+
+        auto optionsAreaAligment = Aligment::byDimensionsAndCentered(Vector2d(100, -1));
+        optionsAreaAligment.marginRight = 20;
+        optionsAreaAligment.marginTop = 20;
+        optionsAreaAligment.marginBottom = 20;
+        auto optionsArea = new NamedArea(window->getInternalArea(), optionsAreaAligment, "Settings");
+
+        auto addressButtonAligment = Aligment::byMargin(5, 5, 5, 5);
+        addressButtonAligment.tableRows = 5;
+        addressButtonAligment.ownRow = 0;
+        auto addressButton = new Button(optionsArea->getInternalArea(), addressButtonAligment);
+        addressButton->setMouseCallback(Release, [this](auto pos) { new AddressSelectionWindow(address, [this](int address) { this->setAddress(address); }); });
+        addressLabel = new Label(addressButton, Aligment(), std::format("Address: {}", address));
+
         Aligment buttonAligment = Aligment::byMargin(5, 5, 5, 5);
         buttonAligment.tableColumns = 3;
         buttonAligment.tableRows = 3;
@@ -52,40 +120,38 @@ class Manipulator : public Machinery {
         buttonAligment.ownColumn = 0;
         buttonAligment.ownRow = 0;
         auto manualButton = new Button(manualControlArea->getInternalArea(), buttonAligment);
-        manualButton->setMouseCallback(Release, [this](auto pos){ this->onManualControlButtonClick(); });
+        manualButton->setMouseCallback(Release, [this](auto pos) { this->onManualControlButtonClick(); });
         manualLabel = new Label(manualButton, Aligment(), manualMode ? "manual" : "auto");
 
         buttonAligment.ownColumn = 1;
         buttonAligment.ownRow = 1;
         auto grabButton = new Button(manualControlArea->getInternalArea(), buttonAligment);
-        grabButton->setMouseCallback(Release, [this](auto pos){ this->onGrabButtonClick(); });
+        grabButton->setMouseCallback(Release, [this](auto pos) { this->onGrabButtonClick(); });
         grabLabel = new Label(grabButton, Aligment(), arm->isActive() ? "release" : "grab");
 
         buttonAligment.ownColumn = 1;
         buttonAligment.ownRow = 0;
         auto moveButton = new Button(manualControlArea->getInternalArea(), buttonAligment);
-        moveButton->setMouseCallback(Hold, [this](auto pos){setManualTarget(this->manualTarget + Vector2d(0, -0.1));  });
+        moveButton->setMouseCallback(Hold, [this](auto pos) { setManualTarget(this->manualTarget + Vector2d(0, -0.1)); });
         new Label(moveButton, Aligment(), "up");
 
         buttonAligment.ownColumn = 1;
         buttonAligment.ownRow = 2;
         moveButton = new Button(manualControlArea->getInternalArea(), buttonAligment);
-        moveButton->setMouseCallback(Hold, [this](auto pos){setManualTarget(this->manualTarget + Vector2d(0, 0.1));  });
+        moveButton->setMouseCallback(Hold, [this](auto pos) { setManualTarget(this->manualTarget + Vector2d(0, 0.1)); });
         new Label(moveButton, Aligment(), "down");
 
         buttonAligment.ownColumn = 0;
         buttonAligment.ownRow = 1;
         moveButton = new Button(manualControlArea->getInternalArea(), buttonAligment);
-        moveButton->setMouseCallback(Hold, [this](auto pos){setManualTarget(this->manualTarget + Vector2d(-0.1, 0));  });
+        moveButton->setMouseCallback(Hold, [this](auto pos) { setManualTarget(this->manualTarget + Vector2d(-0.1, 0)); });
         new Label(moveButton, Aligment(), "left");
 
         buttonAligment.ownColumn = 2;
         buttonAligment.ownRow = 1;
         moveButton = new Button(manualControlArea->getInternalArea(), buttonAligment);
-        moveButton->setMouseCallback(Hold, [this](auto pos){setManualTarget(this->manualTarget + Vector2d(0.1, 0));  });
+        moveButton->setMouseCallback(Hold, [this](auto pos) { setManualTarget(this->manualTarget + Vector2d(0.1, 0)); });
         new Label(moveButton, Aligment(), "right");
-
-        
     }
 
     void onWindowClose() {
@@ -124,7 +190,6 @@ public:
     }
 
     void run() override {
-        // TODO manipulator update here
         if (arm) {
             if (leftClampPos == Vector2d() && rightClampPos == Vector2d()) { // on arm initialisation clamps located at 0, 0 and it causes ugly animation
                 leftClampPos = arm->getLastJointPos();
@@ -149,6 +214,21 @@ public:
         GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/Base/main.png"), 20, 0.1); // base
 
         if (arm) {
+            if (manualMode) {
+                GraphicsEngine::instance()->drawLine(manualTarget, arm->getJointTargetPosition(2), CommonValues::zDebug, al_map_rgb(255, 50, 50));
+                GraphicsEngine::instance()->drawLine(arm->getJointTargetPosition(0), arm->getJointTargetPosition(1), CommonValues::zDebug, al_map_rgb(255, 255, 255));
+                GraphicsEngine::instance()->drawLine(arm->getJointTargetPosition(1), arm->getJointTargetPosition(2), CommonValues::zDebug, al_map_rgb(255, 255, 255));
+
+                GraphicsEngine::instance()->drawCircle(arm->getJointTargetPosition(0), 0.3, CommonValues::zDebug, al_map_rgb(255, 255, 255), 0);
+                GraphicsEngine::instance()->drawCircle(arm->getJointTargetPosition(1), 0.3, CommonValues::zDebug, al_map_rgb(255, 255, 255), 0);
+                GraphicsEngine::instance()->drawCircle(arm->getJointTargetPosition(2), 0.3, CommonValues::zDebug, al_map_rgb(255, 255, 255), 0);
+                GraphicsEngine::instance()->drawLine(manualTarget - Vector2d(0.35, 0.35), manualTarget + Vector2d(0.35, 0.35), CommonValues::zDebug, al_map_rgb(255, 255, 255));
+                GraphicsEngine::instance()->drawLine(manualTarget - Vector2d(-0.35, 0.35), manualTarget + Vector2d(-0.35, 0.35), CommonValues::zDebug, al_map_rgb(255, 255, 255));
+                GraphicsEngine::instance()->drawLine(manualTarget - Vector2d(-0.35, 0.35), manualTarget + Vector2d(-0.35, 0.35), CommonValues::zDebug, al_map_rgb(255, 255, 255));
+                if (arm->isActive()) {
+                    GraphicsEngine::instance()->drawCircle(arm->getJointTargetPosition(2), 0.7, CommonValues::zDebug, al_map_rgb(255, 255, 255), 0.1);
+                }
+            }
             GraphicsEngine::instance()->drawLine(arm->getLastJointPos(), leftClampPos, CommonValues::zArm, al_map_rgb(50, 60, 50), 0.2); // left clamp
             GraphicsEngine::instance()->drawLine(arm->getLastJointPos(), leftClampPos, CommonValues::zArm, al_map_rgb(70, 80, 70), 0.1);
             GraphicsEngine::instance()->drawBitmap(leftClampPos + Vector2d(0.2, 0), GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Manipulator/End1/main.png"), 20, CommonValues::zArm, Vector2d(20, 20), Rotation::fromDegrees(180));
@@ -164,23 +244,16 @@ public:
     }
 
     void drawInfo() override {
-        if (manualMode) {
-            GraphicsEngine::instance()->drawCircle(manualTarget, 1, CommonValues::zDebug, al_map_rgb(255, 255, 255), 0.1);
-            if (arm->isActive()) {
-                GraphicsEngine::instance()->drawCircle(manualTarget, 0.3, CommonValues::zDebug, al_map_rgb(255, 255, 255));
-            }
-        }
-
         double lineLenght = 2;
         GraphicsEngine::instance()->drawArc(arm->getJointPosition(0), Rotation(0), arm->getJointRotation(0), 1, CommonValues::zDebug, al_map_rgb(255, 255, 255));
         GraphicsEngine::instance()->drawLine(arm->getJointPosition(0), arm->getJointPosition(0) + Vector2d(Rotation(0), lineLenght), CommonValues::zDebug, al_map_rgb(255, 255, 255));
         GraphicsEngine::instance()->drawLine(arm->getJointPosition(0), arm->getJointPosition(0) + Vector2d(arm->getJointRotation(0), lineLenght), CommonValues::zDebug, al_map_rgb(255, 255, 255));
-        GraphicsEngine::instance()->drawText(arm->getJointPosition(0) + Vector2d(1, 1), std::format("{:.0f}", arm->getJointRotation(0).degress()), GraphicsEngine::instance()->debugFont, CommonValues::zDebug, al_map_rgb(255, 255, 255), false);
+        GraphicsEngine::instance()->drawText(arm->getJointPosition(0) + Vector2d(1, 1), format("{:.0f}", arm->getJointRotation(0).degress()), GraphicsEngine::instance()->debugFont, CommonValues::zDebug, al_map_rgb(255, 255, 255), false);
 
         GraphicsEngine::instance()->drawArc(arm->getJointPosition(1), arm->getJointRotation(0), arm->getJointRotation(1) + arm->getJointRotation(0), 1, CommonValues::zDebug, al_map_rgb(255, 255, 255));
         GraphicsEngine::instance()->drawLine(arm->getJointPosition(1), arm->getJointPosition(1) + Vector2d(arm->getJointRotation(0), lineLenght), CommonValues::zDebug, al_map_rgb(255, 255, 255));
         GraphicsEngine::instance()->drawLine(arm->getJointPosition(1), arm->getJointPosition(1) + Vector2d(arm->getJointRotation(1) + arm->getJointRotation(0), lineLenght), CommonValues::zDebug, al_map_rgb(255, 255, 255));
-        GraphicsEngine::instance()->drawText(arm->getJointPosition(1) + Vector2d(1, 1), std::format("{:.0f}", arm->getJointRotation(1).degress()), GraphicsEngine::instance()->debugFont, CommonValues::zDebug, al_map_rgb(255, 255, 255), false);
+        GraphicsEngine::instance()->drawText(arm->getJointPosition(1) + Vector2d(1, 1), format("{:.0f}", arm->getJointRotation(1).degress()), GraphicsEngine::instance()->debugFont, CommonValues::zDebug, al_map_rgb(255, 255, 255), false);
     }
 
     void setTarget(Vector2d pos) {
@@ -249,6 +322,12 @@ public:
         if (window == nullptr)
             createWindow();
     }
+
+    void setAddress(int id) override {
+        Machinery::setAddress(id);
+        if (window)
+            addressLabel->setText(std::format("Address: {}", id));
+    }
 };
 
 class Drill : public Machinery {
@@ -267,9 +346,9 @@ public:
     Drill(Vector2d aPos):
         Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(10, 10))) {
         miningProcess.duration = 500;
-        output0 = ProductionArea(Rect2d::fromCenterAndDimensions(Vector2d(7.5, 2.5), Vector2d(5, 5)));
+        output0 = ProductionArea{Rect2d::fromCenterAndDimensions(Vector2d(7.5, 2.5), Vector2d(5, 5))};
         areas.push_back(&output0);
-        output1 = ProductionArea(Rect2d::fromCenterAndDimensions(Vector2d(7.5, 7.5), Vector2d(5, 5)));
+        output1 = ProductionArea{Rect2d::fromCenterAndDimensions(Vector2d(7.5, 7.5), Vector2d(5, 5))};
         areas.push_back(&output1);
     }
 
@@ -329,13 +408,13 @@ public:
     Electrolyzer(Vector2d aPos):
         Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(10, 10))) {
         process.duration = 500;
-        input0 = ProductionArea(Rect2d::fromCenterAndDimensions(Vector2d(2.5, 2.5), Vector2d(5, 5)));
+        input0 = ProductionArea{Rect2d::fromCenterAndDimensions(Vector2d(2.5, 2.5), Vector2d(5, 5))};
         areas.push_back(&input0);
-        output0 = ProductionArea(Rect2d::fromCenterAndDimensions(Vector2d(1.6, 8.3), Vector2d(3.33, 3.33)));
+        output0 = ProductionArea{Rect2d::fromCenterAndDimensions(Vector2d(1.6, 8.3), Vector2d(3.33, 3.33))};
         areas.push_back(&output0);
-        output1 = ProductionArea(Rect2d::fromCenterAndDimensions(Vector2d(5, 8.3), Vector2d(3.33, 3.33)));
+        output1 = ProductionArea{Rect2d::fromCenterAndDimensions(Vector2d(5, 8.3), Vector2d(3.33, 3.33))};
         areas.push_back(&output1);
-        output2 = ProductionArea(Rect2d::fromCenterAndDimensions(Vector2d(8.3, 8.3), Vector2d(3.33, 3.33)));
+        output2 = ProductionArea{Rect2d::fromCenterAndDimensions(Vector2d(8.3, 8.3), Vector2d(3.33, 3.33))};
         areas.push_back(&output2);
     }
 

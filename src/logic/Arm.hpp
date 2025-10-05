@@ -34,6 +34,8 @@ public:
     Arm(int aJointsNumber);
     Vector2d getJointPosition(int n);
     Rotation getJointRotation(int n);
+    Vector2d getJointTargetPosition(int n);
+    Rotation getJointTargetRotation(int n);
     void setSegmentLength(int aSegment, double aLenght);
     void setJointRotation(int aJoint, Rotation aRotation);
     void setJointTargetRotation(int aJoint, Rotation aRotation);

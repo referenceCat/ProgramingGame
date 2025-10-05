@@ -37,7 +37,7 @@ public:
     virtual void onClick() {};
     void addToGameWorld() override;
     void setCenter(Vector2d pos);
-    void setAddress(int id);
+    virtual void setAddress(int id);
     int getAddress();
 };
 
