@@ -59,15 +59,11 @@ void redraw() {
     GuiEngine::instance()->draw();
 
     al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 10, 10, 0, "Programing game");
-    al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 10, 20, 0, "Current tick:");
-    al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 110, 20, 0, std::to_string(tick).c_str());
-    al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 150, 20, 0, "Events counter:");
-    al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 270, 20, 0, std::to_string(eventCounter).c_str());
+    al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 10, 26, 0, std::format("Current tick: {}, Events counter: {}", tick, eventCounter).c_str());
     ALLEGRO_MOUSE_STATE mouseState;
     al_get_mouse_state(&mouseState);
     auto mousePos = GraphicsEngine::instance()->transformPointInverse(Vector2d(mouseState.x, mouseState.y));
-    al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 10, 40, 0, std::format("{:.2f}", mousePos.x).c_str());
-    al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 60, 40, 0, std::format("{:.2f}", mousePos.y).c_str());
+    al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 10, 42, 0, std::format("Mouse pos: {:.2f}, {:.2f}", mousePos.x, mousePos.y).c_str());
 
     // al_hold_bitmap_drawing(false);
     al_flip_display();
