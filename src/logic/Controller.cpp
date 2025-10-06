@@ -32,6 +32,7 @@ void Controller::createWindow() {
         return;
 
     window = new Window(GuiEngine::instance()->getDisplayArea(), AligmentBuilder().dimensions(Vector2d(700, 700)).margin(-1, 50, 50, 50), true);
+    window->setOnCloseCallback([this](){this->onWindowClose();});
     codeConsole = new Console(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(0, 0).margin(10, 90, 5, 10));
     outputConsole = new Console(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(1, 0).margin(5, 90, 10, 10));
     outputConsole->setEditable(false);
@@ -78,6 +79,7 @@ void Controller::onRunButtonClick() {
     if (running) {
         running = false;
         interpreter.clearToInitialState();
+        outputConsole->addLine("Program terminated by user.");
     } else {
         running = true;
         paused = false;

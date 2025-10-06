@@ -106,7 +106,7 @@ class Manipulator : public Machinery {
         addressButtonAligment.ownRow = 0;
         auto addressButton = new Button(optionsArea->getInternalArea(), addressButtonAligment);
         addressButton->setMouseCallback(Release, [this](auto pos) { new AddressSelectionWindow(address, [this](int address) { this->setAddress(address); }); });
-        addressLabel = new Label(addressButton, Aligment(), std::format("Address: {}", address));
+        addressLabel = new Label(addressButton, Aligment(), std::format("Addr: {}", address));
 
         Aligment buttonAligment = Aligment::byMargin(5, 5, 5, 5);
         buttonAligment.tableColumns = 3;
@@ -210,18 +210,18 @@ public:
 
         if (arm) {
             if (manualMode) {
-                GraphicsEngine::instance()->drawLine(manualTarget, arm->getJointTargetPosition(2), CommonValues::zDebug, al_map_rgb(255, 50, 50));
-                GraphicsEngine::instance()->drawLine(arm->getJointTargetPosition(0), arm->getJointTargetPosition(1), CommonValues::zDebug, al_map_rgb(255, 255, 255));
-                GraphicsEngine::instance()->drawLine(arm->getJointTargetPosition(1), arm->getJointTargetPosition(2), CommonValues::zDebug, al_map_rgb(255, 255, 255));
+                GraphicsEngine::instance()->drawLine(manualTarget, arm->getJointPosition(2), CommonValues::zDebug, al_map_rgb(255, 50, 50));
+                GraphicsEngine::instance()->drawLine(arm->getJointPosition(0), arm->getJointPosition(1), CommonValues::zDebug, al_map_rgb(255, 255, 255));
+                GraphicsEngine::instance()->drawLine(arm->getJointPosition(1), arm->getJointPosition(2), CommonValues::zDebug, al_map_rgb(255, 255, 255));
 
-                GraphicsEngine::instance()->drawCircle(arm->getJointTargetPosition(0), 0.3, CommonValues::zDebug, al_map_rgb(255, 255, 255), 0);
-                GraphicsEngine::instance()->drawCircle(arm->getJointTargetPosition(1), 0.3, CommonValues::zDebug, al_map_rgb(255, 255, 255), 0);
-                GraphicsEngine::instance()->drawCircle(arm->getJointTargetPosition(2), 0.3, CommonValues::zDebug, al_map_rgb(255, 255, 255), 0);
+                GraphicsEngine::instance()->drawCircle(arm->getJointPosition(0), 0.3, CommonValues::zDebug, al_map_rgb(255, 255, 255), 0);
+                GraphicsEngine::instance()->drawCircle(arm->getJointPosition(1), 0.3, CommonValues::zDebug, al_map_rgb(255, 255, 255), 0);
+                GraphicsEngine::instance()->drawCircle(arm->getJointPosition(2), 0.3, CommonValues::zDebug, al_map_rgb(255, 255, 255), 0);
                 GraphicsEngine::instance()->drawLine(manualTarget - Vector2d(0.35, 0.35), manualTarget + Vector2d(0.35, 0.35), CommonValues::zDebug, al_map_rgb(255, 255, 255));
                 GraphicsEngine::instance()->drawLine(manualTarget - Vector2d(-0.35, 0.35), manualTarget + Vector2d(-0.35, 0.35), CommonValues::zDebug, al_map_rgb(255, 255, 255));
                 GraphicsEngine::instance()->drawLine(manualTarget - Vector2d(-0.35, 0.35), manualTarget + Vector2d(-0.35, 0.35), CommonValues::zDebug, al_map_rgb(255, 255, 255));
                 if (arm->isActive()) {
-                    GraphicsEngine::instance()->drawCircle(arm->getJointTargetPosition(2), 0.7, CommonValues::zDebug, al_map_rgb(255, 255, 255), 0.1);
+                    GraphicsEngine::instance()->drawCircle(arm->getJointPosition(2), 0.7, CommonValues::zDebug, al_map_rgb(255, 255, 255), 0.1);
                 }
             }
             GraphicsEngine::instance()->drawLine(arm->getLastJointPos(), leftClampPos, CommonValues::zArm, al_map_rgb(50, 60, 50), 0.2); // left clamp
