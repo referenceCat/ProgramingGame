@@ -278,7 +278,6 @@ class Console : public GuiElement {
     int linesMax = 10;
 
     bool editable = true;
-    bool cursor = true;
     int cursorLine = 0;
     int cursorColumn = 0;
 
@@ -322,9 +321,6 @@ public:
     }
 
     virtual void handleKeyChar(char ch) override {
-        if (!cursor) {
-            return;
-        }
         if (!editable) {
             return;
         }
@@ -379,7 +375,7 @@ public:
 class GuiEngine {
     GuiElement* rootElement = new DisplayArea();
     GuiElement* clickedElement = nullptr;
-    GuiElement* keyboardInputElement = nullptr;
+    GuiElement* keyboardInputHandler = nullptr;
 
     GuiEngine() {
         createProceduralIcons();
@@ -533,6 +529,9 @@ public:
 
     // returns true if clicked on some gui element
     bool click(Vector2d aPos) {
+        if (keyboardInputHandler && !keyboardInputHandler->getRect().isInside(aPos)) {
+            clearKeyboardInputHandler();
+        }
         return applyEventRecursively(rootElement, Click, aPos);
     }
 
@@ -553,29 +552,33 @@ public:
     }
 
     bool handlingKeyboardInput() {
-        return keyboardInputElement != nullptr;
+        return keyboardInputHandler != nullptr;
     }
 
     void keyboardKeyPress(int keycode) {
-        if (keyboardInputElement == nullptr)
+        if (keyboardInputHandler == nullptr)
             return;
 
-        keyboardInputElement->handleKeyDown(keycode);
+        keyboardInputHandler->handleKeyDown(keycode);
     }
 
     void keyboardCharPress(char ch) {
-        if (keyboardInputElement == nullptr)
+        if (keyboardInputHandler == nullptr)
             return;
 
-        keyboardInputElement->handleKeyChar(ch);
+        keyboardInputHandler->handleKeyChar(ch);
     }
 
     void setKeyboardInputHandler(GuiElement* element) {
-        keyboardInputElement = element;
+        keyboardInputHandler = element;
+    }
+
+    GuiElement* getKeyboardInputHandler() {
+        return keyboardInputHandler;
     }
 
     void clearKeyboardInputHandler() {
-        keyboardInputElement = nullptr;
+        keyboardInputHandler = nullptr;
     }
 };
 

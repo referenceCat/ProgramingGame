@@ -48,9 +48,9 @@ Console::Console(GuiElement* parent, Aligment aligment):
     GuiElement(parent, aligment) {
     this->setMouseCallback(WheelMoveDown, [this](auto pos) { scrollLines(1); }); // TODO move to handle mouse event
     this->setMouseCallback(WheelMoveUp, [this](auto pos) { scrollLines(-1); });
-    this->setMouseCallback(Click, [this](auto pos) { moveCursor(pos); });
+    this->setMouseCallback(Click, [this](auto pos) { if(GuiEngine::instance()->getKeyboardInputHandler() != this ) {GuiEngine::instance()->setKeyboardInputHandler(this);} moveCursor(pos);});
 
-    GuiEngine::instance()->setKeyboardInputHandler(this);
+    // GuiEngine::instance()->setKeyboardInputHandler(this);
 
     auto duration = std::chrono::system_clock::now().time_since_epoch(); // TODO do it normaly
     lastTimeCursorMovedMillis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
@@ -77,7 +77,7 @@ void Console::draw() {
 
     auto duration = std::chrono::system_clock::now().time_since_epoch(); // TODO do it normaly
     long long millisNow = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
-    if (cursorLine >= lineFrom && cursorLine < lineFrom + linesMax && ((millisNow % 1000 < 500) || (millisNow - lastTimeCursorMovedMillis) < 500)) {
+    if (cursorLine >= lineFrom && cursorLine < lineFrom + linesMax && ((millisNow % 1000 < 500) || (millisNow - lastTimeCursorMovedMillis) < 500) && GuiEngine::instance()->getKeyboardInputHandler() == this) {
         double x = 50 + rect.p1.x + cursorColumn * al_get_text_width(GuiEngine::instance()->debugFont, "a");
         if (x >= rect.p2.x)
             return; // check if cursor is outiside of console
