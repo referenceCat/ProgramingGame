@@ -226,6 +226,8 @@ public:
         interseptsMouseEvents = false;
     }
 
+    void setBitmap(ALLEGRO_BITMAP*);
+
     void draw() override;
 };
 
@@ -349,6 +351,10 @@ public:
         }
     }
 
+    std::vector<std::string> getLines() {
+        return lines;
+    }
+
     virtual void handleKeyDown(int keycode) override {
         switch (keycode) {
             case ALLEGRO_KEY_LEFT:
@@ -395,7 +401,7 @@ class GuiEngine {
 
         icons["stop"] = al_create_bitmap(iconsWidth, iconsHeight);
         al_set_target_bitmap(icons["stop"]);
-        al_draw_rectangle(4, 0, 11, 14, al_map_rgb(200, 50, 50), 3);
+        al_draw_rectangle(2, 2, 12, 12, al_map_rgb(200, 50, 50), 3);
 
         icons["pause"] = al_create_bitmap(iconsWidth, iconsHeight);
         al_set_target_bitmap(icons["pause"]);

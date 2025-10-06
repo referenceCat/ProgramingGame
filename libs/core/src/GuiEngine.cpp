@@ -7,6 +7,10 @@ void Label::draw() {
     al_draw_text(GuiEngine::debugFont, al_map_rgb(255, 255, 255), pos.x + 0.1, pos.y + 0.1, 0, text.c_str());
 }
 
+void Icon::setBitmap(ALLEGRO_BITMAP* bitmap) {
+    this->bitmap = bitmap;
+}
+
 void Icon::draw() {
     if (bitmap == nullptr) return;
     auto pos = rect.center() - Vector2d(static_cast<double>(al_get_bitmap_width(bitmap)) / 2, static_cast<double>(al_get_bitmap_height(bitmap)) / 2);

@@ -5,36 +5,179 @@
 #include "Controller.hpp"
 #include "GameWorld.hpp"
 
+std::vector<std::string> split(const std::string& s,
+    const std::string& delimiter) {
+    std::string strCopy = s;
+    std::vector<std::string> tokens;
+    size_t pos = 0;
+    std::string token;
+    while ((pos = strCopy.find(delimiter)) != std::string::npos) {
+        token = strCopy.substr(0, pos);
+        tokens.push_back(token);
+        strCopy.erase(0, pos + delimiter.length());
+    }
+    tokens.push_back(strCopy);
+
+    return tokens;
+}
+
+void Controller::onClick() {
+    if (window == nullptr) {
+        createWindow();
+    }
+}
+
 void Controller::createWindow() {
-    if (window) return;
-    
+    if (window)
+        return;
+
     window = new Window(GuiEngine::instance()->getDisplayArea(), AligmentBuilder().dimensions(Vector2d(700, 700)).margin(-1, 50, 50, 50), true);
-    new Console(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(0, 0).margin(10, 90, 5, 10));
-    new Console(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(1, 0).margin(5, 90, 10, 10));
+    codeConsole = new Console(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(0, 0).margin(10, 90, 5, 10));
+    outputConsole = new Console(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(1, 0).margin(5, 90, 10, 10));
     new Label(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(0, 0).margin(10, 72, -1, -1).dimensions(Vector2d(al_get_text_width(GuiEngine::instance()->debugFont, "Code:"), 16)), "Code:");
     new Label(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(1, 0).margin(5, 72, -1, -1).dimensions(Vector2d(al_get_text_width(GuiEngine::instance()->debugFont, "Output:"), 16)), "Output:");
     auto controlArea = new NamedArea(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(0, 0).margin(10, 10, 5, -1).dimensions(Vector2d(-1, 50)), "controls");
+
     auto runStopButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(9, 1).tableCell(0, 0).margin(3, 3, 3, 3)); // run/stop
-    new Icon(runStopButton, Aligment(), GuiEngine::instance()->getIcon("run"));
+    runStopButton->setMouseCallback(Release, [this](auto pos) { this->onRunButtonClick(); });
+    runStopButtonIcon = new Icon(runStopButton, Aligment(), GuiEngine::instance()->getIcon("run"));
+
     auto pauseButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(9, 1).tableCell(1, 0).margin(3, 3, 3, 3)); // pause/continue
-    new Icon(pauseButton, Aligment(), GuiEngine::instance()->getIcon("pause"));
+    pauseButton->setMouseCallback(Release, [this](auto pos) { this->onPauseButtonClick(); });
+    pauseButtonIcon = new Icon(pauseButton, Aligment(), GuiEngine::instance()->getIcon("pause"));
+
     auto nextButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(9, 1).tableCell(2, 0).margin(3, 3, 3, 3)); // exec 1 instruction
-    new Icon(nextButton, Aligment(), GuiEngine::instance()->getIcon("next"));
+    nextButtonIcon = new Icon(nextButton, Aligment(), GuiEngine::instance()->getIcon("next"));
+    nextButtonIcon->setMouseCallback(Release, [this](auto pos) {});
+
+    updateWindow();
 }
 
 void Controller::updateWindow() {
-
+    if (!window)
+        return;
+    if (running) {
+        runStopButtonIcon->setBitmap(GuiEngine::instance()->getIcon("stop"));
+        pauseButtonIcon->setBitmap(GuiEngine::instance()->getIcon(paused ? "unpause" : "pause"));
+        nextButtonIcon->setBitmap(paused ? GuiEngine::instance()->getIcon("next") : nullptr);
+    } else {
+        runStopButtonIcon->setBitmap(GuiEngine::instance()->getIcon("run"));
+        pauseButtonIcon->setBitmap(nullptr);
+        nextButtonIcon->setBitmap(nullptr);
+    }
 }
 
-int Controller::execNextInstr() {
+void Controller::onWindowClose() {
+    window = nullptr;
+}
+
+void Controller::onRunButtonClick() {
+    if (running) {
+        running = false;
+        interpreter.clearToInitialState();
+    } else {
+        running = true;
+        paused = false;
+        outputConsole->addLine("");
+        outputConsole->addLine("Compiling...");
+        interpreter.clearToInitialState();
+        interpreter.compile(codeConsole->getLines()); // TODO handle compilation errors
+        outputConsole->addLine("Runnig started.");
+    }
+    updateWindow();
+}
+
+void Controller::onPauseButtonClick() {
+    if (!running)
+        return;
+
+    if (paused)
+        paused = false;
+    else
+        paused = true;
+    updateWindow();
+}
+
+void Controller::openFile() {
+    // char filename[1024];
+    // FILE* f = popen("zenity --file-selection", "r");
+    // fgets(filename, 1024, f);
+    // if (filename == "�?tXUU")
+    //     return; // check if no file was selected
+
+    // for (int i = 0; i < sizeof(filename); i++) { // remove \n from file name
+    //     if (filename[i] == '\n')
+    //         filename[i] = '\0';
+    // }
+
+    // std::cout << "Opening file " << filename << "." << std::endl;
+    // std::ifstream file(filename);
+    // if (!file.is_open())
+    //     return;
+    // clearInstructions();
+    // std::string line;
+    // while (std::getline(file, line)) {
+    //     std::cout << line << std::endl;
+    //     addInstruction(line);
+    // }
+    // pause();
+    // updateWindow();
+}
+
+void Controller::draw() {
+    GraphicsEngine::instance()->drawBitmap(
+        rect.p1,
+        GraphicsEngine::instance()->getBitmap(
+            "resources/assets/machinery/Controller/main.png"),
+        20, 0.2);
+}
+
+std::vector<std::string> Controller::split(const std::string& s,
+    const std::string& delimiter) {
+    std::string strCopy = s;
+    std::vector<std::string> tokens;
+    size_t pos = 0;
+    std::string token;
+    while ((pos = strCopy.find(delimiter)) != std::string::npos) {
+        token = strCopy.substr(0, pos);
+        tokens.push_back(token);
+        strCopy.erase(0, pos + delimiter.length());
+    }
+    tokens.push_back(strCopy);
+
+    return tokens;
+}
+
+void Controller::run() {
+    if (!paused && running) {
+        int result = interpreter.execNextInstruction();
+        if (result == 3) {
+            outputConsole->addLine(std::format("Program finished! (code: {})", result));
+            running = false;
+        } else if (result != 0) {
+            outputConsole->addLine(std::format("Program failed with code: {}!", result));
+            outputConsole->addLine(std::format("At line: {}", interpreter.getSourceLineNumber()));
+            running = false;
+        }
+    }
+
+    updateWindow();
+}
+
+void Interpreter::clearToInitialState() {
+    rInstr = 0;
+    rDelay = 0;
+}
+
+int Interpreter::execNextInstruction() {
     if (rInstr >= instructions.size()) {
         return 3; // program ended
     }
 
-    if (breakpoints.at(rInstr) && !paused) {
-        pause();
-        return 0;
-    }
+    // if (breakpoints.at(rInstr) && !paused) {
+    //     pause();
+    //     return 0;
+    // }
 
     if (rDelay) {
         rDelay--;
@@ -83,161 +226,11 @@ int Controller::execNextInstr() {
     return 0;
 }
 
-void Controller::toggle(int line) {
-    assert(line < instructions.size());
-    breakpoints.at(line) = !breakpoints.at(line);
+int Interpreter::getSourceLineNumber() {
+    return rInstr; // return source line what coresponds to rInstr (for now it is the same line)
 }
 
-void Controller::openFile() {
-    char filename[1024];
-    FILE* f = popen("zenity --file-selection", "r");
-    fgets(filename, 1024, f);
-    if (filename == "�?tXUU")
-        return; // check if no file was selected
-
-    for (int i = 0; i < sizeof(filename); i++) { // remove \n from file name
-        if (filename[i] == '\n')
-            filename[i] = '\0';
-    }
-
-    std::cout << "Opening file " << filename << "." << std::endl;
-    std::ifstream file(filename);
-    if (!file.is_open())
-        return;
-    clearInstructions();
-    std::string line;
-    while (std::getline(file, line)) {
-        std::cout << line << std::endl;
-        addInstruction(line);
-    }
-    pause();
-    updateWindow();
-}
-
-void Controller::draw() {
-    // GraphicsEngine::instance()->drawRectangle(rect, 0, al_map_rgb(100, 255,
-    // 100));
-    GraphicsEngine::instance()->drawBitmap(
-        rect.p1,
-        GraphicsEngine::instance()->getBitmap(
-            "resources/assets/machinery/Controller/main.png"),
-        20, 0.2);
-}
-
-void Controller::addInstruction(std::string instr) {
-    instructions.push_back(instr);
-    breakpoints.push_back(false);
-}
-
-void Controller::clearInstructions() {
-    breakpoints.clear();
-    instructions.clear();
-    rDelay = 0;
-    rInstr = 0;
-}
-
-std::vector<std::string> Controller::split(const std::string& s,
-    const std::string& delimiter) {
-    std::string strCopy = s;
-    std::vector<std::string> tokens;
-    size_t pos = 0;
-    std::string token;
-    while ((pos = strCopy.find(delimiter)) != std::string::npos) {
-        token = strCopy.substr(0, pos);
-        tokens.push_back(token);
-        strCopy.erase(0, pos + delimiter.length());
-    }
-    tokens.push_back(strCopy);
-
-    return tokens;
-}
-
-void Controller::drawInstructions() {
-    for (int i = 0; i < instructions.size(); i++) {
-        al_draw_text(GuiEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 30,
-            40 + i * 10, 0, instructions.at(i).c_str());
-    }
-    al_draw_line(10, 43 + rInstr * 10 + 5, 20, 40 + rInstr * 10 + 5,
-        al_map_rgb(255, 255, 255), 1);
-    al_draw_line(10, 37 + rInstr * 10 + 5, 20, 40 + rInstr * 10 + 5,
-        al_map_rgb(255, 255, 255), 1);
-}
-
-void Controller::run() {
-    if (paused) {
-        return;
-    }
-
-    if (failure) {
-        return;
-    }
-
-    failure = execNextInstr();
-    updateWindow();
-}
-
-void Controller::pause() {
-    paused = true;
-    updateWindow();
-}
-
-void Controller::unpause() {
-    if (failure) {
-        return;
-    }
-
-    failure = execNextInstr();
-    paused = false;
-    updateWindow();
-}
-
-void Controller::pauseUnpause() {
-    if (paused) {
-        unpause();
-    } else {
-        pause();
-    }
-}
-
-void Controller::up() {
-    if (!paused) {
-        return;
-    }
-    failure = 0;
-    rDelay = 0;
-    if (rInstr > 0) {
-        rInstr--;
-    }
-    updateWindow();
-}
-
-void Controller::down() {
-    if (!paused) {
-        return;
-    }
-    failure = 0;
-    rDelay = 0;
-    if (rInstr < instructions.size() - 1) {
-        rInstr++;
-    }
-    updateWindow();
-}
-
-void Controller::next() {
-    if (failure) {
-        return;
-    }
-
-    if (!paused) {
-        return;
-    }
-
-    failure = execNextInstr();
-    updateWindow();
-}
-
-void Controller::onClick() {
-    if (window == nullptr) {
-        createWindow();
-    }
+bool Interpreter::compile(std::vector<std::string> sourceCode) {
+    instructions = sourceCode;
+    return true;
 }
