@@ -9,11 +9,21 @@ void Controller::createWindow() {
     if (window) return;
     
     window = new Window(GuiEngine::instance()->getDisplayArea(), AligmentBuilder().dimensions(Vector2d(700, 700)).margin(-1, 50, 50, 50), true);
-    new Console(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(0, 0).margin(10, 10, 10, 10));
-    new Console(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(1, 0).margin(10, 10, 10, 10));
+    new Console(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(0, 0).margin(10, 90, 5, 10));
+    new Console(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(1, 0).margin(5, 90, 10, 10));
+    new Label(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(0, 0).margin(10, 72, -1, -1).dimensions(Vector2d(al_get_text_width(GuiEngine::instance()->debugFont, "Code:"), 16)), "Code:");
+    new Label(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(1, 0).margin(5, 72, -1, -1).dimensions(Vector2d(al_get_text_width(GuiEngine::instance()->debugFont, "Output:"), 16)), "Output:");
+    auto controlArea = new NamedArea(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(0, 0).margin(10, 10, 5, -1).dimensions(Vector2d(-1, 50)), "controls");
+    auto runStopButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(9, 1).tableCell(0, 0).margin(3, 3, 3, 3)); // run/stop
+    new Icon(runStopButton, Aligment(), GuiEngine::instance()->getIcon("run"));
+    auto pauseButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(9, 1).tableCell(1, 0).margin(3, 3, 3, 3)); // pause/continue
+    new Icon(pauseButton, Aligment(), GuiEngine::instance()->getIcon("pause"));
+    auto nextButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(9, 1).tableCell(2, 0).margin(3, 3, 3, 3)); // exec 1 instruction
+    new Icon(nextButton, Aligment(), GuiEngine::instance()->getIcon("next"));
 }
 
 void Controller::updateWindow() {
+
 }
 
 int Controller::execNextInstr() {

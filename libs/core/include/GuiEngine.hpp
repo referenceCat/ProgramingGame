@@ -273,7 +273,7 @@ public:
 };
 
 class Console : public GuiElement {
-    std::vector<std::string> lines; 
+    std::vector<std::string> lines;
     int lineFrom = 0;
     int linesMax = 10;
 
@@ -377,9 +377,49 @@ class GuiEngine {
     GuiElement* clickedElement = nullptr;
     GuiElement* keyboardInputHandler = nullptr;
 
+    std::map<std::string, ALLEGRO_BITMAP*> icons;
+
     GuiEngine() {
         createProceduralIcons();
     };
+
+    void createProceduralIcons() {
+        ALLEGRO_COLOR blue = al_map_rgb(20, 120, 200);
+
+        int iconsWidth = 14;
+        int iconsHeight = 14;
+
+        icons["run"] = al_create_bitmap(iconsWidth, iconsHeight);
+        al_set_target_bitmap(icons["run"]);
+        al_draw_triangle(2, 1, 2, 13, 11, 7, al_map_rgb(20, 150, 100), 3);
+
+        icons["stop"] = al_create_bitmap(iconsWidth, iconsHeight);
+        al_set_target_bitmap(icons["stop"]);
+        al_draw_rectangle(4, 0, 11, 14, al_map_rgb(200, 50, 50), 3);
+
+        icons["pause"] = al_create_bitmap(iconsWidth, iconsHeight);
+        al_set_target_bitmap(icons["pause"]);
+        al_draw_line(4, 0, 4, 14, blue, 3);
+        al_draw_line(11, 0, 11, 14, blue, 3);
+
+        icons["unpause"] = al_create_bitmap(iconsWidth, iconsHeight);
+        al_set_target_bitmap(icons["unpause"]);
+        al_draw_triangle(3, 2, 3, 12, 12, 7, blue, 3);
+
+        icons["next"] = al_create_bitmap(iconsWidth, iconsHeight);
+        al_set_target_bitmap(icons["next"]);
+        al_draw_triangle(3, 2, 3, 12, 10, 7, blue, 3);
+        al_draw_line(13, 0, 13, 14, blue, 3);
+
+        icons["breakpoint"] = al_create_bitmap(iconsWidth, iconsHeight);
+        al_set_target_bitmap(icons["breakpoint"]);
+        al_draw_filled_circle(7, 7, 4, al_map_rgb(200, 0, 0));
+
+        icons["close"] = al_create_bitmap(iconsWidth, iconsHeight);
+        al_set_target_bitmap(icons["close"]);
+        al_draw_line(2, 2, 12, 12, al_map_rgb(200, 200, 200), 2);
+        al_draw_line(12, 2, 2, 12, al_map_rgb(200, 200, 200), 2);
+    }
 
     void drawRecursively(GuiElement* element) {
         element->draw();
@@ -462,15 +502,9 @@ public:
         return &instance;
     }
 
-    inline static ALLEGRO_BITMAP* circleIcon = nullptr; // TODO move to separate guiResources class
-    inline static ALLEGRO_BITMAP* pauseIcon = nullptr;
-    inline static ALLEGRO_BITMAP* unpauseIcon = nullptr;
-    inline static ALLEGRO_BITMAP* downIcon = nullptr;
-    inline static ALLEGRO_BITMAP* upIcon = nullptr;
-    inline static ALLEGRO_BITMAP* nextIcon = nullptr;
-    inline static ALLEGRO_BITMAP* emptyIcon = nullptr;
-    inline static ALLEGRO_BITMAP* breakpointIcon = nullptr;
-    inline static ALLEGRO_BITMAP* closeWindowIcon = nullptr;
+    ALLEGRO_BITMAP* getIcon(std::string name) {
+        return icons[name];
+    };
 
     inline static ALLEGRO_FONT* debugFont = nullptr;
     inline static Vector2d drawingIndent{};
@@ -482,49 +516,6 @@ public:
 
     GuiElement* getDisplayArea() {
         return rootElement;
-    }
-
-    void createProceduralIcons() {
-        ALLEGRO_COLOR blue = al_map_rgb(20, 120, 200);
-
-        circleIcon = al_create_bitmap(14, 14);
-        al_set_target_bitmap(circleIcon);
-        al_draw_filled_circle(7, 7, 7, al_map_rgb(255, 255, 255));
-
-        pauseIcon = al_create_bitmap(14, 14);
-        al_set_target_bitmap(pauseIcon);
-        al_draw_line(4, 0, 4, 14, blue, 3);
-        al_draw_line(11, 0, 11, 14, blue, 3);
-
-        unpauseIcon = al_create_bitmap(14, 14);
-        al_set_target_bitmap(unpauseIcon);
-        al_draw_triangle(3, 2, 3, 12, 12, 7, blue, 3);
-
-        downIcon = al_create_bitmap(14, 14);
-        al_set_target_bitmap(downIcon);
-        al_draw_line(3, 4, 7, 11, blue, 3);
-        al_draw_line(11, 4, 7, 11, blue, 3);
-
-        upIcon = al_create_bitmap(14, 14);
-        al_set_target_bitmap(upIcon);
-        al_draw_line(3, 9, 7, 2, blue, 3);
-        al_draw_line(11, 9, 7, 2, blue, 3);
-
-        nextIcon = al_create_bitmap(14, 14);
-        al_set_target_bitmap(nextIcon);
-        al_draw_triangle(3, 2, 3, 12, 10, 7, blue, 3);
-        al_draw_line(13, 0, 13, 14, blue, 3);
-
-        emptyIcon = al_create_bitmap(14, 14);
-
-        breakpointIcon = al_create_bitmap(14, 14);
-        al_set_target_bitmap(breakpointIcon);
-        al_draw_filled_circle(7, 7, 4, al_map_rgb(200, 0, 0));
-
-        closeWindowIcon = al_create_bitmap(14, 14);
-        al_set_target_bitmap(closeWindowIcon);
-        al_draw_line(2, 2, 12, 12, al_map_rgb(200, 200, 200), 2);
-        al_draw_line(12, 2, 2, 12, al_map_rgb(200, 200, 200), 2);
     }
 
     // returns true if clicked on some gui element

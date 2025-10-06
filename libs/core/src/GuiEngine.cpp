@@ -8,8 +8,9 @@ void Label::draw() {
 }
 
 void Icon::draw() {
+    if (bitmap == nullptr) return;
     auto pos = rect.center() - Vector2d(static_cast<double>(al_get_bitmap_width(bitmap)) / 2, static_cast<double>(al_get_bitmap_height(bitmap)) / 2);
-    al_draw_bitmap(bitmap, pos.x, pos.y, 0);
+    al_draw_bitmap(bitmap, pos.x + 0.1, pos.y + 0.1, 0);
 }
 
 Window::Window(GuiElement* parent, Aligment aligment, bool closable):
@@ -22,7 +23,7 @@ Window::Window(GuiElement* parent, Aligment aligment, bool closable):
         quitButtonAligment.dimensions = Vector2d(22, 22);
         quitButton = new Button(this, quitButtonAligment);
         quitButton->setMouseCallback(Click, [this](Vector2d pos) { delete this; });
-        auto closeIcon = new Icon(quitButton, Aligment::byDimensionsAndCentered(Vector2d(20, 20)), GuiEngine::instance()->closeWindowIcon);
+        auto closeIcon = new Icon(quitButton, Aligment::byDimensionsAndCentered(Vector2d(20, 20)), GuiEngine::instance()->getIcon("close"));
     }
 
     Aligment areaAligment;
