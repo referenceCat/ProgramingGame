@@ -375,6 +375,10 @@ public:
         }
     }
 
+    void setEditable(bool editable) {
+        this->editable = editable;
+    }
+
     void draw() override;
 };
 

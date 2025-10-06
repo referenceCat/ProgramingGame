@@ -34,6 +34,7 @@ void Controller::createWindow() {
     window = new Window(GuiEngine::instance()->getDisplayArea(), AligmentBuilder().dimensions(Vector2d(700, 700)).margin(-1, 50, 50, 50), true);
     codeConsole = new Console(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(0, 0).margin(10, 90, 5, 10));
     outputConsole = new Console(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(1, 0).margin(5, 90, 10, 10));
+    outputConsole->setEditable(false);
     new Label(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(0, 0).margin(10, 72, -1, -1).dimensions(Vector2d(al_get_text_width(GuiEngine::instance()->debugFont, "Code:"), 16)), "Code:");
     new Label(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(1, 0).margin(5, 72, -1, -1).dimensions(Vector2d(al_get_text_width(GuiEngine::instance()->debugFont, "Output:"), 16)), "Output:");
     auto controlArea = new NamedArea(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(0, 0).margin(10, 10, 5, -1).dimensions(Vector2d(-1, 50)), "controls");
@@ -60,10 +61,12 @@ void Controller::updateWindow() {
         runStopButtonIcon->setBitmap(GuiEngine::instance()->getIcon("stop"));
         pauseButtonIcon->setBitmap(GuiEngine::instance()->getIcon(paused ? "unpause" : "pause"));
         nextButtonIcon->setBitmap(paused ? GuiEngine::instance()->getIcon("next") : nullptr);
+        codeConsole->setEditable(false);
     } else {
         runStopButtonIcon->setBitmap(GuiEngine::instance()->getIcon("run"));
         pauseButtonIcon->setBitmap(nullptr);
         nextButtonIcon->setBitmap(nullptr);
+        codeConsole->setEditable(true);
     }
 }
 
@@ -82,7 +85,7 @@ void Controller::onRunButtonClick() {
         outputConsole->addLine("Compiling...");
         interpreter.clearToInitialState();
         interpreter.compile(codeConsole->getLines()); // TODO handle compilation errors
-        outputConsole->addLine("Runnig started.");
+        outputConsole->addLine("Program started.");
     }
     updateWindow();
 }
