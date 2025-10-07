@@ -32,7 +32,7 @@ void Controller::createWindow() {
         return;
 
     window = new Window(GuiEngine::instance()->getDisplayArea(), AligmentBuilder().dimensions(Vector2d(700, 700)).margin(-1, 50, 50, 50), true);
-    window->setOnCloseCallback([this](){this->onWindowClose();});
+    window->setOnCloseCallback([this]() { this->onWindowClose(); });
     codeConsole = new Console(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(0, 0).margin(10, 90, 5, 10));
     outputConsole = new Console(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(1, 0).margin(5, 90, 10, 10));
     outputConsole->setEditable(false);
@@ -40,17 +40,27 @@ void Controller::createWindow() {
     new Label(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(1, 0).margin(5, 72, -1, -1).dimensions(Vector2d(al_get_text_width(GuiEngine::instance()->debugFont, "Output:"), 16)), "Output:");
     auto controlArea = new NamedArea(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(0, 0).margin(10, 10, 5, -1).dimensions(Vector2d(-1, 50)), "controls");
 
-    auto runStopButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(9, 1).tableCell(0, 0).margin(3, 3, 3, 3)); // run/stop
+    auto runStopButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(8, 1).tableCell(0, 0).margin(3, 3, 3, 3)); // run/stop
     runStopButton->setMouseCallback(Release, [this](auto pos) { this->onRunButtonClick(); });
     runStopButtonIcon = new Icon(runStopButton, Aligment(), GuiEngine::instance()->getIcon("run"));
 
-    auto pauseButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(9, 1).tableCell(1, 0).margin(3, 3, 3, 3)); // pause/continue
+    auto pauseButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(8, 1).tableCell(1, 0).margin(3, 3, 3, 3)); // pause/continue
     pauseButton->setMouseCallback(Release, [this](auto pos) { this->onPauseButtonClick(); });
     pauseButtonIcon = new Icon(pauseButton, Aligment(), GuiEngine::instance()->getIcon("pause"));
 
-    auto nextButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(9, 1).tableCell(2, 0).margin(3, 3, 3, 3)); // exec 1 instruction
+    auto nextButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(8, 1).tableCell(2, 0).margin(3, 3, 3, 3)); // exec 1 instruction
+    nextButton->setMouseCallback(Release, [this](auto pos) {});
     nextButtonIcon = new Icon(nextButton, Aligment(), GuiEngine::instance()->getIcon("next"));
-    nextButtonIcon->setMouseCallback(Release, [this](auto pos) {});
+
+    auto openFileButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(4, 1).tableCell(2, 0).margin(3, 3, 3, 3)); // exec 1 instruction
+    openFileButton->setMouseCallback(Release, [this](auto pos) { onOpenFileButtonClick(); });
+    new Label(openFileButton, Aligment(), "open");
+
+    auto saveAsFileButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(4, 1).tableCell(3, 0).margin(3, 3, 3, 3)); // exec 1 instruction
+    saveAsFileButton->setMouseCallback(Release, [this](auto pos) { onSaveSaveFileButtonClick(); });
+    new Label(saveAsFileButton, Aligment(), "save as");
+
+    loadConsoledStates();
 
     updateWindow();
 }
@@ -72,6 +82,7 @@ void Controller::updateWindow() {
 }
 
 void Controller::onWindowClose() {
+    saveConsolesStates();
     window = nullptr;
 }
 
@@ -103,30 +114,44 @@ void Controller::onPauseButtonClick() {
     updateWindow();
 }
 
-void Controller::openFile() {
-    // char filename[1024];
-    // FILE* f = popen("zenity --file-selection", "r");
-    // fgets(filename, 1024, f);
-    // if (filename == "�?tXUU")
-    //     return; // check if no file was selected
+void Controller::saveConsolesStates() {
+    codeConsoleSavedLines = codeConsole->getLines(); // TODO save to file
+    ouputConsoleSavedLines = outputConsole->getLines();
+}
 
-    // for (int i = 0; i < sizeof(filename); i++) { // remove \n from file name
-    //     if (filename[i] == '\n')
-    //         filename[i] = '\0';
-    // }
+void Controller::loadConsoledStates() {
+    codeConsole->setLines(codeConsoleSavedLines);
+    outputConsole->setLines(ouputConsoleSavedLines);
+}
 
-    // std::cout << "Opening file " << filename << "." << std::endl;
-    // std::ifstream file(filename);
-    // if (!file.is_open())
-    //     return;
-    // clearInstructions();
-    // std::string line;
-    // while (std::getline(file, line)) {
-    //     std::cout << line << std::endl;
-    //     addInstruction(line);
-    // }
-    // pause();
-    // updateWindow();
+void Controller::onSaveSaveFileButtonClick() {
+    // TODO
+}
+
+void Controller::onOpenFileButtonClick() {
+    char filename[1024];
+    FILE* f = popen("zenity --file-selection", "r");
+    fgets(filename, 1024, f);
+    if (filename == "�?tXUU")
+        return; // check if no file was selected
+
+    for (int i = 0; i < sizeof(filename); i++) { // remove \n from file name
+        if (filename[i] == '\n')
+            filename[i] = '\0';
+    }
+
+    std::ifstream file(filename);
+    if (!file.is_open())
+        return;
+    codeConsole->clearLines();
+    std::string line;
+    if (std::getline(file, line)) {
+        codeConsole->setLines({line});
+    }
+    while (std::getline(file, line)) {
+        codeConsole->addLine(line);
+    }
+    updateWindow();
 }
 
 void Controller::draw() {

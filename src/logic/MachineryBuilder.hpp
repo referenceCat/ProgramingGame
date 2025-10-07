@@ -101,6 +101,10 @@ public:
         prototype = nullptr;
     };
 
+    bool placingMachinery() {
+        return prototype != nullptr;
+    }
+
     void mousePos(Vector2d pos) {
         if (!prototype)
             return;

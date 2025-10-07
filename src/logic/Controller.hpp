@@ -13,7 +13,7 @@
 #include "Machinery.hpp"
 
 class Interpreter {
-    std::vector<std::string> instructions;    
+    std::vector<std::string> instructions;
     int rInstr = 0;
     int rDelay = 0;
 
@@ -21,7 +21,7 @@ public:
     void clearToInitialState();
     int execNextInstruction();
     int getSourceLineNumber();
-    bool compile(std::vector<std::string> sourceCode); // TODO maybe return results like error here and here
+    bool compile(std::vector<std::string> sourceCode); // TODO maybe return results like "error here and here"
 };
 
 class Controller : public Machinery {
@@ -36,7 +36,18 @@ class Controller : public Machinery {
     Console* codeConsole = nullptr;
     Console* outputConsole = nullptr;
 
-    void openFile();
+    std::vector<std::string> codeConsoleSavedLines;
+    std::vector<std::string> ouputConsoleSavedLines;
+
+    void onOpenFileButtonClick();
+    void createWindow();
+    void updateWindow();
+    void onWindowClose();
+    void onRunButtonClick();
+    void onPauseButtonClick();
+    void saveConsolesStates();
+    void loadConsoledStates();
+    void onSaveSaveFileButtonClick();
 
 public:
     Controller(Vector2d aPos):
@@ -45,11 +56,6 @@ public:
 
     void draw() override;
     std::vector<std::string> split(const std::string& s, const std::string& delimiter);
-    void createWindow();
-    void updateWindow();
-    void onWindowClose();
-    void onRunButtonClick();
-    void onPauseButtonClick();
     void run() override;
     void onClick() override;
 };

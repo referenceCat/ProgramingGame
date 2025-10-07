@@ -1,6 +1,7 @@
 #include "GameWorld.hpp"
 #include "GraphicsEngine.hpp"
 #include <format>
+#include "MachineryBuilder.hpp"
 
 void GameWorld::addManipulatorArm(Arm* arm) {
     arms.push_back(arm);
@@ -155,7 +156,9 @@ void GameWorld::run() {
     }
 }
 
-void GameWorld::click(Vector2d point) {
+void GameWorld::click(Vector2d point) { // TODO move to other class (game manager or that)
+    if (MachineryBuilder::instance()->placingMachinery())
+        return;
     for (auto machinery : machines) {
         if (machinery->getRect().isInside(point)) {
             machinery->onClick();
@@ -167,8 +170,8 @@ void GameWorld::click(Vector2d point) {
         std::vector<ModuleNode*> nodes = module->getNodes();
         for (auto node : nodes) {
             if ((module->getPosition() + node->position.rotate(module->getRotation()) - Vector2d(point.x, point.y)).lenght() < 3) {
-                    ModuleBuilder::instance()->setParentNode(node);
-                    ModuleBuilder::instance()->createWindow();
+                ModuleBuilder::instance()->setParentNode(node);
+                ModuleBuilder::instance()->createWindow();
                 return;
             }
         }

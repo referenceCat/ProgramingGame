@@ -379,6 +379,23 @@ public:
         this->editable = editable;
     }
 
+    void clearLines() {
+        lines.clear();
+        addLine("");
+        moveCursor(0, 0);
+        lineFrom = 0;
+    }
+
+    void setLines(std::vector<std::string> lines) {
+        if (lines.size() == 0) {
+            clearLines();
+            return;
+        }
+        this->lines = lines;
+        moveCursor(lines.size(), 1000);
+        lineFrom = 0;
+    }
+
     void draw() override;
 };
 
