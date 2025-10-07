@@ -68,10 +68,16 @@ void Console::moveCursor(Vector2d mousePos) {
 
 void Console::draw() {
     al_draw_filled_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, al_map_rgb(10, 10, 10));
-    al_draw_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, al_map_rgb(200, 200, 200), 2);
 
     linesMax = (getRect().dimensions().y - 10) / 15;
-    for (int i = lineFrom; i < (lineFrom + linesMax < lines.size() ? lineFrom + linesMax : lines.size()); i++) {
+
+    // draw selected line background
+    if (selectedLine >= lineFrom && selectedLine < lineFrom + linesMax) {
+        al_draw_filled_rectangle(rect.p1.x, rect.p1.y + 8 + (selectedLine - lineFrom) * 15, rect.p2.x, rect.p1.y + 22 + (selectedLine - lineFrom) * 15, al_map_rgb(40, 40, 40));
+    }
+
+    // draw lines
+    for (int i = lineFrom; i < (lineFrom + linesMax < lines.size() ? lineFrom + linesMax : lines.size()); i++) { 
         al_draw_text(GuiEngine::instance()->debugFont, al_map_rgb(100, 100, 100), rect.p1.x + 10, rect.p1.y + 10.1 + (i - lineFrom) * 15, 0, std::to_string(i).c_str());
         int maxStringLength = (rect.dimensions().x - 50) / al_get_text_width(GuiEngine::instance()->debugFont, "a");
         auto displayedLine = (char*)malloc(maxStringLength + 1);
@@ -80,6 +86,7 @@ void Console::draw() {
         al_draw_text(GuiEngine::instance()->debugFont, al_map_rgb(255, 255, 255), rect.p1.x + 50, rect.p1.y + 10.1 + (i - lineFrom) * 15, 0, displayedLine);
     }
 
+    // draw cursor
     auto duration = std::chrono::system_clock::now().time_since_epoch(); // TODO do it normaly
     long long millisNow = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
     if (cursorLine >= lineFrom && cursorLine < lineFrom + linesMax && ((millisNow % 1000 < 500) || (millisNow - lastTimeCursorMovedMillis) < 500) && GuiEngine::instance()->getKeyboardInputHandler() == this && editable) {
@@ -88,7 +95,9 @@ void Console::draw() {
             return; // check if cursor is outiside of console
         al_draw_line(x, rect.p1.y + 8 + (cursorLine - lineFrom) * 15, x, rect.p1.y + 22 + (cursorLine - lineFrom) * 15, al_map_rgb(255, 255, 255), 2);
     }
-}
+
+    al_draw_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, al_map_rgb(200, 200, 200), 2);
+ }
 
 GuiElement::~GuiElement() {
     if (onCloseCallback)

@@ -282,6 +282,7 @@ class Console : public GuiElement {
     bool editable = true;
     int cursorLine = 0;
     int cursorColumn = 0;
+    int selectedLine = -1;
 
     long long int lastTimeCursorMovedMillis = 0;
 
@@ -320,6 +321,10 @@ public:
         if (lineFrom + n < 0 || lineFrom + n >= lines.size())
             return;
         lineFrom += n;
+    }
+
+    void setSelectedLine(int line) {
+        selectedLine = line;
     }
 
     virtual void handleKeyChar(char ch) override {
