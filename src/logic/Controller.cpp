@@ -40,24 +40,28 @@ void Controller::createWindow() {
     new Label(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(1, 0).margin(5, 72, -1, -1).dimensions(Vector2d(al_get_text_width(GuiEngine::instance()->debugFont, "Output:"), 16)), "Output:");
     auto controlArea = new NamedArea(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(0, 0).margin(10, 10, 5, -1).dimensions(Vector2d(-1, 50)), "controls");
 
-    auto runStopButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(8, 1).tableCell(0, 0).margin(3, 3, 3, 3)); // run/stop
+    auto runStopButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(12, 1).tableCell(0, 0).margin(3, 3, 3, 3)); // run/stop
     runStopButton->setMouseCallback(Release, [this](auto pos) { this->onRunButtonClick(); });
     runStopButtonIcon = new Icon(runStopButton, Aligment(), GuiEngine::instance()->getIcon("run"));
 
-    auto pauseButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(8, 1).tableCell(1, 0).margin(3, 3, 3, 3)); // pause/continue
+    auto pauseButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(12, 1).tableCell(1, 0).margin(3, 3, 3, 3)); // pause/continue
     pauseButton->setMouseCallback(Release, [this](auto pos) { this->onPauseButtonClick(); });
     pauseButtonIcon = new Icon(pauseButton, Aligment(), GuiEngine::instance()->getIcon("pause"));
 
-    auto nextButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(8, 1).tableCell(2, 0).margin(3, 3, 3, 3)); // exec 1 instruction
+    auto nextButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(12, 1).tableCell(2, 0).margin(3, 3, 3, 3)); // exec 1 instruction
     nextButton->setMouseCallback(Release, [this](auto pos) {});
     nextButtonIcon = new Icon(nextButton, Aligment(), GuiEngine::instance()->getIcon("next"));
 
-    auto openFileButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(4, 1).tableCell(2, 0).margin(3, 3, 3, 3)); // exec 1 instruction
+    auto openFileButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(4, 1).tableCell(1, 0).margin(3, 3, 3, 3)); // exec 1 instruction
     openFileButton->setMouseCallback(Release, [this](auto pos) { onOpenFileButtonClick(); });
     new Label(openFileButton, Aligment(), "open");
 
+    auto saveFileButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(4, 1).tableCell(2, 0).margin(3, 3, 3, 3)); // exec 1 instruction
+    saveFileButton->setMouseCallback(Release, [this](auto pos) { onSaveFileButtonClick(); });
+    new Label(saveFileButton, Aligment(), "save");
+
     auto saveAsFileButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(4, 1).tableCell(3, 0).margin(3, 3, 3, 3)); // exec 1 instruction
-    saveAsFileButton->setMouseCallback(Release, [this](auto pos) { onSaveSaveFileButtonClick(); });
+    saveAsFileButton->setMouseCallback(Release, [this](auto pos) { onSaveAsFileButtonClick(); });
     new Label(saveAsFileButton, Aligment(), "save as");
 
     loadConsoledStates();
@@ -124,23 +128,66 @@ void Controller::loadConsoledStates() {
     outputConsole->setLines(ouputConsoleSavedLines);
 }
 
-void Controller::onSaveSaveFileButtonClick() {
-    // TODO
-}
-
-void Controller::onOpenFileButtonClick() {
+std::string getFilenameViaDialog(bool save) {
     char filename[1024];
-    FILE* f = popen("zenity --file-selection", "r");
+    FILE* f;
+    if (save) {
+        f = popen("zenity --file-selection --title='Select a File' --save", "r");
+    } else {
+        f = popen("zenity --file-selection --title='Select a File'", "r");
+    }
+
     fgets(filename, 1024, f);
     if (filename == "�?tXUU")
-        return; // check if no file was selected
+        return {}; // check if no file was selected
 
     for (int i = 0; i < sizeof(filename); i++) { // remove \n from file name
         if (filename[i] == '\n')
             filename[i] = '\0';
     }
 
-    std::ifstream file(filename);
+    return filename;
+}
+
+void Controller::saveCodeToFile(std::string filepath) {
+    std::ofstream myfile;
+    myfile.open(filepath);
+    for (auto line : codeConsole->getLines()) {
+        myfile << line << '\n';
+    }
+    myfile << std::flush;
+    myfile.close();
+    return;
+}
+
+void Controller::onSaveFileButtonClick() {
+    assert(window != nullptr);
+    if (filepath.empty()) {
+        onSaveAsFileButtonClick();
+        return;
+    }
+    saveCodeToFile(filepath);
+}
+
+void Controller::onSaveAsFileButtonClick() {
+    assert(window != nullptr);
+    auto dialogResult = getFilenameViaDialog(true);
+    if (dialogResult.empty()) {
+        return;
+    }
+    filepath = dialogResult;
+    saveCodeToFile(filepath);
+}
+
+void Controller::onReloadFileButtonclick() {
+    assert(window != nullptr);
+}
+
+void Controller::onOpenFileButtonClick() {
+    assert(window != nullptr);
+
+    auto dialogResult = getFilenameViaDialog(false);
+    std::ifstream file(dialogResult);
     if (!file.is_open())
         return;
     codeConsole->clearLines();
@@ -151,6 +198,7 @@ void Controller::onOpenFileButtonClick() {
     while (std::getline(file, line)) {
         codeConsole->addLine(line);
     }
+    filepath = dialogResult;
     updateWindow();
 }
 

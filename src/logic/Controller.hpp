@@ -38,7 +38,7 @@ class Controller : public Machinery {
 
     std::vector<std::string> codeConsoleSavedLines;
     std::vector<std::string> ouputConsoleSavedLines;
-
+    std::string filepath = "";
     void onOpenFileButtonClick();
     void createWindow();
     void updateWindow();
@@ -47,7 +47,10 @@ class Controller : public Machinery {
     void onPauseButtonClick();
     void saveConsolesStates();
     void loadConsoledStates();
-    void onSaveSaveFileButtonClick();
+    void saveCodeToFile(std::string filepath);
+    void onSaveFileButtonClick();
+    void onSaveAsFileButtonClick();
+    void onReloadFileButtonclick();
 
 public:
     Controller(Vector2d aPos):
