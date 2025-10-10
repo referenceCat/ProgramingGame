@@ -229,7 +229,7 @@ std::vector<std::string> Controller::split(const std::string& s,
 void Controller::run() {
     if (!paused && running) {
         int result = interpreter.execNextInstruction();
-        codeConsole->setSelectedLine(interpreter.getSourceLineNumber());
+        codeConsole->setHighlightedLine(interpreter.getSourceLineNumber());
         if (result == 3) {
             outputConsole->addLine(std::format("Program finished! (code: {})", result));
             running = false;

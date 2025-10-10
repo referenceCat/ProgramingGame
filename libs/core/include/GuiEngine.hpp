@@ -283,7 +283,9 @@ class Console : public GuiElement {
     bool editable = true;
     int cursorLine = 0;
     int cursorColumn = 0;
-    int selectedLine = -1;
+    int selectionLine = -1; // selection is everything between selection line/column and cursor/line column
+    int selectionColumn = -1;
+    int highlightedLine = -1;
 
     long long int lastTimeCursorMovedMillis = 0;
 
@@ -324,8 +326,32 @@ public:
         lineFrom += n;
     }
 
-    void setSelectedLine(int line) {
-        selectedLine = line;
+    void setHighlightedLine(int line) {
+        highlightedLine = line;
+    }
+
+    void deleteInsideSelection() {
+        if (selectionColumn == -1 || selectionLine == -1)
+            return;
+
+        int selectionColumnFrom = cursorColumn;
+        int selectionColumnTo = selectionColumn;
+        int selectionLineFrom = cursorLine;
+        int selectionLineTo = selectionLine;
+
+        if (selectionLine < cursorLine || (selectionLine == cursorLine && selectionColumn < cursorColumn)) {
+            selectionColumnFrom = selectionColumn;
+            selectionColumnTo = cursorColumn;
+            selectionLineFrom = selectionLine;
+            selectionLineTo = cursorLine;
+        }
+
+        moveCursor(selectionLineFrom, selectionColumnFrom);
+
+        auto tmp = lines.at(selectionLineFrom).substr(0, selectionColumnFrom) + lines.at(selectionLineTo).substr(selectionColumnTo);
+        lines.at(selectionLineFrom) = tmp;
+        lines.erase(lines.begin() + selectionLineFrom + 1, lines.begin() + selectionLineTo + 1);
+        clearSelection();
     }
 
     virtual void handleKeyChar(char ch) override {
@@ -333,7 +359,9 @@ public:
             return;
         }
         if (ch == '\b' || ch == 177) { // backspace or DEL
-            if (cursorColumn != 0) { // clear char
+            if (selectionColumn != -1 && selectionLine != -1) { // clear only selection
+                deleteInsideSelection();
+            } else if (cursorColumn != 0) { // clear char
                 lines.at(cursorLine).erase(cursorColumn - 1, 1);
                 moveCursor(cursorLine, cursorColumn - 1);
             } else if (cursorLine != 0) { // clear line separation (cant clear first line)
@@ -343,6 +371,7 @@ public:
                 moveCursor(cursorLine - 1, newColumn);
             }
         } else if (ch == '\n' || ch == '\r') { // handle ENTER
+            deleteInsideSelection();
             if (cursorColumn == lines.at(cursorLine).size()) {
                 lines.insert(lines.begin() + cursorLine + 1, "");
                 moveCursor(cursorLine + 1, 0);
@@ -354,6 +383,7 @@ public:
         } else if (ch == 3) { // handle ctrl+c
 
         } else if (ch == 22) { // handle ctrl+v
+            deleteInsideSelection();
             std::string clipboard;
             clip::get_text(clipboard);
             for (char& c : clipboard) {
@@ -362,6 +392,7 @@ public:
         } else if (0 <= ch && ch <= 31) {
             // ignore other special characters
         } else {
+            deleteInsideSelection();
             lines.at(cursorLine).insert(cursorColumn, 1, ch);
             moveCursor(cursorLine, cursorColumn + 1);
         }
@@ -374,15 +405,19 @@ public:
     virtual void handleKeyDown(int keycode) override {
         switch (keycode) {
             case ALLEGRO_KEY_LEFT:
+                clearSelection();
                 moveCursor(cursorLine, cursorColumn - 1);
                 break;
             case ALLEGRO_KEY_RIGHT:
+                clearSelection();
                 moveCursor(cursorLine, cursorColumn + 1);
                 break;
             case ALLEGRO_KEY_UP:
+                clearSelection();
                 moveCursor(cursorLine - 1, cursorColumn);
                 break;
             case ALLEGRO_KEY_DOWN:
+                clearSelection();
                 moveCursor(cursorLine + 1, cursorColumn);
                 break;
 
@@ -412,6 +447,9 @@ public:
         lineFrom = 0;
     }
 
+    void clearSelection();
+    void setSelection(Vector2d mousePos);
+    void setSelection(int line, int column);
     void draw() override;
 };
 

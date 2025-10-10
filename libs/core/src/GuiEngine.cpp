@@ -12,7 +12,8 @@ void Icon::setBitmap(ALLEGRO_BITMAP* bitmap) {
 }
 
 void Icon::draw() {
-    if (bitmap == nullptr) return;
+    if (bitmap == nullptr)
+        return;
     auto pos = rect.center() - Vector2d(static_cast<double>(al_get_bitmap_width(bitmap)) / 2, static_cast<double>(al_get_bitmap_height(bitmap)) / 2);
     al_draw_bitmap(bitmap, pos.x + 0.1, pos.y + 0.1, 0);
 }
@@ -53,7 +54,8 @@ Console::Console(GuiElement* parent, Aligment aligment):
     GuiElement(parent, aligment) {
     this->setMouseCallback(WheelMoveDown, [this](auto pos) { scrollLines(1); }); // TODO move to handle mouse event
     this->setMouseCallback(WheelMoveUp, [this](auto pos) { scrollLines(-1); });
-    this->setMouseCallback(Click, [this](auto pos) { if(GuiEngine::instance()->getKeyboardInputHandler() != this ) {GuiEngine::instance()->setKeyboardInputHandler(this);} moveCursor(pos);});
+    this->setMouseCallback(Click, [this](auto pos) { if(GuiEngine::instance()->getKeyboardInputHandler() != this ) {GuiEngine::instance()->setKeyboardInputHandler(this);} moveCursor(pos); clearSelection(); });
+    this->setMouseCallback(Hold, [this](auto pos) { if (selectionColumn == -1 || selectionLine == -1) {setSelection(cursorLine, cursorColumn);} moveCursor(pos);});
 
     // GuiEngine::instance()->setKeyboardInputHandler(this);
 
@@ -66,18 +68,61 @@ void Console::moveCursor(Vector2d mousePos) {
     moveCursor((mousePos.y - getRect().p1.y - 10) / 15 + lineFrom, (mousePos.x - getRect().p1.x - 50 + 2) / al_get_text_width(GuiEngine::instance()->debugFont, "a"));
 }
 
+void Console::clearSelection() {
+    selectionLine = -1;
+    selectionColumn = -1;
+}
+
+void Console::setSelection(Vector2d mousePos) {
+    setSelection((mousePos.y - getRect().p1.y - 10) / 15 + lineFrom, (mousePos.x - getRect().p1.x - 50 + 2) / al_get_text_width(GuiEngine::instance()->debugFont, "a"));
+}
+
+void Console::setSelection(int line, int column) {
+    selectionLine = line;
+    selectionColumn = column;
+
+    if (selectionLine < 0)
+        selectionLine = 0;
+    if (selectionColumn < 0)
+        selectionColumn = 0;
+    if (selectionLine >= lines.size())
+        selectionLine = lines.size() - 1;
+    if (selectionColumn > lines.at(selectionLine).size())
+        selectionColumn = lines.at(selectionLine).size();
+}
+
 void Console::draw() {
     al_draw_filled_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, al_map_rgb(10, 10, 10));
 
     linesMax = (getRect().dimensions().y - 10) / 15;
 
-    // draw selected line background
-    if (selectedLine >= lineFrom && selectedLine < lineFrom + linesMax) {
-        al_draw_filled_rectangle(rect.p1.x, rect.p1.y + 8 + (selectedLine - lineFrom) * 15, rect.p2.x, rect.p1.y + 22 + (selectedLine - lineFrom) * 15, al_map_rgb(40, 40, 40));
+    // draw highlighted line background
+    if (highlightedLine >= lineFrom && highlightedLine < lineFrom + linesMax) {
+        al_draw_filled_rectangle(rect.p1.x, rect.p1.y + 8 + (highlightedLine - lineFrom) * 15, rect.p2.x, rect.p1.y + 22 + (highlightedLine - lineFrom) * 15, al_map_rgb(40, 40, 40));
     }
 
+    // draw selection
+    if (selectionLine != -1 && selectionColumn != -1) {
+        int selectionColumnFrom = cursorColumn;
+        int selectionColumnTo = selectionColumn;
+        int selectionLineFrom = cursorLine;
+        int selectionLineTo = selectionLine;
+
+        if (selectionLine < cursorLine || (selectionLine == cursorLine && selectionColumn < cursorColumn)) {
+            selectionColumnFrom = selectionColumn;
+            selectionColumnTo = cursorColumn;
+            selectionLineFrom = selectionLine;
+            selectionLineTo = cursorLine;
+        }
+        for (int i = selectionLineFrom; i <= selectionLineTo; i++) {
+            al_draw_filled_rectangle(50 + rect.p1.x + (i == selectionLineFrom ? selectionColumnFrom * al_get_text_width(GuiEngine::instance()->debugFont, "a") : 0),
+                rect.p1.y + 8 + (i - lineFrom) * 15,
+                i == selectionLineTo ? 50 + rect.p1.x + selectionColumnTo * al_get_text_width(GuiEngine::instance()->debugFont, "a") : rect.p2.x,
+                rect.p1.y + 22 + (i - lineFrom) * 15, al_map_rgb(0, 150, 200));
+        }
+    }
     // draw lines
-    for (int i = lineFrom; i < (lineFrom + linesMax < lines.size() ? lineFrom + linesMax : lines.size()); i++) { 
+    for (int i = lineFrom; i < (lineFrom + linesMax < lines.size() ? lineFrom + linesMax : lines.size()); i++) {
         al_draw_text(GuiEngine::instance()->debugFont, al_map_rgb(100, 100, 100), rect.p1.x + 10, rect.p1.y + 10.1 + (i - lineFrom) * 15, 0, std::to_string(i).c_str());
         int maxStringLength = (rect.dimensions().x - 50) / al_get_text_width(GuiEngine::instance()->debugFont, "a");
         auto displayedLine = (char*)malloc(maxStringLength + 1);
@@ -93,11 +138,10 @@ void Console::draw() {
         double x = 50 + rect.p1.x + cursorColumn * al_get_text_width(GuiEngine::instance()->debugFont, "a");
         if (x < rect.p2.x)
             al_draw_line(x, rect.p1.y + 8 + (cursorLine - lineFrom) * 15, x, rect.p1.y + 22 + (cursorLine - lineFrom) * 15, al_map_rgb(255, 255, 255), 2); // check if cursor is outiside of console
-        
     }
 
     al_draw_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, al_map_rgb(200, 200, 200), 2);
- }
+}
 
 GuiElement::~GuiElement() {
     if (onCloseCallback)
