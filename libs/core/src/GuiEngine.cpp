@@ -91,9 +91,9 @@ void Console::draw() {
     long long millisNow = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
     if (cursorLine >= lineFrom && cursorLine < lineFrom + linesMax && ((millisNow % 1000 < 500) || (millisNow - lastTimeCursorMovedMillis) < 500) && GuiEngine::instance()->getKeyboardInputHandler() == this && editable) {
         double x = 50 + rect.p1.x + cursorColumn * al_get_text_width(GuiEngine::instance()->debugFont, "a");
-        if (x >= rect.p2.x)
-            return; // check if cursor is outiside of console
-        al_draw_line(x, rect.p1.y + 8 + (cursorLine - lineFrom) * 15, x, rect.p1.y + 22 + (cursorLine - lineFrom) * 15, al_map_rgb(255, 255, 255), 2);
+        if (x < rect.p2.x)
+            al_draw_line(x, rect.p1.y + 8 + (cursorLine - lineFrom) * 15, x, rect.p1.y + 22 + (cursorLine - lineFrom) * 15, al_map_rgb(255, 255, 255), 2); // check if cursor is outiside of console
+        
     }
 
     al_draw_rectangle(rect.p1.x, rect.p1.y, rect.p2.x, rect.p2.y, al_map_rgb(200, 200, 200), 2);

@@ -12,6 +12,7 @@
 #include <allegro5/allegro_color.h>
 #include <allegro5/allegro_font.h>
 #include "common.hpp"
+#include "clip.h"
 
 class GuiEngine;
 
@@ -331,7 +332,7 @@ public:
         if (!editable) {
             return;
         }
-        if (ch == '\b') { // backspace
+        if (ch == '\b' || ch == 177) { // backspace or DEL
             if (cursorColumn != 0) { // clear char
                 lines.at(cursorLine).erase(cursorColumn - 1, 1);
                 moveCursor(cursorLine, cursorColumn - 1);
@@ -341,7 +342,7 @@ public:
                 lines.erase(lines.begin() + cursorLine);
                 moveCursor(cursorLine - 1, newColumn);
             }
-        } else if (ch == '\r') { // handle ENTER
+        } else if (ch == '\n' || ch == '\r') { // handle ENTER
             if (cursorColumn == lines.at(cursorLine).size()) {
                 lines.insert(lines.begin() + cursorLine + 1, "");
                 moveCursor(cursorLine + 1, 0);
@@ -350,6 +351,16 @@ public:
                 lines.at(cursorLine).erase(lines.at(cursorLine).begin() + cursorColumn, lines.at(cursorLine).end());
                 moveCursor(cursorLine + 1, 0);
             }
+        } else if (ch == 3) { // handle ctrl+c
+
+        } else if (ch == 22) { // handle ctrl+v
+            std::string clipboard;
+            clip::get_text(clipboard);
+            for (char& c : clipboard) {
+                handleKeyChar(c);
+            }
+        } else if (0 <= ch && ch <= 31) {
+            // ignore other special characters
         } else {
             lines.at(cursorLine).insert(cursorColumn, 1, ch);
             moveCursor(cursorLine, cursorColumn + 1);

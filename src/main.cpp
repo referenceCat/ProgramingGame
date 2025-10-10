@@ -217,7 +217,6 @@ void mainLoop(ALLEGRO_EVENT_QUEUE* event_queue) {
 }
 
 int main(int argc, char** argv) {
-    clip::set_text("Hello World");
     const int UPS = 60;
 
     // Initialize allegro

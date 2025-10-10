@@ -51,6 +51,7 @@ class Controller : public Machinery {
     void onSaveFileButtonClick();
     void onSaveAsFileButtonClick();
     void onReloadFileButtonclick();
+    void onPaste();
 
 public:
     Controller(Vector2d aPos):

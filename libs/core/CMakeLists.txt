@@ -5,5 +5,8 @@ cmake_minimum_required(VERSION 3.28)
 file(GLOB_RECURSE SOURCES *.cpp )
 add_library(core OBJECT ${SOURCES})
 
+target_link_libraries(core clip)
+
 target_include_directories(core PUBLIC include)
 target_include_directories(core PUBLIC src)
+target_include_directories(core PUBLIC ../clip)
