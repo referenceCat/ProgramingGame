@@ -16,6 +16,8 @@
 #include "GraphicsEngine.hpp"
 #include "logic/MachineryBuilder.hpp"
 #include <format>
+#include "clip.h"
+
 
 long long tick = 0;
 long long eventCounter = 0;
@@ -215,6 +217,7 @@ void mainLoop(ALLEGRO_EVENT_QUEUE* event_queue) {
 }
 
 int main(int argc, char** argv) {
+    clip::set_text("Hello World");
     const int UPS = 60;
 
     // Initialize allegro
