@@ -355,6 +355,29 @@ public:
     }
 
     virtual void handleKeyChar(char ch) override {
+        if (ch == 3 && selectionLine != -1 && selectionColumn != -1) { // handle ctrl+c
+            std::string result;
+            int selectionColumnFrom = cursorColumn;
+            int selectionColumnTo = selectionColumn;
+            int selectionLineFrom = cursorLine;
+            int selectionLineTo = selectionLine;
+
+            if (selectionLine < cursorLine || (selectionLine == cursorLine && selectionColumn < cursorColumn)) {
+                selectionColumnFrom = selectionColumn;
+                selectionColumnTo = cursorColumn;
+                selectionLineFrom = selectionLine;
+                selectionLineTo = cursorLine;
+            }
+            for (int i = selectionLineFrom; i <= selectionLineTo; i++) {
+                auto columnFrom = selectionLineFrom == i ? selectionColumnFrom : 0;
+                auto columnTo = selectionLineTo == i ? selectionColumnTo : 9999999;
+                result += lines.at(i).substr(columnFrom, columnTo - columnFrom);
+                if (i != selectionLineTo) {
+                    result += "\n";
+                }
+            }
+            clip::set_text(result);
+        }
         if (!editable) {
             return;
         }
@@ -380,8 +403,6 @@ public:
                 lines.at(cursorLine).erase(lines.at(cursorLine).begin() + cursorColumn, lines.at(cursorLine).end());
                 moveCursor(cursorLine + 1, 0);
             }
-        } else if (ch == 3) { // handle ctrl+c
-
         } else if (ch == 22) { // handle ctrl+v
             deleteInsideSelection();
             std::string clipboard;
