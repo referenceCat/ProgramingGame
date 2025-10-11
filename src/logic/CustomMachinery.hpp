@@ -176,7 +176,25 @@ class Manipulator : public Machinery {
     void setManualTarget(Vector2d aPos) {
         manualTarget = aPos;
         if (manualMode)
-            setTarget(manualTarget);
+            setGlobalTarget(manualTarget);
+    }
+
+    void updateMemory() {
+        uint32_t word0 = 0; // TODO should be uniformal across all machinery (e.g. 1 bit is working, 2 is power, 3 ...)
+        word0 |= (manualMode << 0);
+        word0 |= (arm->isActive() << 1);
+        word0 |= ((arm->getTakenBox() != nullptr) << 2);
+        word0 |= ((arm->getJointTargetPosition(2) == arm->getJointPosition(2)) << 3); // arm reached its target
+        setMemoryValue(0, word0);
+
+        uint32_t word1 = getMemoryValue(1);
+        if (word1)
+            arm->grab();
+        else
+            arm->release();
+
+        if (!manualMode)
+            setGlobalTarget(Vector2d(getMemoryValue(2), getMemoryValue(3)));
     }
 
 public:
@@ -187,6 +205,7 @@ public:
     }
 
     void run() override {
+        updateMemory();
         if (arm) {
             if (leftClampPos == Vector2d() && rightClampPos == Vector2d()) { // on arm initialisation clamps located at 0, 0 and it causes ugly animation
                 leftClampPos = arm->getLastJointPos();
@@ -253,7 +272,7 @@ public:
         GraphicsEngine::instance()->drawText(arm->getJointPosition(1) + Vector2d(1, 1), format("{:.0f}", arm->getJointRotation(1).degress()), GraphicsEngine::instance()->debugFont, CommonValues::zDebug, al_map_rgb(255, 255, 255), false);
     }
 
-    void setTarget(Vector2d pos) {
+    void setGlobalTarget(Vector2d pos) {
         pos = pos - arm->getJointPosition(0);
 
         if (pos.lenght() >= 6 + 8) { // target is too far
@@ -286,11 +305,11 @@ public:
     //             break;
     //         case 2:
     //             target.x = arg;
-    //             setTarget(target);
+    //             setGlobalTarget(target);
     //             break;
     //         case 3:
     //             target.x = arg;
-    //             setTarget(target);
+    //             setGlobalTarget(target);
     //             break;
     //         case 100:
     //             arm->release();

@@ -298,11 +298,11 @@ int Controller::execNextInstruction() {
     } else if (command == "send") {
         int machineryAddress = std::atoi(instr.at(1).c_str());
         int memoryAddress = std::atoi(instr.at(2).c_str());
-        int value = std::atoi(instr.at(3).c_str());
+        int ownMemoryAddress = std::atoi(instr.at(3).c_str());
 
         for (auto machinery : GameWorld::instance()->getMachinery()) {
             if (machinery->getAddress() == machineryAddress) {
-                machinery->onMemoryWrite(memoryAddress, value);
+                machinery->onMemoryWrite(memoryAddress, getMemoryValue(ownMemoryAddress));
             }
         }
 
@@ -319,6 +319,12 @@ int Controller::execNextInstruction() {
             }
         }
 
+        rInstr++;
+        return 0;
+    } else if (command == "set") {
+        int memoryAddress = std::atoi(instr.at(1).c_str());
+        int value = std::atoi(instr.at(2).c_str());
+        setMemoryValue(memoryAddress, value);
         rInstr++;
         return 0;
     }
