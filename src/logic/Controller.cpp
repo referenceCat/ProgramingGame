@@ -308,8 +308,7 @@ int Controller::execNextInstruction() {
 
         rInstr++;
         return 0;
-    }
-    if (command == "recieve") {
+    } else if (command == "recieve") {
         int machineryAddress = std::atoi(instr.at(1).c_str());
         int machineryMemoryAddress = std::atoi(instr.at(2).c_str());
         int ownMemoryAddress = std::atoi(instr.at(3).c_str());

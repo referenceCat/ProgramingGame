@@ -114,7 +114,10 @@ void Console::draw() {
             selectionLineFrom = selectionLine;
             selectionLineTo = cursorLine;
         }
+
         for (int i = selectionLineFrom; i <= selectionLineTo; i++) {
+            if (i < lineFrom) continue; // skip lines outside windows
+            if (i >= lineFrom + linesMax) continue; // skip lines outside windows
             al_draw_filled_rectangle(50 + rect.p1.x + (i == selectionLineFrom ? selectionColumnFrom * al_get_text_width(GuiEngine::instance()->debugFont, "a") : 0),
                 rect.p1.y + 8 + (i - lineFrom) * 15,
                 i == selectionLineTo ? 50 + rect.p1.x + selectionColumnTo * al_get_text_width(GuiEngine::instance()->debugFont, "a") : rect.p2.x,
