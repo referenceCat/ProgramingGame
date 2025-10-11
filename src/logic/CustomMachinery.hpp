@@ -105,8 +105,8 @@ class Manipulator : public Machinery {
         addressButtonAligment.tableRows = 5;
         addressButtonAligment.ownRow = 0;
         auto addressButton = new Button(optionsArea->getInternalArea(), addressButtonAligment);
-        addressButton->setMouseCallback(Release, [this](auto pos) { new AddressSelectionWindow(address, [this](int address) { this->setAddress(address); }); });
-        addressLabel = new Label(addressButton, Aligment(), std::format("Addr: {}", address));
+        addressButton->setMouseCallback(Release, [this](auto pos) { new AddressSelectionWindow(getAddress(), [this](int address) { this->setAddress(address); }); });
+        addressLabel = new Label(addressButton, Aligment(), std::format("Addr: {}", getAddress()));
 
         Aligment buttonAligment = Aligment::byMargin(5, 5, 5, 5);
         buttonAligment.tableColumns = 3;
@@ -181,7 +181,9 @@ class Manipulator : public Machinery {
 
 public:
     Manipulator(Vector2d aPos):
-        Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(5, 3))) {
+        Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(5, 3)), 10) {
+        for (int i = 0; i < 10; i++) // for testing
+            setMemoryValue(i, i);
     }
 
     void run() override {
@@ -270,36 +272,36 @@ public:
         arm->setJointTargetRotation(1, q2(pos.x, pos.y, 8, 6));
     }
 
-    void onCommandRecive(int cmd, int arg) override {
-        if (manualMode)
-            return;
-        switch (cmd) {
-            case 0:
-                arm->setJointTargetRotation(0, Rotation::fromDegrees(arg));
-                target = rect.p2; // manipulator should ignore its last target
-                break;
-            case 1:
-                arm->setJointTargetRotation(1, Rotation::fromDegrees(arg));
-                target = rect.p2; // manipulator should ignore its last target
-                break;
-            case 2:
-                target.x = arg;
-                setTarget(target);
-                break;
-            case 3:
-                target.x = arg;
-                setTarget(target);
-                break;
-            case 100:
-                arm->release();
-                break;
-            case 200:
-                arm->grab();
-                break;
-            default:
-                break;
-        }
-    }
+    // void onCommandRecive(int cmd, int arg) override {
+    //     if (manualMode)
+    //         return;
+    //     switch (cmd) {
+    //         case 0:
+    //             arm->setJointTargetRotation(0, Rotation::fromDegrees(arg));
+    //             target = rect.p2; // manipulator should ignore its last target
+    //             break;
+    //         case 1:
+    //             arm->setJointTargetRotation(1, Rotation::fromDegrees(arg));
+    //             target = rect.p2; // manipulator should ignore its last target
+    //             break;
+    //         case 2:
+    //             target.x = arg;
+    //             setTarget(target);
+    //             break;
+    //         case 3:
+    //             target.x = arg;
+    //             setTarget(target);
+    //             break;
+    //         case 100:
+    //             arm->release();
+    //             break;
+    //         case 200:
+    //             arm->grab();
+    //             break;
+    //         default:
+    //             break;
+    //     }
+    // }
 
     void addToGameWorld() override { // TODO
         Machinery::addToGameWorld();

@@ -43,6 +43,14 @@ std::vector<Box*> Machinery::getBoxesTouching(ProductionArea area) {
     return result;
 }
 
+void Machinery::setMemoryValue(size_t address, uint32_t value) {
+    memory.at(address) = value;
+}
+
+uint32_t Machinery::getMemoryValue(size_t address) {
+    return memory.at(address);
+}
+
 void Machinery::addToGameWorld() {
     GameWorld::instance()->addMachinery(this);
 }
@@ -64,6 +72,16 @@ Rect2d Machinery::getRect() {
     return rect;
 }
 
+void Machinery::onMemoryWrite(size_t address, uint32_t value) {
+    if (address >= memory.size()) return;
+    memory.at(address) = value;
+}
+
+uint32_t Machinery::onMemoryRead(size_t address) {
+    if (address >= memory.size()) return 0;
+    return memory.at(address);
+}
+
 void Machinery::setCenter(Vector2d pos) {
     rect = Rect2d::fromCenterAndDimensions(pos, rect.dimensions());
 }
@@ -74,4 +92,8 @@ void Machinery::setAddress(int id) {
 
 int Machinery::getAddress() {
     return address;
+}
+
+size_t Machinery::getMemorySize() {
+    return memory.size();
 }

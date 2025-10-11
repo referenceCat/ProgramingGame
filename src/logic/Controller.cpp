@@ -34,10 +34,13 @@ void Controller::createWindow() {
     window = new Window(GuiEngine::instance()->getDisplayArea(), AligmentBuilder().dimensions(Vector2d(700, 700)).margin(-1, 50, 50, 50), true);
     window->setOnCloseCallback([this]() { this->onWindowClose(); });
     codeConsole = new Console(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(0, 0).margin(10, 90, 5, 10));
-    outputConsole = new Console(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(1, 0).margin(5, 90, 10, 10));
+    outputConsole = new Console(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 2).tableCell(1, 0).margin(5, 90, 10, 5));
     outputConsole->setEditable(false);
+    memoryConsole = new Console(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 2).tableCell(1, 1).margin(5, 25, 10, 10));
+    memoryConsole->setEditable(false);
     new Label(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(0, 0).margin(10, 72, -1, -1).dimensions(Vector2d(al_get_text_width(GuiEngine::instance()->debugFont, "Code:"), 16)), "Code:");
-    new Label(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(1, 0).margin(5, 72, -1, -1).dimensions(Vector2d(al_get_text_width(GuiEngine::instance()->debugFont, "Output:"), 16)), "Output:");
+    new Label(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 2).tableCell(1, 0).margin(5, 72, -1, -1).dimensions(Vector2d(al_get_text_width(GuiEngine::instance()->debugFont, "Output:"), 16)), "Output:");
+    new Label(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 2).tableCell(1, 1).margin(5, 5, -1, -1).dimensions(Vector2d(al_get_text_width(GuiEngine::instance()->debugFont, "Memory:"), 16)), "Memory:");
     auto controlArea = new NamedArea(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(0, 0).margin(10, 10, 5, -1).dimensions(Vector2d(-1, 50)), "controls");
 
     auto runStopButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(12, 1).tableCell(0, 0).margin(3, 3, 3, 3)); // run/stop
@@ -52,15 +55,15 @@ void Controller::createWindow() {
     nextButton->setMouseCallback(Release, [this](auto pos) {});
     nextButtonIcon = new Icon(nextButton, Aligment(), GuiEngine::instance()->getIcon("next"));
 
-    auto openFileButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(4, 1).tableCell(1, 0).margin(3, 3, 3, 3)); // exec 1 instruction
+    auto openFileButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(4, 1).tableCell(1, 0).margin(3, 3, 3, 3));
     openFileButton->setMouseCallback(Release, [this](auto pos) { onOpenFileButtonClick(); });
     new Label(openFileButton, Aligment(), "open");
 
-    auto saveFileButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(4, 1).tableCell(2, 0).margin(3, 3, 3, 3)); // exec 1 instruction
+    auto saveFileButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(4, 1).tableCell(2, 0).margin(3, 3, 3, 3));
     saveFileButton->setMouseCallback(Release, [this](auto pos) { onSaveFileButtonClick(); });
     new Label(saveFileButton, Aligment(), "save");
 
-    auto saveAsFileButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(4, 1).tableCell(3, 0).margin(3, 3, 3, 3)); // exec 1 instruction
+    auto saveAsFileButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(4, 1).tableCell(3, 0).margin(3, 3, 3, 3));
     saveAsFileButton->setMouseCallback(Release, [this](auto pos) { onSaveAsFileButtonClick(); });
     new Label(saveAsFileButton, Aligment(), "save as");
 
@@ -77,11 +80,22 @@ void Controller::updateWindow() {
         pauseButtonIcon->setBitmap(GuiEngine::instance()->getIcon(paused ? "unpause" : "pause"));
         nextButtonIcon->setBitmap(paused ? GuiEngine::instance()->getIcon("next") : nullptr);
         codeConsole->setEditable(false);
+        updateMemoryConsole();
     } else {
         runStopButtonIcon->setBitmap(GuiEngine::instance()->getIcon("run"));
         pauseButtonIcon->setBitmap(nullptr);
         nextButtonIcon->setBitmap(nullptr);
         codeConsole->setEditable(true);
+    }
+}
+
+void Controller::updateMemoryConsole() {
+    memoryConsole->clearLines();
+    for (int i = 0; i < getMemorySize(); i++) {
+        if (i == 0)
+            memoryConsole->setLines({std::to_string(getMemoryValue(i))});
+        else
+            memoryConsole->addLine(std::to_string(getMemoryValue(i)));
     }
 }
 
@@ -93,15 +107,15 @@ void Controller::onWindowClose() {
 void Controller::onRunButtonClick() {
     if (running) {
         running = false;
-        interpreter.clearToInitialState();
+        clearToInitialState();
         outputConsole->addLine("Program terminated by user.");
     } else {
         running = true;
         paused = false;
         outputConsole->addLine("");
         outputConsole->addLine("Compiling...");
-        interpreter.clearToInitialState();
-        interpreter.compile(codeConsole->getLines()); // TODO handle compilation errors
+        clearToInitialState();
+        compile(codeConsole->getLines()); // TODO handle compilation errors
         outputConsole->addLine("Program started.");
     }
     updateWindow();
@@ -228,14 +242,14 @@ std::vector<std::string> Controller::split(const std::string& s,
 
 void Controller::run() {
     if (!paused && running) {
-        int result = interpreter.execNextInstruction();
-        codeConsole->setHighlightedLine(interpreter.getSourceLineNumber());
+        int result = execNextInstruction();
+        codeConsole->setHighlightedLine(getSourceLineNumber());
         if (result == 3) {
             outputConsole->addLine(std::format("Program finished! (code: {})", result));
             running = false;
         } else if (result != 0) {
             outputConsole->addLine(std::format("Program failed with code: {}!", result));
-            outputConsole->addLine(std::format("At line: {}", interpreter.getSourceLineNumber()));
+            outputConsole->addLine(std::format("At line: {}", getSourceLineNumber()));
             running = false;
         }
     }
@@ -243,20 +257,15 @@ void Controller::run() {
     updateWindow();
 }
 
-void Interpreter::clearToInitialState() {
+void Controller::clearToInitialState() {
     rInstr = 0;
     rDelay = 0;
 }
 
-int Interpreter::execNextInstruction() {
+int Controller::execNextInstruction() {
     if (rInstr >= instructions.size()) {
         return 3; // program ended
     }
-
-    // if (breakpoints.at(rInstr) && !paused) {
-    //     pause();
-    //     return 0;
-    // }
 
     if (rDelay) {
         rDelay--;
@@ -266,7 +275,7 @@ int Interpreter::execNextInstruction() {
         return 0;
     }
 
-    if (instructions.at(rInstr).size() == 0 || instructions.at(rInstr).at(0) == '#') {
+    if (instructions.at(rInstr).size() == 0 || instructions.at(rInstr).at(0) == '#') { // ignore this
         rInstr++;
         return 0;
     }
@@ -287,29 +296,41 @@ int Interpreter::execNextInstruction() {
         int error = std::atoi(instr.at(1).c_str());
         return error;
     } else if (command == "send") {
-        int address = std::atoi(instr.at(1).c_str());
-        int command = std::atoi(instr.at(2).c_str());
-        int argument = std::atoi(instr.at(3).c_str());
+        int machineryAddress = std::atoi(instr.at(1).c_str());
+        int memoryAddress = std::atoi(instr.at(2).c_str());
+        int value = std::atoi(instr.at(3).c_str());
 
-        for (auto item : GameWorld::instance()->getMachinery()) {
-            if (item->getAddress() == address)
-                item->onCommandRecive(command, argument);
+        for (auto machinery : GameWorld::instance()->getMachinery()) {
+            if (machinery->getAddress() == machineryAddress) {
+                machinery->onMemoryWrite(memoryAddress, value);
+            }
         }
 
         rInstr++;
         return 0;
-    } else {
-        return 1; // invalid instruction
     }
+    if (command == "recieve") {
+        int machineryAddress = std::atoi(instr.at(1).c_str());
+        int machineryMemoryAddress = std::atoi(instr.at(2).c_str());
+        int ownMemoryAddress = std::atoi(instr.at(3).c_str());
 
-    return 0;
+        for (auto machinery : GameWorld::instance()->getMachinery()) {
+            if (machinery->getAddress() == machineryAddress) {
+                setMemoryValue(ownMemoryAddress, machinery->onMemoryRead(machineryMemoryAddress));
+            }
+        }
+
+        rInstr++;
+        return 0;
+    }
+    return 1; // invalid instruction
 }
 
-int Interpreter::getSourceLineNumber() {
+int Controller::getSourceLineNumber() {
     return rInstr; // return source line what coresponds to rInstr (for now it is the same line)
 }
 
-bool Interpreter::compile(std::vector<std::string> sourceCode) {
+bool Controller::compile(std::vector<std::string> sourceCode) {
     instructions = sourceCode;
     return true;
 }

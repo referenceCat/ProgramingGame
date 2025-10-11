@@ -470,9 +470,9 @@ void ModuleBuilder::createWindow() {
     window->setOnCloseCallback([this](){this->onWindowClose();});
 
     Aligment createButtonAligment;
-    createButtonAligment.marginLeft = 10;
-    createButtonAligment.marginBottom = 10;
-    createButtonAligment.dimensions = Vector2d(100, 40);
+    createButtonAligment.marginLeft = 20;
+    createButtonAligment.marginBottom = 20;
+    createButtonAligment.dimensions = Vector2d(200, 40);
     auto createButton = new Button(window->getInternalArea(), createButtonAligment);
     createButton->setMouseCallback(Release, [this](auto pos) {
         bool result = this->buildModule();

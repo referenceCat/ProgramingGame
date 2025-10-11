@@ -12,22 +12,14 @@
 
 #include "Machinery.hpp"
 
-class Interpreter {
+class Controller : public Machinery {
+    bool paused = true;
+    int running = false;
+
     std::vector<std::string> instructions;
     int rInstr = 0;
     int rDelay = 0;
-
-public:
-    void clearToInitialState();
-    int execNextInstruction();
-    int getSourceLineNumber();
-    bool compile(std::vector<std::string> sourceCode); // TODO maybe return results like "error here and here"
-};
-
-class Controller : public Machinery {
-    Interpreter interpreter;
-    bool paused = true;
-    int running = false;
+    Machinery* ownMachinery;
 
     Window* window = nullptr;
     Icon* runStopButtonIcon = nullptr;
@@ -35,6 +27,7 @@ class Controller : public Machinery {
     Icon* nextButtonIcon = nullptr;
     Console* codeConsole = nullptr;
     Console* outputConsole = nullptr;
+    Console* memoryConsole = nullptr;
 
     std::vector<std::string> codeConsoleSavedLines;
     std::vector<std::string> ouputConsoleSavedLines;
@@ -42,6 +35,7 @@ class Controller : public Machinery {
     void onOpenFileButtonClick();
     void createWindow();
     void updateWindow();
+    void updateMemoryConsole();
     void onWindowClose();
     void onRunButtonClick();
     void onPauseButtonClick();
@@ -51,11 +45,14 @@ class Controller : public Machinery {
     void onSaveFileButtonClick();
     void onSaveAsFileButtonClick();
     void onReloadFileButtonclick();
-    void onPaste();
+    void clearToInitialState();
+    int execNextInstruction();
+    int getSourceLineNumber();
+    bool compile(std::vector<std::string> sourceCode); // TODO maybe return results like "error here and here"
 
 public:
     Controller(Vector2d aPos):
-        Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(5, 7))) {
+        Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(5, 7)), 100) {
     }
 
     void draw() override;
