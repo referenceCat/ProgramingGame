@@ -43,11 +43,11 @@ std::vector<Box*> Machinery::getBoxesTouching(ProductionArea area) {
     return result;
 }
 
-void Machinery::setMemoryValue(size_t address, uint32_t value) {
+void Machinery::setMemoryValue(size_t address, MemoryWord value) {
     memory.at(address) = value;
 }
 
-uint32_t Machinery::getMemoryValue(size_t address) {
+MemoryWord Machinery::getMemoryValue(size_t address) {
     return memory.at(address);
 }
 
@@ -72,12 +72,12 @@ Rect2d Machinery::getRect() {
     return rect;
 }
 
-void Machinery::onMemoryWrite(size_t address, uint32_t value) {
+void Machinery::onMemoryWrite(size_t address, MemoryWord value) {
     if (address >= memory.size()) return;
     memory.at(address) = value;
 }
 
-uint32_t Machinery::onMemoryRead(size_t address) {
+MemoryWord Machinery::onMemoryRead(size_t address) {
     if (address >= memory.size()) return 0;
     return memory.at(address);
 }

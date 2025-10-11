@@ -10,9 +10,10 @@
 #include "Box.hpp"
 #include "GameObject.hpp"
 
+typedef int32_t MemoryWord;
 class Machinery : public GameObject {
     int address = 0;
-    std::vector<uint32_t> memory;
+    std::vector<MemoryWord> memory;
 
 protected:
     Rect2d rect;
@@ -27,12 +28,12 @@ protected:
     Box* createBox(ProductionArea area);
     std::vector<Box*> getBoxesInside(ProductionArea area);
     std::vector<Box*> getBoxesTouching(ProductionArea area);
-    void setMemoryValue(size_t address, uint32_t value);
-    uint32_t getMemoryValue(size_t address);
+    void setMemoryValue(size_t address, MemoryWord value);
+    MemoryWord getMemoryValue(size_t address);
 public:
     Machinery(Rect2d rect, size_t memorySize = 0):
         rect(rect) {
-        memory = std::vector<uint32_t>(memorySize, 0);
+        memory = std::vector<MemoryWord>(memorySize, 0);
     };
 
     virtual void drawInfo() {};
@@ -40,8 +41,8 @@ public:
     virtual void draw() {};
     Rect2d getRect();
     virtual void run() {};
-    virtual void onMemoryWrite(size_t address, uint32_t value);
-    uint32_t onMemoryRead(size_t address);
+    virtual void onMemoryWrite(size_t address, MemoryWord value);
+    MemoryWord onMemoryRead(size_t address);
     virtual void onClick() {};
     void addToGameWorld() override;
     void setCenter(Vector2d pos);

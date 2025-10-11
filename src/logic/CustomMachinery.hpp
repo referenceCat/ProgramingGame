@@ -180,14 +180,14 @@ class Manipulator : public Machinery {
     }
 
     void updateMemory() {
-        uint32_t word0 = 0; // TODO should be uniformal across all machinery (e.g. 1 bit is working, 2 is power, 3 ...)
+        MemoryWord word0 = 0; // TODO should be uniformal across all machinery (e.g. 1 bit is working, 2 is power, 3 ...)
         word0 |= (manualMode << 0);
         word0 |= (arm->isActive() << 1);
         word0 |= ((arm->getTakenBox() != nullptr) << 2);
         word0 |= ((arm->getJointTargetPosition(2) == arm->getJointPosition(2)) << 3); // arm reached its target
         setMemoryValue(0, word0);
 
-        uint32_t word1 = getMemoryValue(1);
+        MemoryWord word1 = getMemoryValue(1);
         if (word1)
             arm->grab();
         else
