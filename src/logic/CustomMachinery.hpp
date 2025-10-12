@@ -187,21 +187,23 @@ class Manipulator : public Machinery {
         word0 |= ((arm->getJointTargetPosition(2) == arm->getJointPosition(2)) << 3); // arm reached its target
         setMemoryValue(0, word0);
 
+        if (manualMode)
+            return;
         MemoryWord word1 = getMemoryValue(1);
         if (word1)
             arm->grab();
         else
             arm->release();
 
-        if (!manualMode)
-            setGlobalTarget(Vector2d(getMemoryValue(2), getMemoryValue(3)));
+        setRelativeTarget(Vector2d(getMemoryValue(2), getMemoryValue(3)));
     }
 
 public:
     Manipulator(Vector2d aPos):
         Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(5, 3)), 10) {
-        for (int i = 0; i < 10; i++) // for testing
-            setMemoryValue(i, i);
+        manualMode == true;
+        setMemoryValue(2, 5);
+        setMemoryValue(3, 0);
     }
 
     void run() override {
@@ -273,8 +275,10 @@ public:
     }
 
     void setGlobalTarget(Vector2d pos) {
-        pos = pos - arm->getJointPosition(0);
+        setRelativeTarget(pos - arm->getJointPosition(0));
+    }
 
+    void setRelativeTarget(Vector2d pos) {
         if (pos.lenght() >= 6 + 8) { // target is too far
             arm->setJointTargetRotation(0, pos.getDirection());
             arm->setJointTargetRotation(1, Rotation());
@@ -290,37 +294,6 @@ public:
         arm->setJointTargetRotation(0, q1(pos.x, pos.y, 8, 6));
         arm->setJointTargetRotation(1, q2(pos.x, pos.y, 8, 6));
     }
-
-    // void onCommandRecive(int cmd, int arg) override {
-    //     if (manualMode)
-    //         return;
-    //     switch (cmd) {
-    //         case 0:
-    //             arm->setJointTargetRotation(0, Rotation::fromDegrees(arg));
-    //             target = rect.p2; // manipulator should ignore its last target
-    //             break;
-    //         case 1:
-    //             arm->setJointTargetRotation(1, Rotation::fromDegrees(arg));
-    //             target = rect.p2; // manipulator should ignore its last target
-    //             break;
-    //         case 2:
-    //             target.x = arg;
-    //             setGlobalTarget(target);
-    //             break;
-    //         case 3:
-    //             target.x = arg;
-    //             setGlobalTarget(target);
-    //             break;
-    //         case 100:
-    //             arm->release();
-    //             break;
-    //         case 200:
-    //             arm->grab();
-    //             break;
-    //         default:
-    //             break;
-    //     }
-    // }
 
     void addToGameWorld() override { // TODO
         Machinery::addToGameWorld();
