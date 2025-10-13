@@ -67,10 +67,11 @@ class Manipulator : public Machinery {
     bool manualMode = false;
     Vector2d manualTarget;
 
-    Window* window = nullptr; // gui
+    Window* window = nullptr; // gui // TODO move to its own class
     Label* manualLabel = nullptr;
     Label* grabLabel = nullptr;
     Label* addressLabel = nullptr;
+    Console* memoryConsole = nullptr;
 
     Vector2d leftClampPos, rightClampPos;
 
@@ -86,20 +87,13 @@ class Manipulator : public Machinery {
     void createWindow() {
         if (window)
             return;
-        window = new Window(GuiEngine::instance()->getDisplayArea(), Aligment::byDimensionsAndCentered(Vector2d(500, 300)), true);
+        window = new Window(GuiEngine::instance()->getDisplayArea(), AligmentBuilder().dimensions({720, 300}).margin(-1, -1, -1, 30), true);
         window->setOnCloseCallback([this]() { this->onWindowClose(); });
+        window->setDrawPriority(2);
 
-        auto manualControlAreaAligment = Aligment::byDimensionsAndCentered(Vector2d(200, -1));
-        manualControlAreaAligment.marginLeft = 20;
-        manualControlAreaAligment.marginTop = 20;
-        manualControlAreaAligment.marginBottom = 20;
-        auto manualControlArea = new NamedArea(window->getInternalArea(), manualControlAreaAligment, "Manual control");
-
-        auto optionsAreaAligment = Aligment::byDimensionsAndCentered(Vector2d(100, -1));
-        optionsAreaAligment.marginRight = 20;
-        optionsAreaAligment.marginTop = 20;
-        optionsAreaAligment.marginBottom = 20;
-        auto optionsArea = new NamedArea(window->getInternalArea(), optionsAreaAligment, "Settings");
+        auto manualControlArea = new NamedArea(window->getInternalArea(), AligmentBuilder().tableDimensions(3, 1).tableCell(0, 0).margin(20, 20, 10, 20), "Manual control");
+        auto optionsArea = new NamedArea(window->getInternalArea(), AligmentBuilder().tableDimensions(3, 1).tableCell(1, 0).margin(10, 20, 10, 20), "Settings");
+        auto memoryArea = new NamedArea(window->getInternalArea(), AligmentBuilder().tableDimensions(3, 1).tableCell(2, 0).margin(10, 20, 20, 20), "Memory");
 
         auto addressButtonAligment = Aligment::byMargin(5, 5, 5, 5);
         addressButtonAligment.tableRows = 5;
@@ -147,6 +141,24 @@ class Manipulator : public Machinery {
         moveButton = new Button(manualControlArea->getInternalArea(), buttonAligment);
         moveButton->setMouseCallback(Hold, [this](auto pos) { setManualTarget(this->manualTarget + Vector2d(0.1, 0)); });
         new Label(moveButton, Aligment(), "right");
+
+        memoryConsole = new Console(memoryArea->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(1, 0).margin(5, 5, 5, 5));
+        memoryConsole->setEditable(false);
+        new Label(memoryArea->getInternalArea(), AligmentBuilder().tableDimensions(2, 14).tableCell(0, 1).margin(-1, -1, 5, 10).dimensions(Vector2d(al_get_text_width(GuiEngine::instance()->debugFont, "status->"), -1)), "status->");
+        new Label(memoryArea->getInternalArea(), AligmentBuilder().tableDimensions(2, 14).tableCell(0, 2).margin(-1, -1, 5, 10).dimensions(Vector2d(al_get_text_width(GuiEngine::instance()->debugFont, "grab->"), -1)), "grab->");
+        new Label(memoryArea->getInternalArea(), AligmentBuilder().tableDimensions(2, 14).tableCell(0, 3).margin(-1, -1, 5, 10).dimensions(Vector2d(al_get_text_width(GuiEngine::instance()->debugFont, "target x->"), -1)), "target x->");
+        new Label(memoryArea->getInternalArea(), AligmentBuilder().tableDimensions(2, 14).tableCell(0, 4).margin(-1, -1, 5, 10).dimensions(Vector2d(al_get_text_width(GuiEngine::instance()->debugFont, "target y->"), -1)), "target y->");
+    }
+
+    void updateMemoryConsole() {
+        if (window == nullptr) return;
+        memoryConsole->clearLines();
+        for (int i = 0; i < getMemorySize(); i++) {
+            if (i == 0)
+                memoryConsole->setLines({std::to_string(getMemoryValue(i))});
+            else
+                memoryConsole->addLine(std::to_string(getMemoryValue(i)));
+        }
     }
 
     void onWindowClose() {
@@ -226,6 +238,7 @@ public:
             leftClampPos.x = leftClampPos.x / 2 + leftClampTargetX / 2;
             rightClampPos.x = rightClampPos.x / 2 + rightClampTargetX / 2;
         }
+        updateMemoryConsole();
     }
 
     void draw() override {
