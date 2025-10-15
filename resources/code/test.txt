@@ -1,37 +1,55 @@
-delay 50
-delay 100
+#define arm 13
+#define cmdX 2
+#define cmdY 3
+#define cmdS 0
+#define addrX 0
+#define addrY 1
+#define addrCnt 2
+#define addrS 3
 
-send 13 0 353
-send 13 1 98 
-delay 200
-send 13 200 0
+//  constants
+#define addrK1 10
+set addrK1 1
 
-send 13 0 80
-send 13 1 80 
-delay 200
-send 13 100 0
+#define addrK4 11
+set addrK4 4
 
-send 13 0 353
-send 13 1 98 
-delay 200
-send 13 200 0
+// initial position
+set addrX -10
+set addrY 10
+send arm cmdX addrX
+send arm cmdY addrY
+delay 300
 
-send 13 0 80
-send 13 1 80 
-delay 200
-send 13 100 0
+#label loop_main
+set addrCnt 4
+#label loop_right
+send arm cmdX addrX
+send arm cmdY addrY
 
-send 13 0 101
-send 13 1 119 
-delay 200
-send 13 200 0
-send 13 0 134
-send 13 1 121 
-delay 200
-send 13 100 0
-delay 1000
-send 13 200 0
-send 13 0 101
-delay 200
-send 13 100 0
-goto 2
+// wait for arm to stop
+#label wait0
+recieve arm cmdS addrS
+goto_ifn wait0 addrS
+
+add addrX addrK4 addrX
+subtract addrCnt addrK1 addrCnt
+goto_if loop_right addrCnt
+// end loop
+
+set addrCnt 4
+#label loop_left
+send arm cmdX addrX
+send arm cmdY addrY
+
+// wait for arm to stop
+#label wait1
+recieve arm cmdS addrS
+goto_ifn wait1 addrS
+
+subtract addrX addrK4 addrX
+subtract addrCnt addrK1 addrCnt
+goto_if loop_left addrCnt
+goto loop_main
+// end loop
+

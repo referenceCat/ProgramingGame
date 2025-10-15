@@ -151,7 +151,8 @@ class Manipulator : public Machinery {
     }
 
     void updateMemoryConsole() {
-        if (window == nullptr) return;
+        if (window == nullptr)
+            return;
         memoryConsole->clearLines();
         for (int i = 0; i < getMemorySize(); i++) {
             if (i == 0)
@@ -196,7 +197,7 @@ class Manipulator : public Machinery {
         word0 |= (manualMode << 0);
         word0 |= (arm->isActive() << 1);
         word0 |= ((arm->getTakenBox() != nullptr) << 2);
-        word0 |= ((arm->getJointTargetPosition(2) == arm->getJointPosition(2)) << 3); // arm reached its target
+        word0 |= (((arm->getJointTargetPosition(2) - arm->getJointPosition(2)).lenght() < 0.01) << 3); // arm reached its target
         setMemoryValue(0, word0);
 
         if (manualMode)
@@ -675,4 +676,7 @@ public:
     }
 };
 
+class ProductionMachineryPrototype : public Machinery {
+    
+};
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_CUSTOMMACHINERY_HPP_

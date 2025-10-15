@@ -4,6 +4,7 @@
 
 #include "Controller.hpp"
 #include "GameWorld.hpp"
+#include <regex>
 
 std::vector<std::string> split(const std::string& s,
     const std::string& delimiter) {
@@ -110,13 +111,19 @@ void Controller::onRunButtonClick() {
         clearToInitialState();
         outputConsole->addLine("Program terminated by user.");
     } else {
-        running = true;
-        paused = false;
         outputConsole->addLine("");
         outputConsole->addLine("Compiling...");
         clearToInitialState();
-        compile(codeConsole->getLines()); // TODO handle compilation errors
-        outputConsole->addLine("Program started.");
+        bool compilationResult = compile(codeConsole->getLines()); // TODO handle compilation errors
+
+        if (compilationResult) {
+            running = true;
+            paused = false;
+
+            outputConsole->addLine("Program started.");
+        } else {
+            outputConsole->addLine("Compilation failed.");
+        }
     }
     updateWindow();
 }
@@ -275,7 +282,7 @@ int Controller::execNextInstruction() {
         return 0;
     }
 
-    if (instructions.at(rInstr).size() == 0 || instructions.at(rInstr).at(0) == '#') { // ignore this
+    if (instructions.at(rInstr).size() == 0 || instructions.at(rInstr).starts_with('#') || instructions.at(rInstr).starts_with("//"sv)) { // ignore empty line, preprocessor, comments
         rInstr++;
         return 0;
     }
@@ -292,9 +299,43 @@ int Controller::execNextInstruction() {
     } else if (command == "goto") {
         rInstr = std::atoi(instr.at(1).c_str());
         return 0;
+    } else if (command == "goto_if") {
+        auto memoryAddress = std::atoi(instr.at(2).c_str());
+        if (getMemoryValue(memoryAddress) != 0)
+            rInstr = std::atoi(instr.at(1).c_str());
+        else
+            rInstr++;
+        return 0;
+    } else if (command == "goto_ifn") {
+        auto memoryAddress = std::atoi(instr.at(2).c_str());
+        if (getMemoryValue(memoryAddress) == 0)
+            rInstr = std::atoi(instr.at(1).c_str());
+        else
+            rInstr++;
+        return 0;
     } else if (command == "error") {
         int error = std::atoi(instr.at(1).c_str());
         return error;
+    } else if (command == "copy") {
+        int memoryAddressSrc = std::atoi(instr.at(1).c_str());
+        int memoryAddressDest = std::atoi(instr.at(2).c_str());
+        setMemoryValue(memoryAddressDest, getMemoryValue(memoryAddressSrc));
+        rInstr++;
+        return 0;
+    } else if (command == "add") {
+        int memoryAddressSrc1 = std::atoi(instr.at(1).c_str());
+        int memoryAddressSrc2 = std::atoi(instr.at(2).c_str());
+        int memoryAddressDest = std::atoi(instr.at(3).c_str());
+        setMemoryValue(memoryAddressDest, getMemoryValue(memoryAddressSrc1) + getMemoryValue(memoryAddressSrc2));
+        rInstr++;
+        return 0;
+    } else if (command == "subtract") {
+        int memoryAddressSrc1 = std::atoi(instr.at(1).c_str());
+        int memoryAddressSrc2 = std::atoi(instr.at(2).c_str());
+        int memoryAddressDest = std::atoi(instr.at(3).c_str());
+        setMemoryValue(memoryAddressDest, getMemoryValue(memoryAddressSrc1) - getMemoryValue(memoryAddressSrc2));
+        rInstr++;
+        return 0;
     } else if (command == "send") {
         int machineryAddress = std::atoi(instr.at(1).c_str());
         int memoryAddress = std::atoi(instr.at(2).c_str());
@@ -337,5 +378,26 @@ int Controller::getSourceLineNumber() {
 
 bool Controller::compile(std::vector<std::string> sourceCode) {
     instructions = sourceCode;
+    for (int j = 0; j < sourceCode.size(); j++) {
+        if (sourceCode.at(j).starts_with("#define")) {
+            auto lineParts = split(sourceCode.at(j), " ");
+            if (lineParts.size() != 3)
+                return false; // error
+            auto search = lineParts.at(1);
+            auto replace = lineParts.at(2);
+            for (int i = 0; i < instructions.size(); i++) {
+                instructions.at(i) = std::regex_replace(instructions.at(i), std::regex(search), replace);
+            }
+        } else if (sourceCode.at(j).starts_with("#label")) {
+            auto lineParts = split(sourceCode.at(j), " ");
+            if (lineParts.size() != 2)
+                return false; // error
+            auto search = lineParts.at(1);
+            auto replace = std::to_string(j);
+            for (int i = 0; i < instructions.size(); i++) {
+                instructions.at(i) = std::regex_replace(instructions.at(i), std::regex(search), replace);
+            }
+        }
+    }
     return true;
 }
