@@ -28,6 +28,12 @@ void Controller::onClick() {
     }
 }
 
+void Controller::setAddress(int id) {
+    Machinery::setAddress(id);
+    if (window)
+        addressLabel->setText(std::format("Address: {}", id));
+}
+
 void Controller::createWindow() {
     if (window)
         return;
@@ -42,31 +48,37 @@ void Controller::createWindow() {
     new Label(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(0, 0).margin(10, 72, -1, -1).dimensions(Vector2d(al_get_text_width(GuiEngine::instance()->debugFont, "Code:"), 16)), "Code:");
     new Label(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 2).tableCell(1, 0).margin(5, 72, -1, -1).dimensions(Vector2d(al_get_text_width(GuiEngine::instance()->debugFont, "Output:"), 16)), "Output:");
     new Label(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 2).tableCell(1, 1).margin(5, 5, -1, -1).dimensions(Vector2d(al_get_text_width(GuiEngine::instance()->debugFont, "Memory:"), 16)), "Memory:");
-    auto controlArea = new NamedArea(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(0, 0).margin(10, 10, 5, -1).dimensions(Vector2d(-1, 50)), "controls");
+    auto controlArea = new NamedArea(window->getInternalArea(), AligmentBuilder().tableDimensions(3, 1).tableCell(1, 0).margin(10, 10, 5, -1).dimensions(Vector2d(-1, 50)), "controls");
+    auto settingsArea = new NamedArea(window->getInternalArea(), AligmentBuilder().tableDimensions(3, 1).tableCell(2, 0).margin(10, 10, 5, -1).dimensions(Vector2d(-1, 50)), "settings");
+    auto fileArea = new NamedArea(window->getInternalArea(), AligmentBuilder().tableDimensions(3, 1).tableCell(0, 0).margin(10, 10, 5, -1).dimensions(Vector2d(-1, 50)), "file");
 
-    auto runStopButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(12, 1).tableCell(0, 0).margin(3, 3, 3, 3)); // run/stop
+    auto runStopButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(6, 1).tableCell(0, 0).margin(3, 3, 3, 3)); // run/stop
     runStopButton->setMouseCallback(Release, [this](auto pos) { this->onRunButtonClick(); });
     runStopButtonIcon = new Icon(runStopButton, Aligment(), GuiEngine::instance()->getIcon("run"));
 
-    auto pauseButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(12, 1).tableCell(1, 0).margin(3, 3, 3, 3)); // pause/continue
+    auto pauseButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(6, 1).tableCell(1, 0).margin(3, 3, 3, 3)); // pause/continue
     pauseButton->setMouseCallback(Release, [this](auto pos) { this->onPauseButtonClick(); });
     pauseButtonIcon = new Icon(pauseButton, Aligment(), GuiEngine::instance()->getIcon("pause"));
 
-    auto nextButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(12, 1).tableCell(2, 0).margin(3, 3, 3, 3)); // exec 1 instruction
+    auto nextButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(6, 1).tableCell(2, 0).margin(3, 3, 3, 3)); // exec 1 instruction
     nextButton->setMouseCallback(Release, [this](auto pos) {});
     nextButtonIcon = new Icon(nextButton, Aligment(), GuiEngine::instance()->getIcon("next"));
 
-    auto openFileButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(4, 1).tableCell(1, 0).margin(3, 3, 3, 3));
+    auto openFileButton = new Button(fileArea->getInternalArea(), AligmentBuilder().tableDimensions(3, 1).tableCell(0, 0).margin(3, 3, 3, 3));
     openFileButton->setMouseCallback(Release, [this](auto pos) { onOpenFileButtonClick(); });
     new Label(openFileButton, Aligment(), "open");
 
-    auto saveFileButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(4, 1).tableCell(2, 0).margin(3, 3, 3, 3));
+    auto saveFileButton = new Button(fileArea->getInternalArea(), AligmentBuilder().tableDimensions(3, 1).tableCell(1, 0).margin(3, 3, 3, 3));
     saveFileButton->setMouseCallback(Release, [this](auto pos) { onSaveFileButtonClick(); });
     new Label(saveFileButton, Aligment(), "save");
 
-    auto saveAsFileButton = new Button(controlArea->getInternalArea(), AligmentBuilder().tableDimensions(4, 1).tableCell(3, 0).margin(3, 3, 3, 3));
+    auto saveAsFileButton = new Button(fileArea->getInternalArea(), AligmentBuilder().tableDimensions(3, 1).tableCell(2, 0).margin(3, 3, 3, 3));
     saveAsFileButton->setMouseCallback(Release, [this](auto pos) { onSaveAsFileButtonClick(); });
     new Label(saveAsFileButton, Aligment(), "save as");
+
+    auto addressButton = new Button(settingsArea->getInternalArea(), AligmentBuilder().margin(3, 3, 3, 3));
+    addressButton->setMouseCallback(Release, [this](auto pos) { new AddressSelectionWindow(getAddress(), [this](int address) { this->setAddress(address); }); });
+    addressLabel = new Label(addressButton, Aligment(), std::format("Addr: {}", getAddress()));
 
     loadConsoledStates();
 

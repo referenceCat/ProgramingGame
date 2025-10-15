@@ -9,6 +9,7 @@
 #include "Arm.hpp"
 #include "Box.hpp"
 #include "GameObject.hpp"
+#include "GuiEngine.hpp"
 
 typedef int32_t MemoryWord;
 class Machinery : public GameObject {
@@ -49,6 +50,46 @@ public:
     virtual void setAddress(int id);
     int getAddress();
     size_t getMemorySize();
+};
+
+class AddressSelectionWindow {
+    Window* window = nullptr;
+    Button* addressButtons[16][16] = {nullptr};
+    Label* addressLabels[16][16] = {nullptr};
+    int address = 0;
+    std::function<void(int)> onAddressButtonClicked = nullptr;
+
+public:
+    AddressSelectionWindow(int selectedAddress, std::function<void(int)> onAddressButtonClicked):
+        onAddressButtonClicked{onAddressButtonClicked} {
+        window = new Window(GuiEngine::instance()->getDisplayArea(), Aligment::byDimensionsAndCentered(Vector2d(640, 640)), true);
+        window->setDrawPriority(2);
+        for (int i = 0; i < 256; i++) {
+            addressButtons[i / 16][i % 16] = new Button(window->getInternalArea(), AligmentBuilder().margin(3, 3, 3, 3).tableDimensions(16, 16).tableCell(i % 16, i / 16));
+            addressButtons[i / 16][i % 16]->setMouseCallback(Release, [this, i](auto pos) { this->onAddressButtonClick(i); });
+            addressLabels[i / 16][i % 16] = new Label(addressButtons[i / 16][i % 16], Aligment(), std::to_string(i));
+        }
+        setSelectedAddress(selectedAddress);
+    };
+
+    ~AddressSelectionWindow() {
+        delete window;
+    }
+
+    void setSelectedAddress(int address) {
+        assert(address >= 0 && address <= 255);
+        this->address = address;
+        for (int i = 0; i < 256; i++) {
+            addressLabels[i / 16][i % 16]->setText(std::to_string(i));
+        }
+        addressLabels[address / 16][address % 16]->setText(std::format("({})", address));
+    };
+
+    void onAddressButtonClick(int address) {
+        setSelectedAddress(address);
+        onAddressButtonClicked(address);
+        // delete this;
+    }
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_MACHINERY_HPP_

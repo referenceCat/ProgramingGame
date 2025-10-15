@@ -9,7 +9,6 @@
 #include "common.hpp"
 #include "GuiEngine.hpp"
 #include "GraphicsEngine.hpp"
-
 #include "Machinery.hpp"
 
 class Controller : public Machinery {
@@ -28,6 +27,7 @@ class Controller : public Machinery {
     Console* codeConsole = nullptr;
     Console* outputConsole = nullptr;
     Console* memoryConsole = nullptr;
+    Label* addressLabel = nullptr;
 
     std::vector<std::string> codeConsoleSavedLines;
     std::vector<std::string> ouputConsoleSavedLines;
@@ -59,6 +59,7 @@ public:
     std::vector<std::string> split(const std::string& s, const std::string& delimiter);
     void run() override;
     void onClick() override;
+    void setAddress(int id) override;
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_CONTROLLER_HPP_
