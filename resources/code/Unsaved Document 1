@@ -1,0 +1,8 @@
+#define pArray 0
+#define pTmp 10
+
+loop:
+copy pTmp 0
+add
+
+goto loop

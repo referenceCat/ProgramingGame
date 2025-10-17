@@ -38,7 +38,7 @@ void Controller::createWindow() {
     if (window)
         return;
 
-    window = new Window(GuiEngine::instance()->getDisplayArea(), AligmentBuilder().dimensions(Vector2d(700, 700)).margin(-1, 50, 50, 50), true);
+    window = new Window(GuiEngine::instance()->getDisplayArea(), AligmentBuilder().dimensions(Vector2d(700, 700)).margin(-1, 30, 30, 30), true);
     window->setOnCloseCallback([this]() { this->onWindowClose(); });
     codeConsole = new Console(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(0, 0).margin(10, 90, 5, 10));
     outputConsole = new Console(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 2).tableCell(1, 0).margin(5, 90, 10, 5));
@@ -279,11 +279,63 @@ void Controller::run() {
 void Controller::clearToInitialState() {
     rInstr = 0;
     rDelay = 0;
+    for (int i = 0; i < getMemorySize(); i++) {
+        setMemoryValue(i, 0);
+    }
 }
 
-int Controller::execNextInstruction() {
+bool Controller::isMemoryAddressValid(size_t address) {
+    return address >= 0 || address < getMemorySize();
+}
+
+bool Controller::getMemoryValueByLiteral(std::string literal, MemoryWord& result) {
+    if (literal.starts_with("p")) { // indirect access (e.g. at123 will result in value at addrees stored at address 123)
+        size_t address1 = std::atoi(literal.substr(1).c_str());
+        if (!isMemoryAddressValid(address1))
+            return false;
+        size_t address2 = getMemoryValue(address1);
+        if (!isMemoryAddressValid(address2))
+            return false;
+        result = getMemoryValue(address2);
+        return true;
+    } else if (literal.starts_with("at")) { // direct access (e.g. at123 will result in value at addrees 123)
+        size_t address = std::atoi(literal.substr(2).c_str());
+        if (!isMemoryAddressValid(address))
+            return false;
+        result = getMemoryValue(address);
+        return true;
+    } else if (std::atoi(literal.c_str()) || literal == "0") { // literals like 0, 123, -5
+        result = std::atoi(literal.c_str());
+        return true;
+    }
+    return false;
+}
+
+bool Controller::setMemoryValueByLiteral(std::string literal, MemoryWord value) {
+    if (std::atoi(literal.c_str()) || literal == "0") { // writing to literals like 0, 123, -5 wont do anything
+        return true;
+    } else if (literal.starts_with("at")) { // direct access (e.g. "copy at123 1" will result in 1 stored at addrees 123)
+        size_t address = std::atoi(literal.substr(2).c_str());
+        if (!isMemoryAddressValid(address))
+            return false;
+        setMemoryValue(address, value);
+        return true;
+    } else if (literal.starts_with("p")) { // indirect access (e.g. "copy p123 1" will result in 1 stored at addrees stored at addrees 123)
+        size_t address1 = std::atoi(literal.substr(1).c_str());
+        if (!isMemoryAddressValid(address1))
+            return false;
+        size_t address2 = getMemoryValue(address1);
+        if (!isMemoryAddressValid(address2))
+            return false;
+        setMemoryValue(address2, value);
+        return true;
+    }
+    return false;
+}
+
+TerminationCode Controller::execNextInstruction() {
     if (rInstr >= instructions.size()) {
-        return 3; // program ended
+        return ProgrammFinished;
     }
 
     if (rDelay) {
@@ -291,97 +343,147 @@ int Controller::execNextInstruction() {
         if (rDelay == 0) {
             rInstr++;
         }
-        return 0;
+        return Continue;
     }
 
-    if (instructions.at(rInstr).size() == 0 || instructions.at(rInstr).starts_with('#') || instructions.at(rInstr).starts_with("//"sv)) { // ignore empty line, preprocessor, comments
+    if (instructions.at(rInstr).size() == 0 || instructions.at(rInstr).starts_with('#') || instructions.at(rInstr).starts_with("//"sv)) { // ignore empty line, preprocessor and comments
         rInstr++;
-        return 0;
+        return Continue;
     }
 
     std::vector<std::string> instr = split(instructions.at(rInstr), " ");
-    if (instr.size() < 1) {
-        return 1; // invalid instruction
-    }
-
     std::string command = instr.at(0);
-    if (command == "delay") {
-        rDelay = std::atoi(instr.at(1).c_str());
-        return 0;
-    } else if (command == "goto") {
-        rInstr = std::atoi(instr.at(1).c_str());
-        return 0;
-    } else if (command == "goto_if") {
-        auto memoryAddress = std::atoi(instr.at(2).c_str());
-        if (getMemoryValue(memoryAddress) != 0)
-            rInstr = std::atoi(instr.at(1).c_str());
+    if (command == "delay") { // delay n
+        if (instr.size() != 2)
+            return InvalidNumberOfArguments;
+        if (!getMemoryValueByLiteral(instr.at(1), rDelay))
+            return SegFault;
+        return Continue;
+    } else if (command == "goto") { // goto instr_n
+        if (instr.size() != 2)
+            return InvalidNumberOfArguments;
+        if (!getMemoryValueByLiteral(instr.at(1), rInstr))
+            return SegFault;
+        return Continue;
+    } else if (command == "goto_if") { // goto_if instr_n condition
+        if (instr.size() != 3)
+            return InvalidNumberOfArguments;
+        MemoryWord instrN;
+        MemoryWord value;
+        if (!getMemoryValueByLiteral(instr.at(1), instrN))
+            return SegFault;
+        if (!getMemoryValueByLiteral(instr.at(2), value))
+            return SegFault;
+        if (value != 0)
+            rInstr = instrN;
         else
             rInstr++;
-        return 0;
-    } else if (command == "goto_ifn") {
-        auto memoryAddress = std::atoi(instr.at(2).c_str());
-        if (getMemoryValue(memoryAddress) == 0)
-            rInstr = std::atoi(instr.at(1).c_str());
+        return Continue;
+    } else if (command == "goto_ifn") { // goto_ifn instr_n condition
+        if (instr.size() != 3)
+            return InvalidNumberOfArguments;
+        MemoryWord instrN;
+        MemoryWord value;
+        if (!getMemoryValueByLiteral(instr.at(1), instrN))
+            return SegFault;
+        if (!getMemoryValueByLiteral(instr.at(2), value))
+            return SegFault;
+        if (value == 0)
+            rInstr = instrN;
         else
             rInstr++;
-        return 0;
-    } else if (command == "error") {
-        int error = std::atoi(instr.at(1).c_str());
-        return error;
-    } else if (command == "copy") {
-        int memoryAddressSrc = std::atoi(instr.at(1).c_str());
-        int memoryAddressDest = std::atoi(instr.at(2).c_str());
-        setMemoryValue(memoryAddressDest, getMemoryValue(memoryAddressSrc));
+        return Continue;
+    } else if (command == "throw") { // throw error_code
+        if (instr.size() != 2)
+            return InvalidNumberOfArguments;
+        MemoryWord errorCode;
+        if (!getMemoryValueByLiteral(instr.at(1), errorCode))
+            return SegFault;
+        return static_cast<TerminationCode>(errorCode);
+    } else if (command == "set") { // set dest src
+        if (instr.size() != 3)
+            return InvalidNumberOfArguments;
+        MemoryWord src1;
+        if (!getMemoryValueByLiteral(instr.at(2), src1))
+            return SegFault;
+        if (!setMemoryValueByLiteral(instr.at(1), src1))
+            return SegFault;
         rInstr++;
-        return 0;
-    } else if (command == "add") {
-        int memoryAddressSrc1 = std::atoi(instr.at(1).c_str());
-        int memoryAddressSrc2 = std::atoi(instr.at(2).c_str());
-        int memoryAddressDest = std::atoi(instr.at(3).c_str());
-        setMemoryValue(memoryAddressDest, getMemoryValue(memoryAddressSrc1) + getMemoryValue(memoryAddressSrc2));
+        return Continue;
+    } else if (command == "add") { // add dest src1 src2
+        if (instr.size() != 4)
+            return InvalidNumberOfArguments;
+        MemoryWord src1;
+        MemoryWord src2;
+        if (!getMemoryValueByLiteral(instr.at(2), src1))
+            return SegFault;
+        if (!getMemoryValueByLiteral(instr.at(3), src2))
+            return SegFault;
+        if (!setMemoryValueByLiteral(instr.at(1), src1 + src2))
+            return SegFault;
         rInstr++;
-        return 0;
-    } else if (command == "subtract") {
-        int memoryAddressSrc1 = std::atoi(instr.at(1).c_str());
-        int memoryAddressSrc2 = std::atoi(instr.at(2).c_str());
-        int memoryAddressDest = std::atoi(instr.at(3).c_str());
-        setMemoryValue(memoryAddressDest, getMemoryValue(memoryAddressSrc1) - getMemoryValue(memoryAddressSrc2));
+        return Continue;
+    } else if (command == "subtract") { // subtract dest src1 src2
+        if (instr.size() != 4)
+            return InvalidNumberOfArguments;
+        MemoryWord src1;
+        MemoryWord src2;
+        if (!getMemoryValueByLiteral(instr.at(2), src1))
+            return SegFault;
+        if (!getMemoryValueByLiteral(instr.at(3), src2))
+            return SegFault;
+        if (!setMemoryValueByLiteral(instr.at(1), src1 - src2))
+            return SegFault;
         rInstr++;
-        return 0;
-    } else if (command == "send") {
-        int machineryAddress = std::atoi(instr.at(1).c_str());
-        int memoryAddress = std::atoi(instr.at(2).c_str());
-        int ownMemoryAddress = std::atoi(instr.at(3).c_str());
+        return Continue;
+    } else if (command == "send") { // send mach_addr mach_memory_addr value
+
+        if (instr.size() != 4)
+            return InvalidNumberOfArguments;
+        MemoryWord value;
+        MemoryWord machineryAddr;
+        MemoryWord machineMemoryAddr;
+        if (!getMemoryValueByLiteral(instr.at(1), value))
+            return SegFault;
+        if (!getMemoryValueByLiteral(instr.at(2), machineryAddr))
+            return SegFault;
+        if (!getMemoryValueByLiteral(instr.at(3), machineMemoryAddr))
+            return SegFault;
 
         for (auto machinery : GameWorld::instance()->getMachinery()) {
-            if (machinery->getAddress() == machineryAddress) {
-                machinery->onMemoryWrite(memoryAddress, getMemoryValue(ownMemoryAddress));
+            if (machinery->getAddress() == machineryAddr) {
+                machinery->onMemoryWrite(machineMemoryAddr, value);
             }
         }
 
         rInstr++;
-        return 0;
+        return Continue;
     } else if (command == "recieve") {
-        int machineryAddress = std::atoi(instr.at(1).c_str());
-        int machineryMemoryAddress = std::atoi(instr.at(2).c_str());
-        int ownMemoryAddress = std::atoi(instr.at(3).c_str());
+        if (instr.size() != 4)
+            return InvalidNumberOfArguments;
+        MemoryWord machineryAddr;
+        MemoryWord machineMemoryAddr;
+        if (!getMemoryValueByLiteral(instr.at(2), machineryAddr))
+            return SegFault;
+        if (!getMemoryValueByLiteral(instr.at(3), machineMemoryAddr))
+            return SegFault;
 
         for (auto machinery : GameWorld::instance()->getMachinery()) {
-            if (machinery->getAddress() == machineryAddress) {
-                setMemoryValue(ownMemoryAddress, machinery->onMemoryRead(machineryMemoryAddress));
+            if (machinery->getAddress() == machineryAddr) {
+                if (setMemoryValueByLiteral(instr.at(1), machinery->onMemoryRead(machineMemoryAddr))) {
+                    rInstr++;
+                    return Continue;
+                } else {
+                    return SegFault;
+                }
             }
         }
 
+        // reach here if didnt find any machines with address
         rInstr++;
-        return 0;
-    } else if (command == "set") {
-        int memoryAddress = std::atoi(instr.at(1).c_str());
-        int value = std::atoi(instr.at(2).c_str());
-        setMemoryValue(memoryAddress, value);
-        rInstr++;
-        return 0;
+        return Continue;
     }
-    return 1; // invalid instruction
+    return InvalidInstruction; // invalid instruction
 }
 
 int Controller::getSourceLineNumber() {

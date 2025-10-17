@@ -38,14 +38,6 @@ void init() {
 
     auto box = new TapeBox(Vector2d(10, -10));
     GameWorld::instance()->addBox(box);
-
-    // auto window = new Window(GuiEngine::instance()->getDisplayArea(), Aligment::byDimensionsAndCentered(Vector2d(500, 500)), true);
-    // auto console = new Console(window->getInternalArea(), Aligment::byMargin(10, 10, 10, 10));
-    // console->addLine("12313254");
-    // console->addLine("Hello, world!");
-    // for (int i = 0; i < 120; i++) {
-    //     console->addLine("Hello, world! Line: " + std::to_string(i));
-    // }
 }
 
 void redraw() {

@@ -1,0 +1,43 @@
+goto main 
+
+#define _aRec 900
+#define _aFuncAddr 899
+#define _aRecArray 898
+#define _a1 901
+#define _a2 902
+#define _a3 903
+#define _a4 904
+
+#label _return
+
+#label _func
+// _a1 is where function starts
+set _a1 3
+add _a1 _aFuncAddr _a1
+
+// _a2 is address on rec array
+add _aRec _aRecArray _a2
+copy _a1 _a2
+
+// incriment rec depth
+set _a3 1
+add _aRec _a1 _aRec
+
+goto_addr _a1
+
+#label myFuncA
+set _aFuncAddr myFuncA
+goto _func
+// do something 
+goto _return
+
+#label myFuncB
+set _aFuncAddr myFuncB
+goto _func
+// do something 
+goto _return
+
+//entry point
+#label main
+goto myFuncA
+goto myFuncB

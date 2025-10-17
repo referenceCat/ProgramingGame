@@ -11,6 +11,15 @@
 #include "GraphicsEngine.hpp"
 #include "Machinery.hpp"
 
+enum TerminationCode {
+    Continue,
+    ProgrammFinished,
+    UnknownError,
+    SegFault,
+    InvalidNumberOfArguments,
+    InvalidInstruction
+};
+
 class Controller : public Machinery {
     bool paused = true;
     int running = false;
@@ -46,13 +55,19 @@ class Controller : public Machinery {
     void onSaveAsFileButtonClick();
     void onReloadFileButtonclick();
     void clearToInitialState();
-    int execNextInstruction();
+    bool isMemoryAddressValid(size_t);
+    // 123 for literal, at123 for value at 123, p123 for value at address at 123
+    // returns false if something goes wrong
+    bool getMemoryValueByLiteral(std::string literal, MemoryWord& result);
+    // returns false if something goes wrong
+    bool setMemoryValueByLiteral(std::string literal, MemoryWord value);
+    TerminationCode execNextInstruction();
     int getSourceLineNumber();
     bool compile(std::vector<std::string> sourceCode); // TODO maybe return results like "error here and here"
 
 public:
     Controller(Vector2d aPos):
-        Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(5, 7)), 100) {
+        Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(5, 7)), 1000) {
     }
 
     void draw() override;

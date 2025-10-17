@@ -1,0 +1,9 @@
+set at0 1000
+set at1 5
+
+#label loop
+delay 30
+set p1 at0
+add at0 at0 1
+add at1 at1 1
+goto loop
