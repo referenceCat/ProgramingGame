@@ -125,11 +125,30 @@ public:
     void drawGhost() {
         if (!prototype)
             return;
-        prototype->draw();
+
+        prototype->draw(); // TODO draw in blue color
         if (!blocked)
             GraphicsEngine::instance()->drawRectangle(prototype->getRect(), 0, al_map_rgba(50, 100, 100, 30));
         else
             GraphicsEngine::instance()->drawRectangle(prototype->getRect(), 0, al_map_rgba(100, 50, 50, 30));
+
+        // draw grid
+
+        const int gridSize = 11;
+        const double gridExpantion = 2;
+        for (int i = 0; i < gridSize; i++) {
+            double x = round(prototype->getRect().center().x) - gridSize / 2 + i;
+            double y1 = prototype->getRect().center().y - gridSize / 2 - gridExpantion;
+            double y2 = prototype->getRect().center().y + gridSize / 2 + gridExpantion;
+            GraphicsEngine::instance()->drawLine(Vector2d(x, y1), Vector2d(x, y2), 0, al_map_rgba(200, 200, 200, 30), 0.1);
+        }
+
+        for (int i = 0; i < gridSize; i++) {
+            double y = round(prototype->getRect().center().y) - gridSize / 2 + i;
+            double x1 = prototype->getRect().center().x - gridSize / 2 - gridExpantion;
+            double x2 = prototype->getRect().center().x + gridSize / 2 + gridExpantion;
+            GraphicsEngine::instance()->drawLine(Vector2d(x1, y), Vector2d(x2, y), 0, al_map_rgba(200, 200, 200, 30), 0.1);
+        }
     }
 
     void createWindow() {
