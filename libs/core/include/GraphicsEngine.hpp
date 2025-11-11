@@ -10,6 +10,7 @@
 #include <cmath>
 #include <map>
 #include <string>
+#include <functional>
 
 struct CameraParameters {
     Vector2d position;
@@ -25,8 +26,8 @@ constexpr double zModuleMainBackgroung = 0.3;
 constexpr double zSurface = 0.5;
 constexpr double zModuleFarBackgroung = 0.7;
 constexpr double zModuleVeryFarBackgroung = 1.5;
-constexpr double zMachinery = 0.15;
-constexpr double zMachineryFront = 0.001;
+constexpr double zMachinery = 0.005;
+constexpr double zMachineryFront = -0.15;
 constexpr double zMachineryBack = 0.25;
 constexpr double zBox = 0.01;
 constexpr double zArm = 0;
@@ -84,6 +85,46 @@ public:
     void drawArcProgressBar(Vector2d aPoint, double fraction, double r, double z, ALLEGRO_COLOR color, double thickness = 0.1);
     void drawDebugBackgroung2();
     void drawStarsBackgroung();
+};
+
+template<typename T>
+struct ParametricValue { // TODO
+    T defaultValue = 0;
+    std::function<T(double)> func = nullptr;
+    std::string parameterName;
+
+    T eval(std::map<std::string, double> parameters) {
+        if (func != nullptr && parameters[parameterName]) return func(parameters[parameterName]);
+        return defaultValue;
+    }
+};
+
+class ParametricDrawableObject { // TODO
+    Vector2d pos;
+    Rotation rotation;
+
+    struct Sprite {
+        ALLEGRO_BITMAP* bitmap;
+        Vector2d pivot;
+        double z;
+        ParametricValue<Vector2d> pos;
+        ParametricValue<Rotation> rotation;
+    };
+
+    std::vector<Sprite> sprites;
+    std::map<std::string, double> parameters;
+
+    
+
+public:
+    void setPosition(Vector2d aPos) {
+        pos = aPos;
+    };
+
+    void drawDebug();
+    void draw();
+    void addSprite(ALLEGRO_BITMAP* bitmap, Vector2d pivot, double z, ParametricValue<Vector2d> pos, ParametricValue<Rotation> rotation);
+    void setParameter(std::string name, double value);
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_LIBS_CORE_INCLUDE_GRAPHICSENGINE_HPP_

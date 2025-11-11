@@ -14,7 +14,8 @@ enum MachineryType {
     TypeParticleResearch,
     TypeDrill,
     TypeElectrolyzer,
-    TypeAnalyzer
+    TypeAnalyzer,
+    Test
 };
 
 class MachineryBuilder {
@@ -46,6 +47,14 @@ class MachineryBuilder {
             case TypeAnalyzer:
                 prototype = new Analyzer(Vector2d());
                 break;
+            case Test: {
+                auto abstactAssembler = new AbstractAssembler(Rect2d::fromCenterAndDimensions(Vector2d(), Vector2d(5, 5)));
+                ParametricDrawableObject* drawable = new ParametricDrawableObject();
+                drawable->addSprite(GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Oxygen/main.png"), Vector2d(0, 0), 0, {Vector2d(1, 1)}, ParametricValue<Rotation>{0, [](double t){return t * 2;}, "testParam"});
+                drawable->setParameter("testParam", 2);
+                abstactAssembler->setDrawableObject(drawable);
+                prototype = abstactAssembler;
+            } break;
             default:
                 break;
         }
@@ -167,10 +176,10 @@ public:
         labelAligment.marginRight = 4;
         labelAligment.dimensions = Vector2d(0, 20);
 
-        std::string labels[] = {"Arm", "Controller", "Lab", "Drill", "Electrolyzer", "Particle Detector", "Analyzer"};
-        MachineryType types[] = {TypeArm, TypeController, TypeLab, TypeDrill, TypeElectrolyzer, TypeParticleResearch, TypeAnalyzer};
+        std::string labels[] = {"Arm", "Controller", "Lab", "Drill", "Electrolyzer", "Particle Detector", "Analyzer", "Test"};
+        MachineryType types[] = {TypeArm, TypeController, TypeLab, TypeDrill, TypeElectrolyzer, TypeParticleResearch, TypeAnalyzer, Test};
 
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 8; i++) {
             Aligment buttonAligment;
             buttonAligment.marginLeft = 4;
             buttonAligment.marginRight = 4;

@@ -97,3 +97,30 @@ int Machinery::getAddress() {
 size_t Machinery::getMemorySize() {
     return memory.size();
 }
+
+void AbstractAssembler::drawDebug() {
+    Machinery::drawDebug();
+    if (drawable) drawable->drawDebug();
+}
+
+void AbstractAssembler::draw() {
+    Machinery::draw();
+    if (drawable) {
+        drawable->setParameter("testParam", static_cast<float>(tick) / 10);
+        drawable->setPosition(getRect().p1);
+        drawable->draw();
+    }
+}
+
+void AbstractAssembler::run() {
+    Machinery::run();
+    tick++;
+}
+
+void AbstractAssembler::setDrawableObject(ParametricDrawableObject* aDrawable) {
+    drawable = aDrawable;
+}
+
+// void AbstractAssembler::setReciept(Reciept reciept) {
+//     // TODO validate reciept first
+// }

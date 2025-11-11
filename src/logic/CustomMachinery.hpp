@@ -635,7 +635,4 @@ public:
         }
     }
 };
-
-class ProductionMachineryPrototype : public Machinery {
-};
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_CUSTOMMACHINERY_HPP_

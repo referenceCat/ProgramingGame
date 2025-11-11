@@ -12,6 +12,7 @@
 #include "GuiEngine.hpp"
 
 typedef int32_t MemoryWord;
+
 class Machinery : public GameObject {
     int address = 0;
     std::vector<MemoryWord> memory;
@@ -31,6 +32,7 @@ protected:
     std::vector<Box*> getBoxesTouching(ProductionArea area);
     void setMemoryValue(size_t address, MemoryWord value);
     MemoryWord getMemoryValue(size_t address);
+
 public:
     Machinery(Rect2d rect, size_t memorySize = 0):
         rect(rect) {
@@ -90,6 +92,27 @@ public:
         onAddressButtonClicked(address);
         // delete this;
     }
+};
+
+// struct Reciept {
+//     int durationTicks = 100;
+//     // production areas, box types, etc
+// };
+
+class AbstractAssembler : public Machinery {
+    ParametricDrawableObject* drawable = nullptr;
+    int tick = 0;
+public:
+    AbstractAssembler(Rect2d rect): Machinery(rect, 10) {};
+
+    void drawInfo() override {};
+    void drawDebug() override;
+    void draw() override;
+    void run() override;
+
+    void setDrawableObject(ParametricDrawableObject* aDrawable);
+    // void addProductionArea(int id, Rect2d rect);
+    // void setReciept(Reciept reciept);
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_MACHINERY_HPP_
