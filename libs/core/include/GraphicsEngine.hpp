@@ -19,7 +19,7 @@ struct CameraParameters {
     Vector2d displayDimensions;
 };
 
-namespace CommonValues {
+namespace CommonValues { // TODO move to game and not the core lib
 constexpr double zDebug = NAN;
 constexpr double zModuleWalls = 0;
 constexpr double zModuleMainBackgroung = 0.3;
@@ -87,44 +87,41 @@ public:
     void drawStarsBackgroung();
 };
 
-template<typename T>
-struct ParametricValue { // TODO
-    T defaultValue = 0;
-    std::function<T(double)> func = nullptr;
-    std::string parameterName;
-
-    T eval(std::map<std::string, double> parameters) {
-        if (func != nullptr && parameters[parameterName]) return func(parameters[parameterName]);
-        return defaultValue;
-    }
-};
-
-class ParametricDrawableObject { // TODO
-    Vector2d pos;
+class AbstractDrawable {
+    Vector2d pos; // pos in game world
     Rotation rotation;
-
-    struct Sprite {
-        ALLEGRO_BITMAP* bitmap;
-        Vector2d pivot;
-        double z;
-        ParametricValue<Vector2d> pos;
-        ParametricValue<Rotation> rotation;
-    };
-
-    std::vector<Sprite> sprites;
-    std::map<std::string, double> parameters;
-
-    
+    std::map<std::string, int> parameters;
 
 public:
-    void setPosition(Vector2d aPos) {
+    void setPos(Vector2d aPos) {
         pos = aPos;
     };
 
-    void drawDebug();
-    void draw();
-    void addSprite(ALLEGRO_BITMAP* bitmap, Vector2d pivot, double z, ParametricValue<Vector2d> pos, ParametricValue<Rotation> rotation);
-    void setParameter(std::string name, double value);
+    Vector2d getPos() {
+        return pos;
+    };
+
+    void setRotation(Rotation aRot) {
+        rotation = aRot;
+    };
+
+    Rotation getRotation() {
+        return rotation;
+    };
+
+    virtual void draw() {};
+
+    void setParameter(std::string key, int value) {
+        parameters[key] = value;
+    };
+
+    int getParameter(std::string key) {
+        if (parameters.count(key)) {
+            return 0;
+        } else {
+            return parameters.at("key");
+        }
+    };
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_LIBS_CORE_INCLUDE_GRAPHICSENGINE_HPP_

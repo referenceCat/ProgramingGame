@@ -100,14 +100,13 @@ size_t Machinery::getMemorySize() {
 
 void AbstractAssembler::drawDebug() {
     Machinery::drawDebug();
-    if (drawable) drawable->drawDebug();
 }
 
 void AbstractAssembler::draw() {
     Machinery::draw();
     if (drawable) {
         drawable->setParameter("testParam", static_cast<float>(tick) / 10);
-        drawable->setPosition(getRect().p1);
+        drawable->setPos(getRect().center());
         drawable->draw();
     }
 }
@@ -117,7 +116,7 @@ void AbstractAssembler::run() {
     tick++;
 }
 
-void AbstractAssembler::setDrawableObject(ParametricDrawableObject* aDrawable) {
+void AbstractAssembler::setDrawable(AbstractDrawable* aDrawable) {
     drawable = aDrawable;
 }
 

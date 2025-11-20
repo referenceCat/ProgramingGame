@@ -268,28 +268,3 @@ void GraphicsEngine::initStars(std::vector<BackgroundStar>& stars, int n) {
         stars.push_back(star);
     }
 }
-
-void ParametricDrawableObject::drawDebug() {
-    GraphicsEngine::instance()->drawPoint(
-            pos, CommonValues::zDebug,
-            al_map_rgb(0, 255, 0));
-        GraphicsEngine::instance()->drawLine(
-            pos,
-            pos + Vector2d(rotation, 5),
-            CommonValues::zDebug, al_map_rgb(0, 255, 0));
-}
-
-void ParametricDrawableObject::draw() {
-    for (auto sprite : sprites) {
-        GraphicsEngine::instance()->drawBitmap(pos + sprite.pos.eval(parameters), sprite.bitmap, 20,
-            sprite.z, sprite.pivot, sprite.rotation.eval(parameters));
-    }
-}
-
-void ParametricDrawableObject::addSprite(ALLEGRO_BITMAP* bitmap, Vector2d pivot, double z, ParametricValue<Vector2d> pos, ParametricValue<Rotation> rotation) {
-    sprites.push_back(Sprite{bitmap, pivot, z, pos, rotation});
-}
-
-void ParametricDrawableObject::setParameter(std::string name, double value) {
-    parameters[name] = value;
-}

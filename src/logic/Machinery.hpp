@@ -100,7 +100,7 @@ public:
 // };
 
 class AbstractAssembler : public Machinery {
-    ParametricDrawableObject* drawable = nullptr;
+    AbstractDrawable* drawable = nullptr;
     int tick = 0;
 public:
     AbstractAssembler(Rect2d rect): Machinery(rect, 10) {};
@@ -110,9 +110,7 @@ public:
     void draw() override;
     void run() override;
 
-    void setDrawableObject(ParametricDrawableObject* aDrawable);
-    // void addProductionArea(int id, Rect2d rect);
-    // void setReciept(Reciept reciept);
+    void setDrawable(AbstractDrawable* aDrawable);
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_MACHINERY_HPP_

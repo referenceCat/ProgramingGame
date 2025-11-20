@@ -49,10 +49,8 @@ class MachineryBuilder {
                 break;
             case Test: {
                 auto abstactAssembler = new AbstractAssembler(Rect2d::fromCenterAndDimensions(Vector2d(), Vector2d(5, 5)));
-                ParametricDrawableObject* drawable = new ParametricDrawableObject();
-                drawable->addSprite(GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Oxygen/main.png"), Vector2d(0, 0), 0, {Vector2d(1, 1)}, ParametricValue<Rotation>{0, [](double t){return t * 2;}, "testParam"});
-                drawable->setParameter("testParam", 2);
-                abstactAssembler->setDrawableObject(drawable);
+                auto* drawable = new AbstractDrawable();
+                abstactAssembler->setDrawable(drawable);
                 prototype = abstactAssembler;
             } break;
             default:
