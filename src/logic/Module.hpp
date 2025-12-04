@@ -14,7 +14,7 @@ class Module;
 
 struct ModuleNode {
     Vector2d position;
-    Rotation rotation;
+    Rotation rot;
     ModuleNode* attachedNode = nullptr;
     Module* parentModule;
 };
@@ -28,7 +28,7 @@ class Module : public GameObject {
 protected:
     std::vector<ModuleNode> nodes;
     Vector2d position;
-    Rotation rotation;
+    Rotation rot;
     Module();
     std::vector<PolygonalArea*> walls;
     std::vector<PolygonalArea*> buildableAreas;
@@ -47,8 +47,8 @@ public:
         return position;
     }
 
-    Rotation getRotation() {
-        return rotation;
+    Rotation getRot() {
+        return rot;
     }
 
     void addToGameWorld() override;

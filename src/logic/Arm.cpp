@@ -55,7 +55,7 @@ void Arm::drawDebug() {
 }
 
 void Arm::rotateJointToTarget(
-    int i) { // TODO stop after reacing target rotation
+    int i) { // TODO stop after reacing target rot
     double dRotation = std::fmod(
         jointsTargetRotation[i].radians - jointsRotation[i].radians, M_PI * 2);
     if (dRotation < 0)

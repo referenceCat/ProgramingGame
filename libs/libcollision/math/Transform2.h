@@ -48,8 +48,8 @@ class Transform2
         float x = v.x;
         float y = v.y;
 
-        v.x = rotation[0][0] * x + rotation[0][1] * y + translation.x;
-        v.y = rotation[1][0] * x + rotation[1][1] * y + translation.y;
+        v.x = rot[0][0] * x + rot[0][1] * y + translation.x;
+        v.y = rot[1][0] * x + rot[1][1] * y + translation.y;
     }
 
     collision::vec2<float> getTransformed(const collision::vec2<float> &v) const
@@ -59,8 +59,8 @@ class Transform2
         float x = v.x;
         float y = v.y;
 
-        tv.x = rotation[0][0] * x + rotation[0][1] * y + translation.x;
-        tv.y = rotation[1][0] * x + rotation[1][1] * y + translation.y;
+        tv.x = rot[0][0] * x + rot[0][1] * y + translation.x;
+        tv.y = rot[1][0] * x + rot[1][1] * y + translation.y;
 
         return tv;
     }
@@ -72,9 +72,9 @@ class Transform2
         float x = v.x;
         float y = v.y;
 
-        // since the transpose of a rotation matrix is the inverse
-        tv.x = rotation[0][0] * x + rotation[1][0] * y;
-        tv.y = rotation[0][1] * x + rotation[1][1] * y;
+        // since the transpose of a rot matrix is the inverse
+        tv.x = rot[0][0] * x + rot[1][0] * y;
+        tv.y = rot[0][1] * x + rot[1][1] * y;
 
         return tv;
     }
@@ -82,7 +82,7 @@ class Transform2
   private:
     collision::vec2<float> translation;
     collision::vec2<float> scaleV;
-    collision::tmat2x2<float> rotation;
+    collision::tmat2x2<float> rot;
 };
 
 } // namespace collision

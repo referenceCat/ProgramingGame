@@ -169,7 +169,7 @@ void GameWorld::click(Vector2d point) { // TODO move to other class (game manage
     for (auto module : GameWorld::instance()->getModules()) {
         std::vector<ModuleNode*> nodes = module->getNodes();
         for (auto node : nodes) {
-            if ((module->getPosition() + node->position.rotate(module->getRotation()) - Vector2d(point.x, point.y)).lenght() < 3) {
+            if ((module->getPosition() + node->position.rotate(module->getRot()) - Vector2d(point.x, point.y)).lenght() < 3) {
                 ModuleBuilder::instance()->setParentNode(node);
                 ModuleBuilder::instance()->createWindow();
                 return;

@@ -56,9 +56,9 @@ struct Vector2d {
         x(0), y(0) {
     }
 
-    Vector2d(Rotation rotation, double length) {
-        x = cos(rotation.radians) * length;
-        y = sin(rotation.radians) * length;
+    Vector2d(Rotation rot, double length) {
+        x = cos(rot.radians) * length;
+        y = sin(rot.radians) * length;
     }
 
     Vector2d operator+(Vector2d other) {
@@ -89,10 +89,10 @@ struct Vector2d {
         return Rotation(std::atan2(y, x));
     }
 
-    Vector2d rotate(Rotation rotation) {
+    Vector2d rotate(Rotation rot) {
         Vector2d result;
-        result.x = x * std::cos(rotation.radians) - y * std::sin(rotation.radians);
-        result.y = x * std::sin(rotation.radians) + y * std::cos(rotation.radians);
+        result.x = x * std::cos(rot.radians) - y * std::sin(rot.radians);
+        result.y = x * std::sin(rot.radians) + y * std::cos(rot.radians);
         return result;
     }
 

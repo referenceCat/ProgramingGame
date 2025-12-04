@@ -61,6 +61,7 @@ public:
 
     static GraphicsEngine* instance();
     void drawLayers();
+    void drawDrawables();
 
     void loadBitmaps();
     ALLEGRO_BITMAP* getBitmap(std::string path);
@@ -89,7 +90,7 @@ public:
 
 class AbstractDrawable {
     Vector2d pos; // pos in game world
-    Rotation rotation;
+    Rotation rot;
     std::map<std::string, int> parameters;
 
 public:
@@ -102,11 +103,11 @@ public:
     };
 
     void setRotation(Rotation aRot) {
-        rotation = aRot;
+        rot = aRot;
     };
 
-    Rotation getRotation() {
-        return rotation;
+    Rotation getRot() {
+        return rot;
     };
 
     virtual void draw() {};
@@ -122,6 +123,30 @@ public:
             return parameters.at("key");
         }
     };
+};
+
+struct Sprite {
+    ALLEGRO_BITMAP* bitmap;
+    double z;
+    Vector2d pos;
+    Rotation rot;
+    Vector2d pivot;
+};
+
+class BitmapCollectionDrawable : public AbstractDrawable {
+    std::vector<Sprite> sprites;
+    Vector2d pos;
+
+public:
+    virtual void draw() override {
+        for (auto sprite : sprites) {
+            GraphicsEngine::instance()->drawBitmap(getPos() + sprite.pos.rotate(getRot()), sprite.bitmap, 20, sprite.z, sprite.pivot, getRot() + sprite.rot);
+        }
+    }
+
+    void addSprite(Sprite sprite) {
+        sprites.push_back(sprite);
+    }
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_LIBS_CORE_INCLUDE_GRAPHICSENGINE_HPP_

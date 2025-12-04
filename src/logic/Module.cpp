@@ -217,7 +217,7 @@ void Module::drawInfo() {
     for (auto node : nodes) {
         if (node.attachedNode == nullptr)
             GraphicsEngine::instance()->drawCircle(
-                node.position.rotate(rotation) + position, 0.5, CommonValues::zDebug,
+                node.position.rotate(rot) + position, 0.5, CommonValues::zDebug,
                 al_map_rgba(255, 255, 0, 100), 0.2);
     }
 }
@@ -241,44 +241,44 @@ void Module::drawDebug() {
 
     for (auto node : nodes) {
         GraphicsEngine::instance()->drawPoint(
-            node.position.rotate(rotation) + position, CommonValues::zDebug,
+            node.position.rotate(rot) + position, CommonValues::zDebug,
             al_map_rgb(0, 0, 255));
         GraphicsEngine::instance()->drawLine(
-            node.position.rotate(rotation) + position,
-            node.position.rotate(rotation) + position + Vector2d(rotation + node.rotation, 5),
+            node.position.rotate(rot) + position,
+            node.position.rotate(rot) + position + Vector2d(rot + node.rot, 5),
             CommonValues::zDebug, al_map_rgb(0, 0, 255));
     }
 }
 
 void Module::setTransforms(Vector2d aPos, Rotation aRot) {
     position = aPos;
-    rotation = aRot;
+    rot = aRot;
     for (auto wall : walls) {
         wall->transformedVerticies.clear();
         for (auto dot : wall->initialVerticies) {
-            wall->transformedVerticies.push_back(position + dot.rotate(rotation));
+            wall->transformedVerticies.push_back(position + dot.rotate(rot));
         }
     }
 
     for (auto area : buildableAreas) {
         area->transformedVerticies.clear();
         for (auto dot : area->initialVerticies) {
-            area->transformedVerticies.push_back(position + dot.rotate(rotation));
+            area->transformedVerticies.push_back(position + dot.rotate(rot));
         }
     }
 
     for (auto area : blockingAreas) {
         area->transformedVerticies.clear();
         for (auto dot : area->initialVerticies) {
-            area->transformedVerticies.push_back(position + dot.rotate(rotation));
+            area->transformedVerticies.push_back(position + dot.rotate(rot));
         }
     }
 }
 
 void Module::setTransforms(ModuleNode* parentNode, ModuleNode* ownNode) {
     Module* parentModule = parentNode->parentModule;
-    Rotation newRot = parentModule->rotation + parentNode->rotation - ownNode->rotation + M_PI;
-    Vector2d newPos = parentModule->position + parentNode->position.rotate(parentModule->rotation) + ownNode->position.rotate(parentModule->rotation + parentNode->rotation - ownNode->rotation);
+    Rotation newRot = parentModule->rot + parentNode->rot - ownNode->rot + M_PI;
+    Vector2d newPos = parentModule->position + parentNode->position.rotate(parentModule->rot) + ownNode->position.rotate(parentModule->rot + parentNode->rot - ownNode->rot);
     setTransforms(newPos, newRot);
 }
 
@@ -379,7 +379,7 @@ void BasicModulePrototype::addNode(Vector2d pos, Rotation rot) {
     assert(nodes.size() < nodesNumber);
     ModuleNode newNode;
     newNode.position = pos;
-    newNode.rotation = rot;
+    newNode.rot = rot;
     newNode.parentModule = this;
     nodes.push_back(newNode);
 }
@@ -441,7 +441,7 @@ void BasicModulePrototype::draw() {
     Module::draw();
     for (auto sprite : sprites) {
         GraphicsEngine::instance()->drawBitmap(position, sprite.bitmap, 20,
-            sprite.z, sprite.pivot, rotation);
+            sprite.z, sprite.pivot, rot);
     }
 }
 
