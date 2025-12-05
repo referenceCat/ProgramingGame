@@ -17,6 +17,7 @@
 #include "logic/MachineryBuilder.hpp"
 #include <format>
 #include "clip.h"
+#include <Profiler.hpp>
 
 
 long long tick = 0;
@@ -41,7 +42,7 @@ void init() {
 }
 
 void redraw() {
-    // auto start = std::chrono::system_clock::now();
+    Profiler::instance().startStopwatch("redraw");
     GameWorld::instance()->drawAll(drawInfo, drawDebug);
     MachineryBuilder::instance()->drawGhost();
     // GraphicsEngine::instance()->drawDebugBackgroung2();
@@ -52,20 +53,26 @@ void redraw() {
     GraphicsEngine::instance()->drawLayers();
     GuiEngine::instance()->draw();
 
+    Profiler::instance().stopStopwatch("redraw");
     al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 10, 10, 0, "Programing game");
-    al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 10, 26, 0, std::format("Current tick: {}, Events counter: {}", tick, eventCounter).c_str());
+    al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 10, 10 + 16*1, 0, std::format("Current tick: {}, Events counter: {}", tick, eventCounter).c_str());
     ALLEGRO_MOUSE_STATE mouseState;
     al_get_mouse_state(&mouseState);
     auto mousePos = GraphicsEngine::instance()->transformPointInverse(Vector2d(mouseState.x, mouseState.y));
-    al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 10, 42, 0, std::format("Mouse pos: {:.2f}, {:.2f}", mousePos.x, mousePos.y).c_str());
+    al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 10, 10 + 16*2, 0, std::format("Mouse pos: {:.2f}, {:.2f}", mousePos.x, mousePos.y).c_str());
 
-    // al_hold_bitmap_drawing(false);
+    al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 10, 10 + 16*3, 0, "Profiler (useconds):");
+    int line = 4;
+    for (const auto name: Profiler::instance().getAllNames()) {
+        al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 30, 10 + 16 * line, 0, std::format("{}: {}", name, Profiler::instance().getElapsed(name)).c_str());
+        line++;
+    }
+    Profiler::instance().clearStopwatches();
+
+    Profiler::instance().startStopwatch("flip_last_frame");
     al_flip_display();
     GraphicsEngine::instance()->clearBitmaps();
-
-    // auto end = std::chrono::system_clock::now();
-    // auto elapsed_ms = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-    // std::cout << elapsed_ms << std::endl;
+    Profiler::instance().stopStopwatch("flip_last_frame");
 }
 
 void updateMouse() {
@@ -77,6 +84,7 @@ void updateMouse() {
 }
 
 void update() {
+    Profiler::instance().startStopwatch("update");
     tick++;
 
     if (!GuiEngine::instance()->handlingKeyboardInput()) {
@@ -105,6 +113,7 @@ void update() {
 
     updateMouse();
     GameWorld::instance()->run();
+    Profiler::instance().stopStopwatch("update");
 }
 
 void onKeyDown(int keycode) {
