@@ -43,15 +43,22 @@ void init() {
 
 void redraw() {
     Profiler::instance().startStopwatch("redraw");
+
+    Profiler::instance().startStopwatch("redraw_world");
     GameWorld::instance()->drawAll(drawInfo, drawDebug);
     MachineryBuilder::instance()->drawGhost();
-    // GraphicsEngine::instance()->drawDebugBackgroung2();
-    al_set_target_bitmap(al_get_backbuffer(al_get_current_display()));
-    // al_hold_bitmap_drawing(true);
-    al_clear_to_color(al_map_rgb(0, 0, 5));
 
+    Profiler::instance().stopStopwatch("redraw_world");
+
+    Profiler::instance().startStopwatch("redraw_layers");
+    al_set_target_bitmap(al_get_backbuffer(al_get_current_display()));
+    al_clear_to_color(al_map_rgb(0, 0, 5));
     GraphicsEngine::instance()->drawLayers();
+    Profiler::instance().stopStopwatch("redraw_layers");
+
+    Profiler::instance().startStopwatch("redraw_gui");
     GuiEngine::instance()->draw();
+    Profiler::instance().stopStopwatch("redraw_gui");
 
     Profiler::instance().stopStopwatch("redraw");
     al_draw_text(GraphicsEngine::instance()->debugFont, al_map_rgb(255, 255, 255), 10, 10, 0, "Programing game");
