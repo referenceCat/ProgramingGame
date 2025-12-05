@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 #include <bitset>
-#include "common.hpp"
+#include "types.hpp"
 #include "Arm.hpp"
 #include "Box.hpp"
 #include "GameObject.hpp"

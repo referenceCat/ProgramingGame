@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <vector>
 
-#include "common.hpp"
+#include "types.hpp"
 #include "Arm.hpp"
 #include "Box.hpp"
 #include "GameObject.hpp"

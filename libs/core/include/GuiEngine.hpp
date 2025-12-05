@@ -11,7 +11,7 @@
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_color.h>
 #include <allegro5/allegro_font.h>
-#include "common.hpp"
+#include "types.hpp"
 #include "clip.h"
 
 class GuiEngine;

@@ -2,7 +2,7 @@
 #define __PROJECTS_PROGRAMINGGAME_SRC_MANIPULATORARM_HPP_
 
 #include <assert.h>
-#include "common.hpp"
+#include "types.hpp"
 #include "Box.hpp"
 #include "GameObject.hpp"
 

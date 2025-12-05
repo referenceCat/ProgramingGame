@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "common.hpp"
+#include "types.hpp"
 #include "GuiEngine.hpp"
 #include "GraphicsEngine.hpp"
 #include "Machinery.hpp"

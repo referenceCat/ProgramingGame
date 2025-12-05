@@ -1,7 +1,7 @@
 #ifndef __PROJECTS_PROGRAMINGGAME_LIBS_CORE_INCLUDE_GRAPHICSENGINE_HPP_
 #define __PROJECTS_PROGRAMINGGAME_LIBS_CORE_INCLUDE_GRAPHICSENGINE_HPP_
 
-#include <common.hpp>
+#include <types.hpp>
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_color.h>

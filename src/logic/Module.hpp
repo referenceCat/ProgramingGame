@@ -2,7 +2,7 @@
 #define __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_MODULE_HPP_
 
 #include <assert.h>
-#include "common.hpp"
+#include "types.hpp"
 #include "GameObject.hpp"
 #include "GuiEngine.hpp"
 #include "collision.h"

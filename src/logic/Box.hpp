@@ -3,7 +3,7 @@
 
 #include <assert.h>
 
-#include "common.hpp"
+#include "types.hpp"
 #include "GameObject.hpp"
 #include "GraphicsEngine.hpp"
 
