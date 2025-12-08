@@ -177,3 +177,43 @@ void GameWorld::click(Vector2d point) { // TODO move to other class (game manage
         }
     }
 }
+
+void GameWorld::saveAll(std::string filepath) {
+    std::ofstream file;
+    file.open(filepath, std::fstream::trunc);
+    if (!file.is_open())
+        return;
+
+    // create a copy
+    nlohmann::ordered_json saveData;
+    
+    auto now = std::chrono::system_clock::now();
+    auto time_t_now = std::chrono::system_clock::to_time_t(now);
+    auto local_time = std::localtime(&time_t_now);
+
+    saveData["date"] = std::format("{:04d}-{:02d}-{:02d}", 
+        local_time->tm_year + 1900, 
+        local_time->tm_mon + 1, 
+        local_time->tm_mday);
+    saveData["time"] = std::format("{:02d}:{:02d}:{:02d}", 
+        local_time->tm_hour, 
+        local_time->tm_min, 
+        local_time->tm_sec);
+    saveData["name"] = "test save";
+    // ... add other data
+
+    // serialize the JSON array
+    file << saveData << '\n';
+    file << std::flush;
+    file.close();
+    return;
+}
+
+void GameWorld::loadAll(std::string filepath) {
+    std::ifstream file(filepath);
+    if (!file.is_open())
+        return;
+
+    // load data
+    return;
+}

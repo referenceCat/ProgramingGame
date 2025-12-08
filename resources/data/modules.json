@@ -1,0 +1,69 @@
+[
+    {
+        "name": "Corridor",
+        "nodes": [
+            {
+                "rot": "right",
+                "pos": {
+                    "rot": 0,
+                    "length": 16
+                }
+            },
+            {
+                "rot": "left",
+                "pos": {
+                    "rot": "left",
+                    "length": 16
+                }
+            },
+            {
+                "rot": "down",
+                "pos": [
+                    -8,
+                    -8
+                ]
+            },
+            {
+                "rot": "down",
+                "pos": [ 8, -8 ]
+            },
+            {
+                "rot": "up",
+                "pos": [ -8, 8 ]
+            },
+            {
+                "rot": "up",
+                "pos": [ 8, 8 ]
+            }
+        ],
+        "walls": [
+            [ -16, -9, 16, -7 ],
+            [ -16, 9, 16, 7 ]
+        ],
+        "blockingAreas": [
+            [ -16, -12, 16, 12 ]
+        ],
+        "buildableAreas": [
+            [ -16, -7, 16, 7 ]
+        ],
+        "drawable": {
+            "type": "bitmapCollection",
+            "bitmaps": [
+                {
+                    "filepath": "resources/assets/modules/Corridor/background.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0.3,
+                    "pivot": [ 320, 320 ],
+                    "rot": "left"
+                },
+                {
+                    "filepath": "resources/assets/modules/Corridor/walls.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0,
+                    "pivot": [ 320, 320 ],
+                    "rot": "left"
+                }
+            ]
+        }
+    }
+]

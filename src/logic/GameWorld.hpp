@@ -3,6 +3,9 @@
 
 #include <assert.h>
 #include <vector>
+#include <string>
+#include <fstream>
+#include <nlohmann/json.hpp>
 
 #include "types.hpp"
 #include "Arm.hpp"
@@ -45,6 +48,8 @@ public:
     void drawAll(bool, bool);
     void run();
     void click(Vector2d point);
+    void saveAll(std::string filepath);
+    void loadAll(std::string filepath);
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_GAMEWORLD_HPP_

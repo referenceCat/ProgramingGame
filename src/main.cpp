@@ -24,6 +24,20 @@ long long tick = 0;
 long long eventCounter = 0;
 bool drawDebug = false, drawInfo = false;
 
+std::string debugSaveFilepath = "./saves/testSave.json";
+
+void createSaveLoadWindow() {
+    auto window = new Window(GuiEngine::instance()->getDisplayArea(), AligmentBuilder().dimensions(Vector2d(200, 70)).margin(-1, 10, 10, -1), true);
+
+    auto openFileButton = new Button(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(0, 0).margin(3, 3, 3, 3));
+    openFileButton->setMouseCallback(Release, [](auto pos) { GameWorld::instance()->loadAll(debugSaveFilepath);} );
+    new Label(openFileButton, Aligment(), "load");
+
+    auto saveFileButton = new Button(window->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(1, 0).margin(3, 3, 3, 3));
+    saveFileButton->setMouseCallback(Release, [](auto pos) { GameWorld::instance()->saveAll(debugSaveFilepath);});
+    new Label(saveFileButton, Aligment(), "save");
+}
+
 void init() {
     CameraParameters parameters;
     parameters.fov = 90;
@@ -32,10 +46,12 @@ void init() {
     parameters.z = -40; // fov = 90 deg
 
     GraphicsEngine::instance()->setCameraParameters(parameters);
-    MachineryBuilder::instance()->createWindow();
 
+    MachineryBuilder::instance()->createWindow();
     ModuleBuilder::instance()->createModulePrototype(LargeModule);
     ModuleBuilder::instance()->buildModule(true);
+    createSaveLoadWindow();
+
 
     auto box = new TapeBox(Vector2d(10, -10));
     GameWorld::instance()->addBox(box);

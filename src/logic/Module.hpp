@@ -57,7 +57,7 @@ public:
     bool checkTouchesBuildableArea(Rect2d rect);
 };
 
-class BasicModulePrototype : public Module {
+class BasicModule : public Module {
     int nodesNumber = 0;
 
     struct ModuleSprite {
@@ -69,7 +69,8 @@ class BasicModulePrototype : public Module {
     std::vector<ModuleSprite> sprites;
 
 public:
-    BasicModulePrototype(int nodesNumber);
+    BasicModule(int nodesNumber);
+    static BasicModule* createFromJson(nlohmann::json data);
     void addNode(Vector2d pos, Rotation rot);
     void addBitmap(ALLEGRO_BITMAP* bitmap, Vector2d pivot, double z);
     void addWall(Rect2d rect);

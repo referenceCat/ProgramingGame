@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <algorithm>
+#include <nlohmann/json.hpp>
 
 struct Rotation {
     double radians = 0;
@@ -21,6 +22,21 @@ struct Rotation {
 
     Rotation(double radians):
         radians(radians) {
+    }
+
+    static Rotation fromJson(nlohmann::json data) {
+        if (data.is_number()) {
+            return Rotation(data);
+        } else if (data.is_string() && data.get<std::string>() == "up") {
+            return Rotation(M_PI / 2);
+        } else if (data.is_string() && data.get<std::string>() == "down") {
+            return Rotation(M_PI * 3 / 2);
+        } else if (data.is_string() && data.get<std::string>() == "left") {
+            return Rotation(M_PI);
+        } else if (data.is_string() && data.get<std::string>() == "right") {
+            return Rotation(0);
+        }
+        return Rotation();
     }
 
     Rotation operator+(Rotation other) {
@@ -59,6 +75,17 @@ struct Vector2d {
     Vector2d(Rotation rot, double length) {
         x = cos(rot.radians) * length;
         y = sin(rot.radians) * length;
+    }
+
+    Vector2d static fromJson(nlohmann::json data) {
+        if (data.is_array()) {
+            return Vector2d(data[0], data[1]);
+        } else if (data.is_object() && data.contains("rot") && data.contains("length")) {
+            Rotation rot = Rotation::fromJson(data["rot"]);
+            double length = data["length"];
+            return Vector2d(rot, length);
+        }
+        return Vector2d();
     }
 
     Vector2d operator+(Vector2d other) {
@@ -132,6 +159,10 @@ struct Rect2d {
 
     Vector2d center() {
         return Vector2d(p1.x / 2 + p2.x / 2, p1.y / 2 + p2.y / 2);
+    }
+
+    static Rect2d fromJson(nlohmann::json data) {
+        return Rect2d::fromTwoCorners(Vector2d(data[0], data[1]), Vector2d(data[2], data[3]));
     }
 
     bool isIntersecting(Rect2d other) {
