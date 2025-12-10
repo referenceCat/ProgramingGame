@@ -16,6 +16,7 @@ void GraphicsEngine::loadBitmaps() {
 }
 
 ALLEGRO_BITMAP* GraphicsEngine::getBitmap(std::string path) {
+    assert(loadedBitmaps.contains(path));
     return loadedBitmaps[path];
 }
 

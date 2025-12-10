@@ -35,178 +35,9 @@ bool ModuleBuilder::buildModule(bool initial) {
     return true;
 }
 
-bool ModuleBuilder::createModulePrototype(ModuleType type) {
+bool ModuleBuilder::createModulePrototype(std::string name) {
     delete modulePrototype;
-    switch (type) { // put this data to json vvv
-        case ModuleType::Corridor: {
-            std::ifstream f("resources/data/modules.json");
-            nlohmann::json data = nlohmann::json::parse(f);
-            BasicModule* moduleSetup = BasicModule::fromJson(data[0]);
-            f.close();
-            // BasicModule* moduleSetup = new BasicModule(6);
-            // moduleSetup->addNode(Vector2d(Rotation(0), 16), Rotation(0));
-            // moduleSetup->addNode(Vector2d(Rotation(M_PI), 16), Rotation(M_PI));
-            // moduleSetup->addNode(Vector2d(-8, -8), Rotation(M_PI / 2 * 3));
-            // moduleSetup->addNode(Vector2d(8, -8), Rotation(M_PI / 2 * 3));
-            // moduleSetup->addNode(Vector2d(-8, 8), Rotation(M_PI / 2));
-            // moduleSetup->addNode(Vector2d(8, 8), Rotation(M_PI / 2));
-            // moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/Corridor/background.png"), Vector2d(320, 320), CommonValues::zModuleMainBackgroung);
-            // moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/Corridor/walls.png"), Vector2d(320, 320), CommonValues::zModuleWalls);
-            // moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(-16, -9), Vector2d(16, -7)));
-            // moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(-16, 9), Vector2d(16, 7)));
-            // moduleSetup->addBlockingArea(Rect2d::fromTwoCorners(Vector2d(-16, -12), Vector2d(16, 12)));
-            // moduleSetup->addBuildableArea(Rect2d::fromTwoCorners(Vector2d(-16, -7), Vector2d(16, 7)));
-            modulePrototype = moduleSetup;
-            break;
-        }
-        case ModuleType::ConnectorCross: {
-            BasicModule* moduleSetup = new BasicModule(4);
-            moduleSetup->addNode(Vector2d(Rotation(0), 12), Rotation(0));
-            moduleSetup->addNode(Vector2d(Rotation(M_PI / 2), 12), Rotation(M_PI / 2));
-            moduleSetup->addNode(Vector2d(Rotation(M_PI), 12), Rotation(M_PI));
-            moduleSetup->addNode(Vector2d(Rotation(M_PI / 2 * 3), 12), Rotation(M_PI / 2 * 3));
-            moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/ConnectorCross/background.png"), Vector2d(240, 240), CommonValues::zModuleMainBackgroung);
-            moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/ConnectorCross/walls.png"), Vector2d(240, 240), CommonValues::zModuleWalls);
-            moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(-9, -12), Vector2d(-7, -7))); // top left
-            moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(-12, -9), Vector2d(-7, -7)));
-            moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(7, -12), Vector2d(9, -9))); // top right
-            moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(12, -9), Vector2d(7, -7)));
-            moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(-12, 9), Vector2d(-7, 7))); // bottom left
-            moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(-9, 12), Vector2d(-7, 7)));
-            moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(12, 9), Vector2d(7, 7))); // bottom right
-            moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(9, 12), Vector2d(7, 7)));
-            moduleSetup->addBlockingArea(Rect2d::fromTwoCorners(Vector2d(-12, -12), Vector2d(12, 12)));
-            moduleSetup->addBuildableArea(Rect2d::fromTwoCorners(Vector2d(-7, -12), Vector2d(7, 12)));
-            moduleSetup->addBuildableArea(Rect2d::fromTwoCorners(Vector2d(-12, -7), Vector2d(12, 7)));
-            modulePrototype = moduleSetup;
-            break;
-        }
-        case ModuleType::Connector3: {
-            BasicModule* moduleSetup = new BasicModule(3);
-            moduleSetup->addNode(Vector2d(Rotation(M_PI), 8.62), Rotation(M_PI));
-            moduleSetup->addNode(Vector2d(Rotation(M_PI / 3), 8.62), Rotation(M_PI / 3));
-            moduleSetup->addNode(Vector2d(Rotation(-M_PI / 3), 8.62), Rotation(-M_PI / 3));
-            moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/Connector3/background.png"), Vector2d(8.62 * 20, 320), CommonValues::zModuleMainBackgroung);
-            moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/Connector3/walls.png"), Vector2d(8.62 * 20, 320), CommonValues::zModuleWalls);
-            // add collision
-            modulePrototype = moduleSetup;
-            break;
-        }
-        case ModuleType::Deadend: {
-            BasicModule* moduleSetup = new BasicModule(2);
-            moduleSetup->addNode(Vector2d(Rotation(M_PI / 2), 12), Rotation(M_PI / 2));
-            moduleSetup->addNode(Vector2d(Rotation(M_PI / 2 * 3), -4), Rotation(M_PI / 2 * 3));
-            moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/Deadend/background.png"), Vector2d(240, 240), CommonValues::zModuleMainBackgroung);
-            moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/Deadend/walls.png"), Vector2d(240, 240), CommonValues::zModuleWalls);
-            moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(-9, 3), Vector2d(-7, 12)));
-            moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(9, 3), Vector2d(7, 12)));
-            moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(-9, 3), Vector2d(9, 5)));
-            moduleSetup->addBlockingArea(Rect2d::fromTwoCorners(Vector2d(-12, 0), Vector2d(12, 12)));
-            moduleSetup->addBuildableArea(Rect2d::fromTwoCorners(Vector2d(-7, 5), Vector2d(7, 12)));
-            modulePrototype = moduleSetup;
-            break;
-        }
-        case ModuleType::ConnectorT: {
-            BasicModule* moduleSetup = new BasicModule(4);
-            moduleSetup->addNode(Vector2d(Rotation(0), 12), Rotation(0));
-            moduleSetup->addNode(Vector2d(Rotation(M_PI / 2), 9), Rotation(M_PI / 2));
-            moduleSetup->addNode(Vector2d(Rotation(M_PI), 12), Rotation(M_PI));
-            moduleSetup->addNode(Vector2d(Rotation(M_PI / 2 * 3), 12), Rotation(M_PI / 2 * 3));
-            moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/ConnectorT/background.png"), Vector2d(240, 240), CommonValues::zModuleMainBackgroung);
-            moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/ConnectorT/walls.png"), Vector2d(240, 240), CommonValues::zModuleWalls);
-            moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(-9, -12), Vector2d(-7, -7))); // top left
-            moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(-12, -9), Vector2d(-7, -7)));
-            moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(7, -12), Vector2d(9, -9))); // top right
-            moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(12, -9), Vector2d(7, -7)));
-            moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(-12, 7), Vector2d(12, 9))); // bottom
-            moduleSetup->addBlockingArea(Rect2d::fromTwoCorners(Vector2d(-12, -12), Vector2d(12, 12)));
-            moduleSetup->addBuildableArea(Rect2d::fromTwoCorners(Vector2d(-7, -12), Vector2d(7, -7)));
-            moduleSetup->addBuildableArea(Rect2d::fromTwoCorners(Vector2d(-12, -7), Vector2d(12, 7)));
-            modulePrototype = moduleSetup;
-            break;
-        }
-        case ModuleType::Frame: {
-            BasicModule* moduleSetup = new BasicModule(2);
-            moduleSetup->addNode(Vector2d(Rotation(M_PI / 2), 16), Rotation(M_PI / 2));
-            moduleSetup->addNode(Vector2d(Rotation(M_PI / 2 * 3), 16), Rotation(M_PI / 2 * 3));
-            moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/FrameStraight/background.png"), Vector2d(320, 320), CommonValues::zModuleMainBackgroung);
-            moduleSetup->addBlockingArea(Rect2d::fromTwoCorners(Vector2d(-6, -10), Vector2d(6, 10)));
-            moduleSetup->addBuildableArea(Rect2d::fromTwoCorners(Vector2d(-7, -16), Vector2d(7, 16)));
-            modulePrototype = moduleSetup;
-            break;
-        }
-        case ModuleType::FrameFoundation: {
-            BasicModule* moduleSetup = new BasicModule(2);
-            moduleSetup->addNode(Vector2d(Rotation(M_PI / 2), 16), Rotation(M_PI / 2));
-            moduleSetup->addNode(Vector2d(Rotation(M_PI / 2 * 3), 16), Rotation(M_PI / 2 * 3));
-            moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/FrameStraight/background.png"), Vector2d(320, 320), CommonValues::zModuleFarBackgroung);
-            moduleSetup->addBuildableArea(Rect2d::fromTwoCorners(Vector2d(-7, -16), Vector2d(7, 16)));
-            modulePrototype = moduleSetup;
-            break;
-        }
-        case ModuleType::FrameCross: {
-            BasicModule* moduleSetup = new BasicModule(4);
-            moduleSetup->addNode(Vector2d(Rotation(0), 7), Rotation(0));
-            moduleSetup->addNode(Vector2d(Rotation(M_PI / 2), 7), Rotation(M_PI / 2));
-            moduleSetup->addNode(Vector2d(Rotation(M_PI), 7), Rotation(M_PI));
-            moduleSetup->addNode(Vector2d(Rotation(M_PI / 2 * 3), 7), Rotation(M_PI / 2 * 3));
-            moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/FrameCross/background.png"), Vector2d(140, 140), CommonValues::zModuleMainBackgroung);
-            moduleSetup->addBlockingArea(Rect2d::fromTwoCorners(Vector2d(-6, -6), Vector2d(6, 6)));
-            moduleSetup->addBuildableArea(Rect2d::fromTwoCorners(Vector2d(-7, -7), Vector2d(7, 7)));
-            modulePrototype = moduleSetup;
-            break;
-        }
-        case ModuleType::Frame3: {
-            BasicModule* moduleSetup = new BasicModule(3);
-            moduleSetup->addNode(Vector2d(Rotation(M_PI), 4.04), Rotation(M_PI));
-            moduleSetup->addNode(Vector2d(Rotation(M_PI / 3), 4.04), Rotation(M_PI / 3));
-            moduleSetup->addNode(Vector2d(Rotation(-M_PI / 3), 4.04), Rotation(-M_PI / 3));
-            moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/Frame3/background.png"), Vector2d(4.04 * 20, 140), CommonValues::zModuleMainBackgroung);
-            // add collision
-            modulePrototype = moduleSetup;
-            break;
-        }
-        case ModuleType::LargeModule: {
-            BasicModule* moduleSetup = new BasicModule(4);
-            moduleSetup->addNode(Vector2d(16, -16), Rotation(0));
-            moduleSetup->addNode(Vector2d(0, 32), Rotation(M_PI / 2));
-            moduleSetup->addNode(Vector2d(-16, -16), Rotation(M_PI));
-            moduleSetup->addNode(Vector2d(0, -32), Rotation(M_PI / 2 * 3));
-            moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/LargeModule/background.png"), Vector2d(320, 640), CommonValues::zModuleMainBackgroung);
-            moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/LargeModule/walls.png"), Vector2d(320, 640), CommonValues::zModuleWalls);
-            moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/LargeModule/far_background.png"), Vector2d(320, 640), CommonValues::zModuleVeryFarBackgroung);
-            moduleSetup->addBlockingArea(Rect2d::fromTwoCorners(Vector2d(-16, -32), Vector2d(16, 32)));
-            moduleSetup->addBuildableArea(Rect2d::fromTwoCorners(Vector2d(-16, -32), Vector2d(16, 32)));
-            moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(-16, -32), Vector2d(-7, -30))); // top left
-            moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(-16, -32), Vector2d(-14, -23)));
-            moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(16, -32), Vector2d(7, -30))); // top rith
-            moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(16, -32), Vector2d(14, -23)));
-            moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(-16, 32), Vector2d(-7, 30))); // bottom left
-            moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(-16, 32), Vector2d(-14, -9)));
-            moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(16, 32), Vector2d(7, 30))); // bottom right
-            moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(16, 32), Vector2d(14, -9)));
-            modulePrototype = moduleSetup;
-            break;
-        }
-        case ModuleType::SolarPanel: {
-            BasicModule* moduleSetup = new BasicModule(1);
-            moduleSetup->addNode(Vector2d(Rotation(M_PI / 2), 12), Rotation(M_PI / 2));
-            moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/external/SolarPanel/background.png"), Vector2d(160, 320), CommonValues::zModuleFarBackgroung);
-            moduleSetup->addBlockingArea(Rect2d::fromTwoCorners(Vector2d(-8, -16), Vector2d(8, 8)));
-            modulePrototype = moduleSetup;
-            break;
-        }
-        case ModuleType::Antena: {
-            BasicModule* moduleSetup = new BasicModule(1);
-            moduleSetup->addNode(Vector2d(Rotation(M_PI / 2), 12), Rotation(M_PI / 2));
-            moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/external/CommunicationArray/background.png"), Vector2d(160, 320), CommonValues::zModuleFarBackgroung);
-            moduleSetup->addBlockingArea(Rect2d::fromTwoCorners(Vector2d(-8, -16), Vector2d(8, 8)));
-            modulePrototype = moduleSetup;
-            break;
-        }
-        default:
-            break;
-    }
+    modulePrototype = BasicModule::fromJson(ModulesData::instance().getModuleJsonData(name));
     selectNewNodeNumber(0);
     updateNodeNumberSelection();
     return true;
@@ -535,24 +366,22 @@ void ModuleBuilder::createWindow() {
     std::string labels[] = {"Corridor", "Cross Connector", "3 Way Connector",
         "T Connector", "Deadend", "Frame",
         "Square Frame", "Triangle Frame", "Utility Module",
-        "Solar Panel", "Antena array"};
-    ModuleType types[] = {Corridor, ConnectorCross, Connector3, ConnectorT,
-        Deadend, Frame, FrameCross, Frame3,
-        LargeModule, SolarPanel, Antena};
-    int n = 11;
+        "Solar Panel", "Antena array"}; // TODO rename modules in json and remove this
 
-    for (int i = 0; i < n; i++) {
+    int line = 0;
+    for (auto moduleName: ModulesData::instance().getAllModuleNames()) {
         Aligment buttonAligment;
         buttonAligment.marginLeft = 5;
         buttonAligment.marginRight = 5;
-        buttonAligment.marginTop = 5 + i * 25;
+        buttonAligment.marginTop = 5 + line * 25;
         buttonAligment.dimensions = Vector2d(-1, 20);
         auto button = new Button(typeSelectionZone->getInternalArea(), buttonAligment);
-        button->setMouseCallback(Release, [this, type = types[i]](auto pos) { createModulePrototype(type); });
-        new Label(button, Aligment(), labels[i]);
+        button->setMouseCallback(Release, [this, name = moduleName](auto pos) { createModulePrototype(name); });
+        new Label(button, Aligment(), moduleName);
+        line++;
     }
 
-    createModulePrototype(Corridor);
+    createModulePrototype("Corridor"); // TODO should be first module or default module not just Corridor
 }
 
 void ModuleBuilder::createModuleSelectionButtons() {

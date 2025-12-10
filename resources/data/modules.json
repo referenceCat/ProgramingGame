@@ -56,5 +56,418 @@
                 }
             ]
         }
+    },
+    {
+        "name": "ConnectorCross",
+        "nodes": [
+            {
+                "rot": "right",
+                "pos": { "rot": "right", "length": 12 }
+            },
+            {
+                "rot": "left",
+                "pos": {"rot": "left","length": 12}
+            },
+            {
+                "rot": "up",
+                "pos": { "rot": "up", "length": 12 }
+            },
+            {
+                "rot": "down",
+                "pos": {"rot": "down","length": 12}
+            }
+        ],
+        "walls": [
+            [ -9, -12, -7, -7],
+            [-12, -9, -7, -7],
+            [7, -12, 9, -9],
+            [12, -9, 7, -7],
+            [-12, 9, -7, 7],
+            [-9, 12, -7, 7],
+            [12, 9, 7, 7],
+            [9, 12, 7, 7]
+        ],
+        "blockingAreas": [
+            [ -12, -12, 12, 12 ]
+        ],
+        "buildableAreas": [
+            [ -7, -12, 7, 12 ],
+            [ -12, -7, 12, 7 ]
+        ],
+        "drawable": {
+            "type": "spriteCollection",
+            "sprites": [
+                {
+                    "filepath": "resources/assets/modules/ConnectorCross/background.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0.3,
+                    "pivot": [ 240, 240 ],
+                    "rot": "right"
+                },
+                {
+                    "filepath": "resources/assets/modules/ConnectorCross/walls.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0,
+                    "pivot": [ 240, 240 ],
+                    "rot": "right"
+                }
+            ]
+        }
+    },
+    {
+        "name": "Connector3",
+        "nodes": [
+            {
+                "rot": "left",
+                "pos": { "rot": "left", "length": 8.62 }
+            },
+            {
+                "rot": 1.0471975512,
+                "pos": {"rot": 1.0471975512, "length": 8.62 }
+            },
+            {
+                "rot": -1.0471975512,
+                "pos": { "rot": -1.0471975512, "length": 8.62 }
+            }
+        ],
+        "walls": [ ],
+        "blockingAreas": [ ],
+        "buildableAreas": [ ],
+        "drawable": {
+            "type": "spriteCollection",
+            "sprites": [
+                {
+                    "filepath": "resources/assets/modules/Connector3/background.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0.3,
+                    "pivot": [ 172.4, 320 ],
+                    "rot": "right"
+                },
+                {
+                    "filepath": "resources/assets/modules/Connector3/walls.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0,
+                    "pivot": [ 172.4, 320 ],
+                    "rot": "right"
+                }
+            ]
+        }
+    },
+    {
+        "name": "Deadend",
+        "nodes": [
+            {
+                "rot": "up",
+                "pos": { "rot": "up", "length": 12 }
+            },
+            {
+                "rot": "down",
+                "pos": {"rot": "down","length": -4}
+            }
+        ],
+        "walls": [
+            [ -9, 3, -9, 3],
+            [9, 3, 7, 12],
+            [-9, 3, 9, 5]
+        ],
+        "blockingAreas": [
+            [ -12, 0, 12, 12 ]
+        ],
+        "buildableAreas": [
+            [ -7, 5, 7, 12 ]
+        ],
+        "drawable": {
+            "type": "spriteCollection",
+            "sprites": [
+                {
+                    "filepath": "resources/assets/modules/Deadend/background.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0.3,
+                    "pivot": [ 240, 240 ],
+                    "rot": "right"
+                },
+                {
+                    "filepath": "resources/assets/modules/Deadend/walls.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0,
+                    "pivot": [ 240, 240 ],
+                    "rot": "right"
+                }
+            ]
+        }
+    },
+    {
+        "name": "ConnectorT",
+        "nodes": [
+            {
+                "rot": "left",
+                "pos": { "rot": "left", "length": 12 }
+            },
+            {
+                "rot": "up",
+                "pos": {"rot": "up","length": 9}
+            },
+            {
+                "rot": "right",
+                "pos": { "rot": "right", "length": 12 }
+            },
+            {
+                "rot": "down",
+                "pos": {"rot": "down","length": 12}
+            }
+        ],
+        "walls": [
+            [-9, -12, -7, -7],
+            [-12, -9,  -7, -7],
+            [7, -12, 9, -9],
+            [12, -9, 7, -7],
+            [-12, 7, 12, 9]
+        ],
+        "blockingAreas": [
+            [ -12, -12, 12, 12 ]
+        ],
+        "buildableAreas": [
+            [-7, -12, 7, -7],
+            [-12, -7, 12, 7]
+        ],
+        "drawable": {
+            "type": "spriteCollection",
+            "sprites": [
+                {
+                    "filepath": "resources/assets/modules/ConnectorT/background.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0.3,
+                    "pivot": [ 240, 240 ],
+                    "rot": "right"
+                },
+                {
+                    "filepath": "resources/assets/modules/ConnectorT/walls.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0,
+                    "pivot": [ 240, 240 ],
+                    "rot": "right"
+                }
+            ]
+        }
+    },
+
+    {
+        "name": "Frame",
+        "nodes": [
+            {
+                "rot": "up",
+                "pos": { "rot": "up", "length": 16 }
+            },
+            {
+                "rot": "down",
+                "pos": {"rot": "down","length": 16}
+            }
+        ],
+        "walls": [],
+        "blockingAreas": [
+            [ -6, -10, 6, 10 ]
+        ],
+        "buildableAreas": [
+            [ -7, -16, 7, 16 ]
+        ],
+        "drawable": {
+            "type": "spriteCollection",
+            "sprites": [
+                {
+                    "filepath": "resources/assets/modules/FrameStraight/background.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0.3,
+                    "pivot": [ 320, 320 ],
+                    "rot": "right"
+                }
+            ]
+        }
+    },
+    {
+    "name": "FrameCross",
+        "nodes": [
+            {
+                "rot": "up",
+                "pos": { "rot": "up", "length": 7 }
+            },
+            {
+                "rot": "down",
+                "pos": {"rot": "down","length": 7}
+            },
+            {
+                "rot": "left",
+                "pos": { "rot": "left", "length": 7 }
+            },
+            {
+                "rot": "right",
+                "pos": {"rot": "right","length": 7 }
+            }
+        ],
+        "walls": [],
+        "blockingAreas": [
+            [ -6, -6, 6, 6 ]
+        ],
+        "buildableAreas": [
+            [ -7, -7, 7, 7 ]
+        ],
+        "drawable": {
+            "type": "spriteCollection",
+            "sprites": [
+                {
+                    "filepath": "resources/assets/modules/FrameCross/background.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0.3,
+                    "pivot": [ 140, 140 ],
+                    "rot": "right"
+                }
+            ]
+        }
+    },
+    {
+    "name": "Frame3",
+        "nodes": [
+             {
+                "rot": "left",
+                "pos": { "rot": "left", "length": 4.04 }
+            },
+            {
+                "rot": 1.0471975512,
+                "pos": {"rot": 1.0471975512, "length": 4.04 }
+            },
+            {
+                "rot": -1.0471975512,
+                "pos": { "rot": -1.0471975512, "length": 4.04 }
+            }
+        ],
+        "walls": [],
+        "blockingAreas": [],
+        "buildableAreas": [],
+        "drawable": {
+            "type": "spriteCollection",
+            "sprites": [
+                {
+                    "filepath": "resources/assets/modules/Frame3/background.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0.3,
+                    "pivot": [ 80.8, 140 ],
+                    "rot": "right"
+                }
+            ]
+        }
+    },
+    {
+    "name": "LargeModule",
+        "nodes": [
+             {
+                "rot": "right",
+                "pos": [ 16, -16 ]
+            },
+            {
+                "rot": "up",
+                "pos": [ 0, 32 ]
+            },
+            {
+                "rot": "left",
+                "pos": [ -16, -16 ]
+            },
+            {
+                "rot": "down",
+                "pos": [ 0, -32 ]
+            }
+        ],
+        "walls": [
+            [-16, -32, -7, -30],
+            [-16, -32, -14, -23],
+            [16, -32, 7, -30],
+            [16, -32, 14, -23],
+            [-16, 32, -7, 30],
+            [-16, 32, -14, -9],
+            [16, 32, 7, 30],
+            [16, 32, 14, -9]
+        ],
+        "blockingAreas": [
+            [-16, -32, 16, 32]
+        ],
+        "buildableAreas": [
+            [-16, -32, 16, 32]
+        ],
+        "drawable": {
+            "type": "spriteCollection",
+            "sprites": [
+                {
+                    "filepath": "resources/assets/modules/LargeModule/background.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0.3,
+                    "pivot": [ 320, 640 ],
+                    "rot": "right"
+                },
+                {
+                    "filepath": "resources/assets/modules/LargeModule/walls.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0,
+                    "pivot": [ 320, 640 ],
+                    "rot": "right"
+                },
+                {
+                    "filepath": "resources/assets/modules/LargeModule/far_background.png",
+                    "pos": [ 0, 0 ],
+                    "z": 1.5,
+                    "pivot": [ 320, 640 ],
+                    "rot": "right"
+                }
+            ]
+        }
+    },
+    {
+        "name": "SolarPanel",
+        "nodes": [
+            {
+                "rot": "up",
+                "pos": { "rot": "up", "length": 12 }
+            }
+        ],
+        "walls": [],
+        "blockingAreas": [
+            [ -8, -16, 8, 8 ]
+        ],
+        "buildableAreas": [],
+        "drawable": {
+            "type": "spriteCollection",
+            "sprites": [
+                {
+                    "filepath": "resources/assets/modules/external/SolarPanel/background.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0.7,
+                    "pivot": [ 160, 320 ],
+                    "rot": "right"
+                }
+            ]
+        }
+    },
+    {
+        "name": "CommunicationArray",
+        "nodes": [
+            {
+                "rot": "up",
+                "pos": { "rot": "up", "length": 12 }
+            }
+        ],
+        "walls": [],
+        "blockingAreas": [
+            [ -8, -16, 8, 8 ]
+        ],
+        "buildableAreas": [],
+        "drawable": {
+            "type": "spriteCollection",
+            "sprites": [
+                {
+                    "filepath": "resources/assets/modules/external/CommunicationArray/background.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0.7,
+                    "pivot": [ 160, 320 ],
+                    "rot": "right"
+                }
+            ]
+        }
     }
 ]

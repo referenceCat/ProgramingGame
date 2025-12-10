@@ -8,6 +8,7 @@
 #include "collision.h"
 #include <nlohmann/json.hpp>
 #include "GraphicsEngine.hpp"
+#include <fstream>
 
 class GuiEngine;
 class GameWorld;
@@ -79,26 +80,45 @@ public:
     void addBuildableArea(Rect2d rect);
     void addBlockingArea(Rect2d rect);
     void draw();
-    void setDrawable(AbstractDrawable* aDrawable) {drawable = aDrawable;};
+
+    void setDrawable(AbstractDrawable* aDrawable) {
+        drawable = aDrawable;
+    };
 };
 
-enum ModuleType // TODO maybe not
-{
-    Corridor,
-    ConnectorCross,
-    Connector3,
-    ConnectorT,
-    Deadend,
-    Frame,
-    FrameCross,
-    Frame3,
-    LargeModule,
-    SolarPanel,
-    Antena,
-    FrameFoundation
+class ModulesData {
+    std::map<std::string, nlohmann::json> data;
+
+public:
+    std::vector<std::string> getAllModuleNames() {
+        std::vector<std::string> names;
+        for (auto const& module : data)
+            names.push_back(module.first);
+        return names;
+    }
+
+    nlohmann::json getModuleJsonData(std::string name) {
+        return data[name];
+    }
+
+    static ModulesData& instance() {
+        static ModulesData inst{};
+        return inst;
+    }
+
+    void initialize() {
+        std::ifstream f("resources/data/modules.json");
+        nlohmann::json json = nlohmann::json::parse(f);
+        f.close();
+        for (auto moduleData: json) {
+            std::string name = moduleData["name"].get<std::string>();
+            data[name] = moduleData;
+        }
+    }
 };
 
 class ModuleBuilder {
+
     ModuleNode* parentModuleNode;
     int newModuleNodeNumber;
     Module* modulePrototype = nullptr;
@@ -115,7 +135,7 @@ public:
     static ModuleBuilder* instance();
     void setParentNode(ModuleNode* node);
     bool buildModule(bool initial = false); // returns true on success
-    bool createModulePrototype(ModuleType);
+    bool createModulePrototype(std::string name);
     bool selectNewNodeNumber(int number);
     void createWindow();
     void createModuleSelectionButtons();

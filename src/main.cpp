@@ -48,10 +48,11 @@ void init() {
     GraphicsEngine::instance()->setCameraParameters(parameters);
 
     MachineryBuilder::instance()->createWindow();
-    ModuleBuilder::instance()->createModulePrototype(LargeModule);
+
+    ModulesData::instance().initialize();
+    ModuleBuilder::instance()->createModulePrototype("LargeModule");
     ModuleBuilder::instance()->buildModule(true);
     createSaveLoadWindow();
-
 
     auto box = new TapeBox(Vector2d(10, -10));
     GameWorld::instance()->addBox(box);
