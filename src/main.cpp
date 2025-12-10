@@ -50,7 +50,7 @@ void init() {
     MachineryBuilder::instance()->createWindow();
 
     ModulesData::instance().initialize();
-    ModuleBuilder::instance()->createModulePrototype("LargeModule");
+    ModuleBuilder::instance()->createModulePrototype("Utility Module");
     ModuleBuilder::instance()->buildModule(true);
     createSaveLoadWindow();
 
