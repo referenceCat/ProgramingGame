@@ -49,7 +49,7 @@ class MachineryBuilder {
                 break;
             case Test: {
                 auto abstactAssembler = new AbstractAssembler(Rect2d::fromCenterAndDimensions(Vector2d(), Vector2d(5, 5)));
-                auto* drawable = new BitmapCollectionDrawable();
+                auto* drawable = new SpriteCollectionDrawable();
                 drawable->addSprite({GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Controller/main.png"), CommonValues::zMachinery, {0, 0}, Rotation::fromDegrees(15), {30, 30}});
                 abstactAssembler->setDrawable(drawable);
                 prototype = abstactAssembler;

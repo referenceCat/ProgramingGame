@@ -26,7 +26,7 @@ struct Rotation {
 
     static Rotation fromJson(nlohmann::json data) {
         if (data.is_number()) {
-            return Rotation(data);
+            return Rotation(data.get<double>());
         } else if (data.is_string() && data.get<std::string>() == "up") {
             return Rotation(M_PI / 2);
         } else if (data.is_string() && data.get<std::string>() == "down") {
@@ -79,10 +79,10 @@ struct Vector2d {
 
     Vector2d static fromJson(nlohmann::json data) {
         if (data.is_array()) {
-            return Vector2d(data[0], data[1]);
+            return Vector2d(data[0].get<double>(), data[1].get<double>());
         } else if (data.is_object() && data.contains("rot") && data.contains("length")) {
             Rotation rot = Rotation::fromJson(data["rot"]);
-            double length = data["length"];
+            double length = data["length"].get<double>();
             return Vector2d(rot, length);
         }
         return Vector2d();
@@ -162,7 +162,7 @@ struct Rect2d {
     }
 
     static Rect2d fromJson(nlohmann::json data) {
-        return Rect2d::fromTwoCorners(Vector2d(data[0], data[1]), Vector2d(data[2], data[3]));
+        return Rect2d::fromTwoCorners(Vector2d(data[0].get<double>(), data[1].get<double>()), Vector2d(data[2].get<double>(), data[3].get<double>()));
     }
 
     bool isIntersecting(Rect2d other) {

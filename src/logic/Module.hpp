@@ -6,7 +6,8 @@
 #include "GameObject.hpp"
 #include "GuiEngine.hpp"
 #include "collision.h"
-// #include <nlohmann/json.hpp>
+#include <nlohmann/json.hpp>
+#include "GraphicsEngine.hpp"
 
 class GuiEngine;
 class GameWorld;
@@ -43,7 +44,7 @@ public:
     ModuleNode* getNode(int number);
     std::vector<ModuleNode*> getNodes();
 
-    Vector2d getPosition() {
+    Vector2d getPos() {
         return position;
     }
 
@@ -59,6 +60,7 @@ public:
 
 class BasicModule : public Module {
     int nodesNumber = 0;
+    AbstractDrawable* drawable = nullptr;
 
     struct ModuleSprite {
         Vector2d pivot;
@@ -70,13 +72,14 @@ class BasicModule : public Module {
 
 public:
     BasicModule(int nodesNumber);
-    static BasicModule* createFromJson(nlohmann::json data);
+    static BasicModule* fromJson(nlohmann::json data);
     void addNode(Vector2d pos, Rotation rot);
     void addBitmap(ALLEGRO_BITMAP* bitmap, Vector2d pivot, double z);
     void addWall(Rect2d rect);
     void addBuildableArea(Rect2d rect);
     void addBlockingArea(Rect2d rect);
     void draw();
+    void setDrawable(AbstractDrawable* aDrawable) {drawable = aDrawable;};
 };
 
 enum ModuleType // TODO maybe not

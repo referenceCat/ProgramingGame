@@ -11,6 +11,7 @@
 #include <map>
 #include <string>
 #include <functional>
+#include <nlohmann/json.hpp>
 
 struct CameraParameters {
     Vector2d position;
@@ -133,9 +134,8 @@ struct Sprite {
     Vector2d pivot;
 };
 
-class BitmapCollectionDrawable : public AbstractDrawable {
+class SpriteCollectionDrawable : public AbstractDrawable {
     std::vector<Sprite> sprites;
-    Vector2d pos;
 
 public:
     virtual void draw() override {
@@ -146,6 +146,16 @@ public:
 
     void addSprite(Sprite sprite) {
         sprites.push_back(sprite);
+    }
+
+    static SpriteCollectionDrawable* fromJson(nlohmann::json data) {
+        SpriteCollectionDrawable* result = new SpriteCollectionDrawable();
+        assert(data["type"].get<std::string>() == "spriteCollection");
+        for (auto spriteData: data["sprites"]) {
+            Sprite sprite {GraphicsEngine::instance()->getBitmap(spriteData["filepath"].get<std::string>()), spriteData["z"].get<double>(), Vector2d::fromJson(spriteData["pos"]), Rotation::fromJson(spriteData["rot"]), Vector2d::fromJson(spriteData["pivot"])};
+            result->addSprite(sprite);
+        }
+        return result;
     }
 };
 

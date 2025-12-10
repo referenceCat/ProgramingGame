@@ -41,7 +41,7 @@ bool ModuleBuilder::createModulePrototype(ModuleType type) {
         case ModuleType::Corridor: {
             std::ifstream f("resources/data/modules.json");
             nlohmann::json data = nlohmann::json::parse(f);
-            BasicModule* moduleSetup = BasicModule::createFromJson(data[0]);
+            BasicModule* moduleSetup = BasicModule::fromJson(data[0]);
             f.close();
             // BasicModule* moduleSetup = new BasicModule(6);
             // moduleSetup->addNode(Vector2d(Rotation(0), 16), Rotation(0));
@@ -50,8 +50,8 @@ bool ModuleBuilder::createModulePrototype(ModuleType type) {
             // moduleSetup->addNode(Vector2d(8, -8), Rotation(M_PI / 2 * 3));
             // moduleSetup->addNode(Vector2d(-8, 8), Rotation(M_PI / 2));
             // moduleSetup->addNode(Vector2d(8, 8), Rotation(M_PI / 2));
-            moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/Corridor/background.png"), Vector2d(320, 320), CommonValues::zModuleMainBackgroung);
-            moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/Corridor/walls.png"), Vector2d(320, 320), CommonValues::zModuleWalls);
+            // moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/Corridor/background.png"), Vector2d(320, 320), CommonValues::zModuleMainBackgroung);
+            // moduleSetup->addBitmap(GraphicsEngine::instance()->getBitmap("resources/assets/modules/Corridor/walls.png"), Vector2d(320, 320), CommonValues::zModuleWalls);
             // moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(-16, -9), Vector2d(16, -7)));
             // moduleSetup->addWall(Rect2d::fromTwoCorners(Vector2d(-16, 9), Vector2d(16, 7)));
             // moduleSetup->addBlockingArea(Rect2d::fromTwoCorners(Vector2d(-16, -12), Vector2d(16, 12)));
@@ -379,7 +379,7 @@ BasicModule::BasicModule(int nodesNumber):
     nodes.reserve(nodesNumber);
 }
 
-BasicModule* BasicModule::createFromJson(nlohmann::json data) {
+BasicModule* BasicModule::fromJson(nlohmann::json data) {
     BasicModule* result = new BasicModule(data["nodes"].size());
 
     for (auto nodeData : data["nodes"]) {
@@ -402,6 +402,7 @@ BasicModule* BasicModule::createFromJson(nlohmann::json data) {
         Rect2d rect = Rect2d::fromJson(buildableAreaData);
         result->addBuildableArea(rect);
     }
+    result->setDrawable(SpriteCollectionDrawable::fromJson(data["drawable"]));
     return result;
 }
 
@@ -472,6 +473,12 @@ void BasicModule::draw() {
     for (auto sprite : sprites) {
         GraphicsEngine::instance()->drawBitmap(position, sprite.bitmap, 20,
             sprite.z, sprite.pivot, rot);
+    }
+
+    if (drawable) {
+        drawable->setPos(getPos());
+        drawable->setRotation(getRot());
+        drawable->draw();
     }
 }
 
