@@ -4,19 +4,20 @@
 class GameWorld;
 
 class GameObject {
-private:
-    inline static int lastId = 0;
-    const int id;
+    uint64_t id;
 
 public:
-    GameObject():
-        id(++lastId) {};
+    GameObject() {
+        static uint64_t next_id = 1;
+        id = next_id;
+        next_id++;
+    }
 
-    int getId() {
+    uint64_t getId() {
         return id;
     }
 
-    virtual void addToGameWorld() = 0;
+    virtual void addToGameWorld() = 0; // TODO should be somewhat same for all types of objects
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_GAMEOBJECT_HPP_
