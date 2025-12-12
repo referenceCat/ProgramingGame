@@ -19,7 +19,7 @@ public:
         rect(aRect) {
     }
 
-    void move(Vector2d position);
+    void move(Vector2d pos);
     virtual void drawInfo();
     virtual void drawDebug();
     virtual void draw();

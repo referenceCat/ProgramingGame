@@ -42,7 +42,7 @@ void init() {
     CameraParameters parameters;
     parameters.fov = 90;
     parameters.displayDimensions = Vector2d(900, 900);
-    parameters.position = Vector2d(0, 0);
+    parameters.pos = Vector2d(0, 0);
     parameters.z = -40; // fov = 90 deg
 
     GraphicsEngine::instance()->setCameraParameters(parameters);
@@ -117,13 +117,13 @@ void update() {
 
         CameraParameters camera = GraphicsEngine::instance()->getCameraParameters();
         if (al_key_down(&keyboardState, ALLEGRO_KEY_W))
-            camera.position.y -= 1;
+            camera.pos.y -= 1;
         if (al_key_down(&keyboardState, ALLEGRO_KEY_S))
-            camera.position.y += 1;
+            camera.pos.y += 1;
         if (al_key_down(&keyboardState, ALLEGRO_KEY_A))
-            camera.position.x -= 1;
+            camera.pos.x -= 1;
         if (al_key_down(&keyboardState, ALLEGRO_KEY_D))
-            camera.position.x += 1;
+            camera.pos.x += 1;
         if (al_key_down(&keyboardState, ALLEGRO_KEY_EQUALS)) {
             camera.z /= 1.01;
             camera.fov /= 1.01;

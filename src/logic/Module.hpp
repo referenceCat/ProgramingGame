@@ -14,8 +14,8 @@ class GuiEngine;
 class GameWorld;
 class Module;
 
-struct ModuleNode {
-    Vector2d position;
+struct ModuleNode: public GameObject {
+    Vector2d pos;
     Rotation rot;
     ModuleNode* attachedNode = nullptr;
     Module* parentModule;
@@ -29,12 +29,12 @@ struct PolygonalArea {
 class Module : public GameObject {
 protected:
     std::vector<ModuleNode> nodes;
-    Vector2d position;
+    Vector2d pos;
     Rotation rot;
     Module();
-    std::vector<PolygonalArea*> walls;
-    std::vector<PolygonalArea*> buildableAreas;
-    std::vector<PolygonalArea*> blockingAreas;
+    std::vector<PolygonalArea> walls;
+    std::vector<PolygonalArea> buildableAreas;
+    std::vector<PolygonalArea> blockingAreas;
 
 public:
     virtual void drawInfo();
@@ -46,7 +46,7 @@ public:
     std::vector<ModuleNode*> getNodes();
 
     Vector2d getPos() {
-        return position;
+        return pos;
     }
 
     Rotation getRot() {
@@ -57,11 +57,14 @@ public:
     bool checkWallCollision(Rect2d rect);
     bool checkBlockingAreaCollision(Module* other);
     bool checkTouchesBuildableArea(Rect2d rect);
+    virtual nlohmann::json toJson();
+    static Module* fromJson(nlohmann::json);
 };
 
 class BasicModule : public Module {
     int nodesNumber = 0;
     AbstractDrawable* drawable = nullptr;
+    std::string name = "unknown"; // e.g. Corridor, Large Module, etc
 
     struct ModuleSprite {
         Vector2d pivot;
@@ -73,14 +76,15 @@ class BasicModule : public Module {
 
 public:
     BasicModule(int nodesNumber);
-    static BasicModule* fromJson(nlohmann::json data);
+    static BasicModule* initializeFromJson(nlohmann::json data);
+    static BasicModule* fromJson(nlohmann::json);
     void addNode(Vector2d pos, Rotation rot);
     void addBitmap(ALLEGRO_BITMAP* bitmap, Vector2d pivot, double z);
     void addWall(Rect2d rect);
     void addBuildableArea(Rect2d rect);
     void addBlockingArea(Rect2d rect);
     void draw();
-
+    virtual nlohmann::json toJson() override;
     void setDrawable(AbstractDrawable* aDrawable) {
         drawable = aDrawable;
     };

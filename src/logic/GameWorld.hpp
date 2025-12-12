@@ -50,6 +50,7 @@ public:
     void click(Vector2d point);
     void saveAll(std::string filepath);
     void loadAll(std::string filepath);
+    void clearAll();
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_GAMEWORLD_HPP_

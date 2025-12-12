@@ -41,7 +41,7 @@ void GraphicsEngine::drawStarsBackgroung() {
 }
 
 Vector2d GraphicsEngine::transformPoint(Vector2d originalPoint, double z) {
-    Vector2d relativePoint = originalPoint - camera.position;
+    Vector2d relativePoint = originalPoint - camera.pos;
 
     Vector2d proportionalPoint = relativePoint;
     proportionalPoint.x /= camera.fov / 2;
@@ -57,7 +57,7 @@ Vector2d GraphicsEngine::transformPoint(Vector2d originalPoint, double z) {
 }
 
 Vector2d GraphicsEngine::transformPointInverse(Vector2d originalPoint) {
-    Vector2d result = camera.position;
+    Vector2d result = camera.pos;
     double pixelsPerUnit = camera.displayDimensions.x / camera.fov;
     result = result - Vector2d(camera.fov / 2, camera.displayDimensions.y / 2 / pixelsPerUnit);
     result = result + originalPoint / pixelsPerUnit;

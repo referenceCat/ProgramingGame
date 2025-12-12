@@ -147,8 +147,8 @@ void Arm::cleatTarget() {
     memcpy(segmentsTargetLength, segmentsLength, maxJointsNumber);
 }
 
-void Arm::setRootJointPosition(Vector2d position) {
-    jointsPosition[0] = position;
+void Arm::setRootJointPosition(Vector2d pos) {
+    jointsPosition[0] = pos;
 }
 
 void Arm::rotateJoint(int aJoint, Rotation aRotation) {

@@ -169,7 +169,7 @@ void GameWorld::click(Vector2d point) { // TODO move to other class (game manage
     for (auto module : GameWorld::instance()->getModules()) {
         std::vector<ModuleNode*> nodes = module->getNodes();
         for (auto node : nodes) {
-            if ((module->getPos() + node->position.rotate(module->getRot()) - Vector2d(point.x, point.y)).lenght() < 3) {
+            if ((module->getPos() + node->pos.rotate(module->getRot()) - Vector2d(point.x, point.y)).lenght() < 3) {
                 ModuleBuilder::instance()->setParentNode(node);
                 ModuleBuilder::instance()->createWindow();
                 return;
@@ -184,25 +184,28 @@ void GameWorld::saveAll(std::string filepath) {
     if (!file.is_open())
         return;
 
-    // create a copy
     nlohmann::ordered_json saveData;
-    
+
     auto now = std::chrono::system_clock::now();
     auto time_t_now = std::chrono::system_clock::to_time_t(now);
     auto local_time = std::localtime(&time_t_now);
 
-    saveData["date"] = std::format("{:04d}-{:02d}-{:02d}", 
-        local_time->tm_year + 1900, 
-        local_time->tm_mon + 1, 
+    saveData["date"] = std::format("{:04d}-{:02d}-{:02d}",
+        local_time->tm_year + 1900,
+        local_time->tm_mon + 1,
         local_time->tm_mday);
-    saveData["time"] = std::format("{:02d}:{:02d}:{:02d}", 
-        local_time->tm_hour, 
-        local_time->tm_min, 
+    saveData["time"] = std::format("{:02d}:{:02d}:{:02d}",
+        local_time->tm_hour,
+        local_time->tm_min,
         local_time->tm_sec);
     saveData["name"] = "test save";
-    // ... add other data
+    
+    auto modulesJson = nlohmann::json::array();
+    for (auto module : modules) {
+        modulesJson.push_back(module->toJson());
+    }
+    saveData["modules"] = modulesJson;
 
-    // serialize the JSON array
     file << saveData << '\n';
     file << std::flush;
     file.close();
@@ -210,10 +213,41 @@ void GameWorld::saveAll(std::string filepath) {
 }
 
 void GameWorld::loadAll(std::string filepath) {
+    clearAll();
+
     std::ifstream file(filepath);
     if (!file.is_open())
         return;
 
-    // load data
+    nlohmann::json data = nlohmann::json::parse(file);
+    file.close();
+
+    for (auto moduleData: data["modules"]) {
+        auto module = BasicModule::fromJson(moduleData); // TODO check for other types of modules, also doesnt connect nodes yet
+        module->addToGameWorld();
+    }
+        
+    
     return;
+}
+
+void GameWorld::clearAll() {
+    for (auto arm: arms) {
+        delete arm;
+    }
+    arms.clear();
+    for (auto machinery: machines) {
+        delete machinery;
+    }
+    machines.clear();
+    for (auto box: boxes) {
+        delete box;
+    }
+    boxes.clear();
+    for (auto module: modules) {
+        delete module;
+    }
+    modules.clear();
+
+    GameObject::next_id = 1;
 }

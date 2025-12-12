@@ -29,7 +29,7 @@ bool ModuleBuilder::buildModule(bool initial) {
         newModuleNode->attachedNode = parentModuleNode;
     }
 
-    GameWorld::instance()->addModule(modulePrototype);
+    // GameWorld::instance()->addModule(modulePrototype);
     modulePrototype->addToGameWorld();
     modulePrototype = nullptr;
     return true;
@@ -37,7 +37,7 @@ bool ModuleBuilder::buildModule(bool initial) {
 
 bool ModuleBuilder::createModulePrototype(std::string name) {
     delete modulePrototype;
-    modulePrototype = BasicModule::fromJson(ModulesData::instance().getModuleJsonData(name));
+    modulePrototype = BasicModule::initializeFromJson(ModulesData::instance().getModuleJsonData(name));
     selectNewNodeNumber(0);
     updateNodeNumberSelection();
     return true;
@@ -52,60 +52,60 @@ void Module::drawInfo() {
     for (auto node : nodes) {
         if (node.attachedNode == nullptr)
             GraphicsEngine::instance()->drawCircle(
-                node.position.rotate(rot) + position, 0.5, CommonValues::zDebug,
+                node.pos.rotate(rot) + pos, 0.5, CommonValues::zDebug,
                 al_map_rgba(255, 255, 0, 100), 0.2);
     }
 }
 
 void Module::drawDebug() {
-    GraphicsEngine::instance()->drawPoint(position, 0, al_map_rgb(255, 255, 255));
+    GraphicsEngine::instance()->drawPoint(pos, 0, al_map_rgb(255, 255, 255));
     for (auto wall : walls) {
-        GraphicsEngine::instance()->drawPolygon(wall->transformedVerticies, -0.001,
+        GraphicsEngine::instance()->drawPolygon(wall.transformedVerticies, -0.001,
             al_map_rgb(255, 0, 0));
     }
 
     for (auto area : blockingAreas) {
-        GraphicsEngine::instance()->drawPolygon(area->transformedVerticies, -0.001,
+        GraphicsEngine::instance()->drawPolygon(area.transformedVerticies, -0.001,
             al_map_rgba(100, 0, 0, 40));
     }
 
     for (auto area : buildableAreas) {
-        GraphicsEngine::instance()->drawPolygon(area->transformedVerticies, -0.001,
+        GraphicsEngine::instance()->drawPolygon(area.transformedVerticies, -0.001,
             al_map_rgba(0, 100, 100, 30));
     }
 
     for (auto node : nodes) {
         GraphicsEngine::instance()->drawPoint(
-            node.position.rotate(rot) + position, CommonValues::zDebug,
+            node.pos.rotate(rot) + pos, CommonValues::zDebug,
             al_map_rgb(0, 0, 255));
         GraphicsEngine::instance()->drawLine(
-            node.position.rotate(rot) + position,
-            node.position.rotate(rot) + position + Vector2d(rot + node.rot, 5),
+            node.pos.rotate(rot) + pos,
+            node.pos.rotate(rot) + pos + Vector2d(rot + node.rot, 5),
             CommonValues::zDebug, al_map_rgb(0, 0, 255));
     }
 }
 
 void Module::setTransforms(Vector2d aPos, Rotation aRot) {
-    position = aPos;
+    pos = aPos;
     rot = aRot;
-    for (auto wall : walls) {
-        wall->transformedVerticies.clear();
-        for (auto dot : wall->initialVerticies) {
-            wall->transformedVerticies.push_back(position + dot.rotate(rot));
+    for (auto& wall : walls) {
+        wall.transformedVerticies.clear();
+        for (auto dot : wall.initialVerticies) {
+            wall.transformedVerticies.push_back(pos + dot.rotate(rot));
         }
     }
 
-    for (auto area : buildableAreas) {
-        area->transformedVerticies.clear();
-        for (auto dot : area->initialVerticies) {
-            area->transformedVerticies.push_back(position + dot.rotate(rot));
+    for (auto& area : buildableAreas) {
+        area.transformedVerticies.clear();
+        for (auto dot : area.initialVerticies) {
+            area.transformedVerticies.push_back(pos + dot.rotate(rot));
         }
     }
 
-    for (auto area : blockingAreas) {
-        area->transformedVerticies.clear();
-        for (auto dot : area->initialVerticies) {
-            area->transformedVerticies.push_back(position + dot.rotate(rot));
+    for (auto& area : blockingAreas) {
+        area.transformedVerticies.clear();
+        for (auto dot : area.initialVerticies) {
+            area.transformedVerticies.push_back(pos + dot.rotate(rot));
         }
     }
 }
@@ -113,7 +113,7 @@ void Module::setTransforms(Vector2d aPos, Rotation aRot) {
 void Module::setTransforms(ModuleNode* parentNode, ModuleNode* ownNode) {
     Module* parentModule = parentNode->parentModule;
     Rotation newRot = parentModule->rot + parentNode->rot - ownNode->rot + M_PI;
-    Vector2d newPos = parentModule->position + parentNode->position.rotate(parentModule->rot) + ownNode->position.rotate(parentModule->rot + parentNode->rot - ownNode->rot);
+    Vector2d newPos = parentModule->pos + parentNode->pos.rotate(parentModule->rot) + ownNode->pos.rotate(parentModule->rot + parentNode->rot - ownNode->rot);
     setTransforms(newPos, newRot);
 }
 
@@ -144,7 +144,7 @@ bool Module::checkWallCollision(Rect2d rect) {
     for (auto wall : walls) {
 
         dots.clear();
-        for (auto dot : wall->transformedVerticies) {
+        for (auto dot : wall.transformedVerticies) {
             dots.push_back(collision::fvec2(dot.x, dot.y));
         }
 
@@ -161,7 +161,7 @@ bool Module::checkBlockingAreaCollision(Module* other) {
     std::vector<collision::fvec2> dots;
     for (auto otherArea : other->blockingAreas) {
         dots.clear();
-        for (auto dot : otherArea->transformedVerticies) {
+        for (auto dot : otherArea.transformedVerticies) {
             dots.push_back(collision::fvec2(dot.x, dot.y));
         }
         collision::Polygon otherPolygon(dots);
@@ -169,7 +169,7 @@ bool Module::checkBlockingAreaCollision(Module* other) {
         for (auto ownArea : blockingAreas) {
 
             dots.clear();
-            for (auto dot : ownArea->transformedVerticies) {
+            for (auto dot : ownArea.transformedVerticies) {
                 dots.push_back(collision::fvec2(dot.x, dot.y));
             }
 
@@ -192,7 +192,7 @@ bool Module::checkTouchesBuildableArea(Rect2d rect) {
     for (auto area : buildableAreas) {
 
         dots.clear();
-        for (auto dot : area->transformedVerticies) {
+        for (auto dot : area.transformedVerticies) {
             dots.push_back(collision::fvec2(dot.x, dot.y));
         }
 
@@ -204,13 +204,31 @@ bool Module::checkTouchesBuildableArea(Rect2d rect) {
     return false;
 }
 
+nlohmann::json Module::toJson() {
+    auto result = nlohmann::json();
+    result["type"] = "Module";
+    result["id"] = getId();
+    result["pos"] = pos.toJson();
+    result["rot"] = rot.toJson();
+    auto nodesJson = nlohmann::json::array();
+    for (auto node : nodes) {
+        auto nodeJson = nlohmann::json();
+        nodeJson["id"] = node.getId();
+        if (node.attachedNode != nullptr)
+            nodeJson["attachedNodeId"] = node.attachedNode->getId();
+        nodesJson.push_back(nodeJson);
+    }
+    result["nodes"] = nodesJson;
+    return result;
+}
+
 BasicModule::BasicModule(int nodesNumber):
     Module(), nodesNumber(nodesNumber) {
     assert(nodesNumber > 0);
     nodes.reserve(nodesNumber);
 }
 
-BasicModule* BasicModule::fromJson(nlohmann::json data) {
+BasicModule* BasicModule::initializeFromJson(nlohmann::json data) {
     BasicModule* result = new BasicModule(data["nodes"].size());
 
     for (auto nodeData : data["nodes"]) {
@@ -234,13 +252,20 @@ BasicModule* BasicModule::fromJson(nlohmann::json data) {
         result->addBuildableArea(rect);
     }
     result->setDrawable(SpriteCollectionDrawable::fromJson(data["drawable"]));
+    result->name = data["name"];
     return result;
+}
+
+BasicModule* BasicModule::fromJson(nlohmann::json data) {
+    auto module = BasicModule::initializeFromJson(ModulesData::instance().getModuleJsonData(data["name"]));
+    module->setTransforms(Vector2d::fromJson(data["pos"]), Rotation::fromJson(data["rot"]));
+    return module;
 }
 
 void BasicModule::addNode(Vector2d pos, Rotation rot) {
     assert(nodes.size() < nodesNumber);
     ModuleNode newNode;
-    newNode.position = pos;
+    newNode.pos = pos;
     newNode.rot = rot;
     newNode.parentModule = this;
     nodes.push_back(newNode);
@@ -255,46 +280,44 @@ void BasicModule::addBitmap(ALLEGRO_BITMAP* bitmap, Vector2d pivot,
 }
 
 void BasicModule::addWall(Rect2d rect) {
-    auto wall = new PolygonalArea{};
-    wall->initialVerticies.push_back(Vector2d(rect.p1.x, rect.p2.y));
-    wall->initialVerticies.push_back(rect.p2);
-    wall->initialVerticies.push_back(Vector2d(rect.p2.x, rect.p1.y));
-    wall->initialVerticies.push_back(rect.p1);
-
-    wall->transformedVerticies.push_back(Vector2d(rect.p1.x, rect.p2.y));
-    wall->transformedVerticies.push_back(rect.p2);
-    wall->transformedVerticies.push_back(Vector2d(rect.p2.x, rect.p1.y));
-    wall->transformedVerticies.push_back(rect.p1);
+    PolygonalArea wall {};
+    wall.initialVerticies.push_back(Vector2d(rect.p1.x, rect.p2.y));
+    wall.initialVerticies.push_back(rect.p2);
+    wall.initialVerticies.push_back(Vector2d(rect.p2.x, rect.p1.y));
+    wall.initialVerticies.push_back(rect.p1);
+    wall.transformedVerticies.push_back(Vector2d(rect.p1.x, rect.p2.y));
+    wall.transformedVerticies.push_back(rect.p2);
+    wall.transformedVerticies.push_back(Vector2d(rect.p2.x, rect.p1.y));
+    wall.transformedVerticies.push_back(rect.p1);
 
     walls.push_back(wall);
 }
 
 void BasicModule::addBuildableArea(Rect2d rect) {
-    auto area = new PolygonalArea{};
-    area->initialVerticies.push_back(Vector2d(rect.p1.x, rect.p2.y));
-    area->initialVerticies.push_back(rect.p2);
-    area->initialVerticies.push_back(Vector2d(rect.p2.x, rect.p1.y));
-    area->initialVerticies.push_back(rect.p1);
-
-    area->transformedVerticies.push_back(Vector2d(rect.p1.x, rect.p2.y));
-    area->transformedVerticies.push_back(rect.p2);
-    area->transformedVerticies.push_back(Vector2d(rect.p2.x, rect.p1.y));
-    area->transformedVerticies.push_back(rect.p1);
+    PolygonalArea area {};
+    area.initialVerticies.push_back(Vector2d(rect.p1.x, rect.p2.y));
+    area.initialVerticies.push_back(rect.p2);
+    area.initialVerticies.push_back(Vector2d(rect.p2.x, rect.p1.y));
+    area.initialVerticies.push_back(rect.p1);
+    area.transformedVerticies.push_back(Vector2d(rect.p1.x, rect.p2.y));
+    area.transformedVerticies.push_back(rect.p2);
+    area.transformedVerticies.push_back(Vector2d(rect.p2.x, rect.p1.y));
+    area.transformedVerticies.push_back(rect.p1);
 
     buildableAreas.push_back(area);
 }
 
 void BasicModule::addBlockingArea(Rect2d rect) {
-    auto area = new PolygonalArea{};
-    area->initialVerticies.push_back(Vector2d(rect.p1.x, rect.p2.y));
-    area->initialVerticies.push_back(rect.p2);
-    area->initialVerticies.push_back(Vector2d(rect.p2.x, rect.p1.y));
-    area->initialVerticies.push_back(rect.p1);
+    PolygonalArea area {};
+    area.initialVerticies.push_back(Vector2d(rect.p1.x, rect.p2.y));
+    area.initialVerticies.push_back(rect.p2);
+    area.initialVerticies.push_back(Vector2d(rect.p2.x, rect.p1.y));
+    area.initialVerticies.push_back(rect.p1);
 
-    area->transformedVerticies.push_back(Vector2d(rect.p1.x, rect.p2.y));
-    area->transformedVerticies.push_back(rect.p2);
-    area->transformedVerticies.push_back(Vector2d(rect.p2.x, rect.p1.y));
-    area->transformedVerticies.push_back(rect.p1);
+    area.transformedVerticies.push_back(Vector2d(rect.p1.x, rect.p2.y));
+    area.transformedVerticies.push_back(rect.p2);
+    area.transformedVerticies.push_back(Vector2d(rect.p2.x, rect.p1.y));
+    area.transformedVerticies.push_back(rect.p1);
 
     blockingAreas.push_back(area);
 }
@@ -302,7 +325,7 @@ void BasicModule::addBlockingArea(Rect2d rect) {
 void BasicModule::draw() {
     Module::draw();
     for (auto sprite : sprites) {
-        GraphicsEngine::instance()->drawBitmap(position, sprite.bitmap, 20,
+        GraphicsEngine::instance()->drawBitmap(pos, sprite.bitmap, 20,
             sprite.z, sprite.pivot, rot);
     }
 
@@ -311,6 +334,13 @@ void BasicModule::draw() {
         drawable->setRotation(getRot());
         drawable->draw();
     }
+}
+
+nlohmann::json BasicModule::toJson() {
+    auto result = Module::toJson();
+    result["type"] = "BasicModule";
+    result["name"] = name;
+    return result;
 }
 
 void ModuleBuilder::onWindowClose() {
@@ -369,7 +399,7 @@ void ModuleBuilder::createWindow() {
         "Solar Panel", "Antena array"}; // TODO rename modules in json and remove this
 
     int line = 0;
-    for (auto moduleName: ModulesData::instance().getAllModuleNames()) {
+    for (auto moduleName : ModulesData::instance().getAllModuleNames()) {
         Aligment buttonAligment;
         buttonAligment.marginLeft = 5;
         buttonAligment.marginRight = 5;

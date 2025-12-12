@@ -41,7 +41,7 @@ public:
     void setJointTargetRotation(int aJoint, Rotation aRotation);
     void setSegmentTargetLength(int aSegment, double aLenght);
     void rotateJoint(int aJoint, Rotation aRotation);
-    void setRootJointPosition(Vector2d position);
+    void setRootJointPosition(Vector2d pos);
     void cleatTarget();
     void recalculate();
     void drawInfo() { }

@@ -39,6 +39,10 @@ struct Rotation {
         return Rotation();
     }
 
+    nlohmann::json toJson() {
+        return nlohmann::json(radians);
+    }
+
     Rotation operator+(Rotation other) {
         Rotation result;
         result.radians = std::fmod(radians + other.radians, M_PI * 2);
@@ -86,6 +90,10 @@ struct Vector2d {
             return Vector2d(rot, length);
         }
         return Vector2d();
+    }
+
+    nlohmann::json toJson() {
+        return nlohmann::json::array({x, y});
     }
 
     Vector2d operator+(Vector2d other) {
@@ -163,6 +171,10 @@ struct Rect2d {
 
     static Rect2d fromJson(nlohmann::json data) {
         return Rect2d::fromTwoCorners(Vector2d(data[0].get<double>(), data[1].get<double>()), Vector2d(data[2].get<double>(), data[3].get<double>()));
+    }
+
+    nlohmann::json toJson() {
+        return nlohmann::json::array({p1.x, p1.y, p2.x, p2.y});
     }
 
     bool isIntersecting(Rect2d other) {

@@ -14,7 +14,7 @@
 #include <nlohmann/json.hpp>
 
 struct CameraParameters {
-    Vector2d position;
+    Vector2d pos;
     double z;
     double fov; // horizontal
     Vector2d displayDimensions;
