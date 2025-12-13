@@ -1,5 +1,6 @@
 [
     {
+        "id": 1,
         "name": "Corridor",
         "nodes": [
             {
@@ -58,6 +59,7 @@
         }
     },
     {
+        "id": 2,
         "name": "Cross Connector",
         "nodes": [
             {
@@ -115,6 +117,7 @@
         }
     },
     {
+        "id": 3,
         "name": "3 Way Connector",
         "nodes": [
             {
@@ -154,6 +157,7 @@
         }
     },
     {
+        "id": 4,
         "name": "Deadend",
         "nodes": [
             {
@@ -197,6 +201,7 @@
         }
     },
     {
+        "id": 11,
         "name": "T Connector",
         "nodes": [
             {
@@ -252,6 +257,7 @@
     },
 
     {
+        "id": 5,
         "name": "Frame",
         "nodes": [
             {
@@ -284,6 +290,7 @@
         }
     },
     {
+    "id": 6,
     "name": "Square Frame",
         "nodes": [
             {
@@ -324,6 +331,7 @@
         }
     },
     {
+    "id": 7,
     "name": "Triangle Frame",
         "nodes": [
              {
@@ -356,6 +364,7 @@
         }
     },
     {
+    "id": 8, 
     "name": "Utility Module",
         "nodes": [
              {
@@ -419,6 +428,7 @@
         }
     },
     {
+        "id": 9,
         "name": "Solar Panel",
         "nodes": [
             {
@@ -445,6 +455,7 @@
         }
     },
     {
+        "id": 10,
         "name": "Antena array",
         "nodes": [
             {

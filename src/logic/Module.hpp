@@ -64,7 +64,7 @@ public:
 class BasicModule : public Module {
     int nodesNumber = 0;
     AbstractDrawable* drawable = nullptr;
-    std::string name = "unknown"; // e.g. Corridor, Large Module, etc
+    uint32_t dataId = 0; // e.g. Corridor, Large Module, etc
 
     struct ModuleSprite {
         Vector2d pivot;
@@ -91,18 +91,18 @@ public:
 };
 
 class ModulesData {
-    std::map<std::string, nlohmann::json> data;
+    std::map<uint32_t, nlohmann::json> data;
 
 public:
-    std::vector<std::string> getAllModuleNames() {
-        std::vector<std::string> names;
+    std::vector<uint32_t> getAllModuleDataIds() {
+        std::vector<uint32_t> names;
         for (auto const& module : data)
             names.push_back(module.first);
         return names;
     }
 
-    nlohmann::json getModuleJsonData(std::string name) {
-        return data[name];
+    nlohmann::json getModuleJsonData(uint32_t id) {
+        return data[id];
     }
 
     static ModulesData& instance() {
@@ -115,8 +115,8 @@ public:
         nlohmann::json json = nlohmann::json::parse(f);
         f.close();
         for (auto moduleData: json) {
-            std::string name = moduleData["name"].get<std::string>();
-            data[name] = moduleData;
+            uint32_t id = moduleData["id"].get<int>();
+            data[id] = moduleData;
         }
     }
 };
@@ -139,7 +139,7 @@ public:
     static ModuleBuilder* instance();
     void setParentNode(ModuleNode* node);
     bool buildModule(bool initial = false); // returns true on success
-    bool createModulePrototype(std::string name);
+    bool createModulePrototype(uint32_t dataId);
     bool selectNewNodeNumber(int number);
     void createWindow();
     void createModuleSelectionButtons();

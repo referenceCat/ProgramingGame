@@ -50,12 +50,12 @@ void init() {
     MachineryBuilder::instance()->createWindow();
 
     ModulesData::instance().initialize();
-    ModuleBuilder::instance()->createModulePrototype("Utility Module");
+    ModuleBuilder::instance()->createModulePrototype(8); // "Utility Module"
     ModuleBuilder::instance()->buildModule(true);
     createSaveLoadWindow();
 
-    auto box = new TapeBox(Vector2d(10, -10));
-    GameWorld::instance()->addBox(box);
+    // auto box = new TapeBox(Vector2d(10, -10));
+    // GameWorld::instance()->addBox(box);
 }
 
 void redraw() {

@@ -35,9 +35,9 @@ bool ModuleBuilder::buildModule(bool initial) {
     return true;
 }
 
-bool ModuleBuilder::createModulePrototype(std::string name) {
+bool ModuleBuilder::createModulePrototype(uint32_t dataId) {
     delete modulePrototype;
-    modulePrototype = BasicModule::initializeFromJson(ModulesData::instance().getModuleJsonData(name));
+    modulePrototype = BasicModule::initializeFromJson(ModulesData::instance().getModuleJsonData(dataId));
     selectNewNodeNumber(0);
     updateNodeNumberSelection();
     return true;
@@ -253,12 +253,12 @@ BasicModule* BasicModule::initializeFromJson(nlohmann::json data) {
         result->addBuildableArea(rect);
     }
     result->setDrawable(SpriteCollectionDrawable::fromJson(data["drawable"]));
-    result->name = data["name"];
+    result->dataId = data["id"].get<int>();
     return result;
 }
 
 BasicModule* BasicModule::fromJson(nlohmann::json data) {
-    auto module = BasicModule::initializeFromJson(ModulesData::instance().getModuleJsonData(data["name"]));
+    auto module = BasicModule::initializeFromJson(ModulesData::instance().getModuleJsonData(data["dataId"].get<int>()));
     module->setTransforms(Vector2d::fromJson(data["pos"]), Rotation::fromJson(data["rot"]));
     return module;
 }
@@ -340,7 +340,7 @@ void BasicModule::draw() {
 nlohmann::json BasicModule::toJson() {
     auto result = Module::toJson();
     result["type"] = "BasicModule";
-    result["name"] = name;
+    result["dataId"] = dataId;
     return result;
 }
 
@@ -394,25 +394,20 @@ void ModuleBuilder::createWindow() {
     nodeSelectionZoneAligment.dimensions = Vector2d(250, -1);
     nodeSelectionZone = new NamedArea(window->getInternalArea(), nodeSelectionZoneAligment, "Node selection");
 
-    std::string labels[] = {"Corridor", "Cross Connector", "3 Way Connector",
-        "T Connector", "Deadend", "Frame",
-        "Square Frame", "Triangle Frame", "Utility Module",
-        "Solar Panel", "Antena array"}; // TODO rename modules in json and remove this
-
     int line = 0;
-    for (auto moduleName : ModulesData::instance().getAllModuleNames()) {
+    for (auto moduleDataId : ModulesData::instance().getAllModuleDataIds()) {
         Aligment buttonAligment;
         buttonAligment.marginLeft = 5;
         buttonAligment.marginRight = 5;
         buttonAligment.marginTop = 5 + line * 25;
         buttonAligment.dimensions = Vector2d(-1, 20);
         auto button = new Button(typeSelectionZone->getInternalArea(), buttonAligment);
-        button->setMouseCallback(Release, [this, name = moduleName](auto pos) { createModulePrototype(name); });
-        new Label(button, Aligment(), moduleName);
+        button->setMouseCallback(Release, [this, dataId = moduleDataId](auto pos) { createModulePrototype(dataId); });
+        new Label(button, Aligment(), ModulesData::instance().getModuleJsonData(moduleDataId)["name"].get<std::string>());
         line++;
     }
 
-    createModulePrototype("Corridor"); // TODO should be first module or default module not just Corridor
+    createModulePrototype(1); // TODO should be first module or default module not just Corridor
 }
 
 void ModuleBuilder::createModuleSelectionButtons() {
