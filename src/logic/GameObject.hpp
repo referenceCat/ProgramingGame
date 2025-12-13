@@ -10,7 +10,7 @@ class GameObject {
 
 public:
     GameObject(uint64_t aId) {
-        assert(aId >= next_id);
+        // assert(aId >= next_id); // TODO doesnt work like that then we are loading saves so it is removed for now
         id = aId;
         next_id = id + 1;
     }
@@ -21,7 +21,12 @@ public:
         return id;
     }
 
-    virtual void addToGameWorld() {}; // TODO should be somewhat same for all types of objects
+    void setId(uint64_t aId) { // TODO could cause bugs if used somewhere outside of loading or loading invalid save
+        id = aId;
+        next_id = id + 1;
+    }
+
+    virtual void addToGameWorld() = 0; // TODO should be somewhat same for all types of objects
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_GAMEOBJECT_HPP_

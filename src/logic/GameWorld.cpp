@@ -169,7 +169,7 @@ void GameWorld::click(Vector2d point) { // TODO move to other class (game manage
     for (auto module : GameWorld::instance()->getModules()) {
         std::vector<ModuleNode*> nodes = module->getNodes();
         for (auto node : nodes) {
-            if ((module->getPos() + node->pos.rotate(module->getRot()) - Vector2d(point.x, point.y)).lenght() < 3) {
+            if ((module->getPos() + node->pos.rotate(module->getRot()) - Vector2d(point.x, point.y)).lenght() < 3 && (module->getPos() + node->pos.rotate(module->getRot())).y < surfaceY) {
                 ModuleBuilder::instance()->setParentNode(node);
                 ModuleBuilder::instance()->createWindow();
                 return;
@@ -222,9 +222,24 @@ void GameWorld::loadAll(std::string filepath) {
     nlohmann::json data = nlohmann::json::parse(file);
     file.close();
 
+    GameObject::next_id = 1;
+
     for (auto moduleData: data["modules"]) {
         auto module = BasicModule::fromJson(moduleData); // TODO check for other types of modules, also doesnt connect nodes yet
+        module->setId(moduleData["id"].get<int>());
         module->addToGameWorld();
+    }
+
+    for (auto moduleData: data["modules"]) { // second pass to connect all the nodes
+        auto parentModule = getModule(moduleData["id"].get<int>());
+        int nodeNumber = 0;
+        for (auto nodeData: moduleData["nodes"]) {
+            if (!nodeData.is_null()) {
+                auto attachedModule = getModule(nodeData["attachedModuleId"].get<int>());
+                parentModule->getNode(nodeNumber)->attachedNode = attachedModule->getNode(nodeData["attachedNodeNumber"].get<int>());
+            }
+            nodeNumber++;
+        }
     }
         
     

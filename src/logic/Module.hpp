@@ -14,7 +14,7 @@ class GuiEngine;
 class GameWorld;
 class Module;
 
-struct ModuleNode: public GameObject {
+struct ModuleNode {
     Vector2d pos;
     Rotation rot;
     ModuleNode* attachedNode = nullptr;

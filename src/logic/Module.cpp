@@ -50,7 +50,7 @@ bool ModuleBuilder::selectNewNodeNumber(int number) {
 
 void Module::drawInfo() {
     for (auto node : nodes) {
-        if (node.attachedNode == nullptr)
+        if (node.attachedNode == nullptr && (node.pos.rotate(getRot()) + getPos()).y < GameWorld::surfaceY)
             GraphicsEngine::instance()->drawCircle(
                 node.pos.rotate(rot) + pos, 0.5, CommonValues::zDebug,
                 al_map_rgba(255, 255, 0, 100), 0.2);
@@ -213,9 +213,10 @@ nlohmann::json Module::toJson() {
     auto nodesJson = nlohmann::json::array();
     for (auto node : nodes) {
         auto nodeJson = nlohmann::json();
-        nodeJson["id"] = node.getId();
-        if (node.attachedNode != nullptr)
-            nodeJson["attachedNodeId"] = node.attachedNode->getId();
+        if (node.attachedNode != nullptr) {
+            nodeJson["attachedNodeNumber"] = std::distance(node.attachedNode->parentModule->nodes.data(), node.attachedNode);
+            nodeJson["attachedModuleId"] = node.attachedNode->parentModule->getId();
+        }
         nodesJson.push_back(nodeJson);
     }
     result["nodes"] = nodesJson;
