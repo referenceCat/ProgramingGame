@@ -13,23 +13,24 @@
 
 typedef int32_t MemoryWord;
 
+struct Port {
+        // id? or just numbers?
+        Rect2d rect;
+        // flags
+    };
+
 class Machinery : public GameObject {
     int address = 0;
     std::vector<MemoryWord> memory;
+    std::vector<Port> ports;
 
 protected:
     Rect2d rect;
-
-    struct ProductionArea {
-        Rect2d rect;
-    };
-
-    std::vector<ProductionArea*> areas;
-
     void destroyBox(Box* box);
-    Box* createBox(ProductionArea area);
-    std::vector<Box*> getBoxesInside(ProductionArea area);
-    std::vector<Box*> getBoxesTouching(ProductionArea area);
+    Box* createBox(int portIndex);
+    Port& getPort(int index);
+    std::vector<Box*> getBoxesInside(int portIndex);
+    std::vector<Box*> getBoxesTouching(int portIndex);
     void setMemoryValue(size_t address, MemoryWord value);
     MemoryWord getMemoryValue(size_t address);
 
@@ -42,6 +43,7 @@ public:
     virtual void drawInfo() {};
     virtual void drawDebug();
     virtual void draw() {};
+    void addPort(Rect2d rect);
     Rect2d getRect();
     virtual void run() {};
     virtual void onMemoryWrite(size_t address, MemoryWord value);
@@ -94,10 +96,14 @@ public:
     }
 };
 
-// struct Reciept {
-//     int durationTicks = 100;
-//     // production areas, box types, etc
-// };
+struct Recipe {
+    uint32_t id;
+    std::string name;
+    unsigned int duration = 0;
+    std::vector<uint32_t> machineryIds;
+    std::vector<std::pair<uint32_t, int>> inputs; // box id, port number
+    std::vector<std::pair<uint32_t, int>> outputs; // box id, port number
+};
 
 class AbstractAssembler : public Machinery {
     AbstractDrawable* drawable = nullptr;

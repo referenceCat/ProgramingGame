@@ -35,18 +35,18 @@ class MachineryBuilder {
             case TypeDrill:
                 prototype = new Drill(Vector2d());
                 break;
-            case TypeElectrolyzer:
-                prototype = new Electrolyzer(Vector2d());
-                break;
-            case TypeLab:
-                prototype = new Lab(Vector2d());
-                break;
-            case TypeParticleResearch:
-                prototype = new ParticleDetector(Vector2d());
-                break;
-            case TypeAnalyzer:
-                prototype = new Analyzer(Vector2d());
-                break;
+            // case TypeElectrolyzer:
+            //     prototype = new Electrolyzer(Vector2d());
+            //     break;
+            // case TypeLab:
+            //     prototype = new Lab(Vector2d());
+            //     break;
+            // case TypeParticleResearch:
+            //     prototype = new ParticleDetector(Vector2d());
+            //     break;
+            // case TypeAnalyzer:
+            //     prototype = new Analyzer(Vector2d());
+            //     break;
             case Test: {
                 auto abstactAssembler = new AbstractAssembler(Rect2d::fromCenterAndDimensions(Vector2d(), Vector2d(5, 5)));
                 auto* drawable = new SpriteCollectionDrawable();

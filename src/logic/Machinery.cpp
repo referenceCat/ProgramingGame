@@ -6,37 +6,41 @@ void Machinery::destroyBox(Box* box) {
     GameWorld::instance()->removeBox(box->getId());
 }
 
-Box* Machinery::createBox(ProductionArea area) // TODO no
+Box* Machinery::createBox(int portIndex)
 {
-    auto box = new Box(Rect2d::fromCenterAndDimensions(area.rect.center() + rect.p1, Vector2d(2, 2)));
+    auto box = new Box(Rect2d::fromCenterAndDimensions(getPort(portIndex).rect.center() + rect.p1, Vector2d(2, 2)));
     box->addToGameWorld();
     return box;
 }
 
-std::vector<Box*> Machinery::getBoxesInside(ProductionArea area) {
+Port& Machinery::getPort(int index) {
+    return ports.at(index);
+}
+
+std::vector<Box*> Machinery::getBoxesInside(int portIndex) {
     std::vector<Box*> result;
-    Rect2d areaGlobalRect = area.rect;
-    areaGlobalRect.p1.x += rect.p1.x;
-    areaGlobalRect.p1.y += rect.p1.y;
-    areaGlobalRect.p2.x += rect.p1.x;
-    areaGlobalRect.p2.y += rect.p1.y;
+    Rect2d portGlobalRect = getPort(portIndex).rect;
+    portGlobalRect.p1.x += rect.p1.x;
+    portGlobalRect.p1.y += rect.p1.y;
+    portGlobalRect.p2.x += rect.p1.x;
+    portGlobalRect.p2.y += rect.p1.y;
     for (auto item : GameWorld::instance()->getBoxes()) {
-        if (areaGlobalRect.isInside(item->getRect())) {
+        if (portGlobalRect.isInside(item->getRect())) {
             result.push_back(item);
         }
     }
     return result;
 }
 
-std::vector<Box*> Machinery::getBoxesTouching(ProductionArea area) {
+std::vector<Box*> Machinery::getBoxesTouching(int portIndex) {
     std::vector<Box*> result;
-    Rect2d areaGlobalRect = area.rect;
-    areaGlobalRect.p1.x += rect.p1.x;
-    areaGlobalRect.p1.y += rect.p1.y;
-    areaGlobalRect.p2.x += rect.p1.x;
-    areaGlobalRect.p2.y += rect.p1.y;
+    Rect2d portGlobalRect = getPort(portIndex).rect;
+    portGlobalRect.p1.x += rect.p1.x;
+    portGlobalRect.p1.y += rect.p1.y;
+    portGlobalRect.p2.x += rect.p1.x;
+    portGlobalRect.p2.y += rect.p1.y;
     for (auto item : GameWorld::instance()->getBoxes()) {
-        if (areaGlobalRect.isIntersecting(item->getRect())) {
+        if (portGlobalRect.isIntersecting(item->getRect())) {
             result.push_back(item);
         }
     }
@@ -59,13 +63,17 @@ void Machinery::drawDebug() {
     GraphicsEngine::instance()->drawRectangle(rect, CommonValues::zDebug,
         al_map_rgb(100, 255, 100), 1);
 
-    for (auto item : areas) {
+    for (auto item : ports) {
         Rect2d areaRect;
-        areaRect.p1 = item->rect.p1 + rect.p1;
-        areaRect.p2 = item->rect.p2 + rect.p1;
+        areaRect.p1 = item.rect.p1 + rect.p1;
+        areaRect.p2 = item.rect.p2 + rect.p1;
         GraphicsEngine::instance()->drawRectangle(areaRect, CommonValues::zDebug,
             al_map_rgb(100, 100, 255), 1);
     }
+}
+
+void Machinery::addPort(Rect2d rect) {
+    ports.emplace_back(rect);
 }
 
 Rect2d Machinery::getRect() {

@@ -294,8 +294,6 @@ public:
 };
 
 class Drill : public Machinery {
-    ProductionArea output0;
-    ProductionArea output1;
     ProductionProcess miningProcess;
     int tick = 0;
     Vector2d detailShift = Vector2d();
@@ -309,10 +307,8 @@ public:
     Drill(Vector2d aPos):
         Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(10, 10))) {
         miningProcess.duration = 500;
-        output0 = ProductionArea{Rect2d::fromCenterAndDimensions(Vector2d(7.5, 2.5), Vector2d(5, 5))};
-        areas.push_back(&output0);
-        output1 = ProductionArea{Rect2d::fromCenterAndDimensions(Vector2d(7.5, 7.5), Vector2d(5, 5))};
-        areas.push_back(&output1);
+        addPort(Rect2d::fromCenterAndDimensions(Vector2d(7.5, 2.5), Vector2d(5, 5)));
+        addPort(Rect2d::fromCenterAndDimensions(Vector2d(7.5, 7.5), Vector2d(5, 5)));
     }
 
     void run() override {
@@ -331,13 +327,13 @@ public:
         }
 
         if (miningProcess.status == WaitingToFinish) {
-            if (getBoxesTouching(output0).size() == 0) {
-                auto box = new ResourceBoxPrototype(Rect2d::fromCenterAndDimensions(rect.p1 + output0.rect.center(), Vector2d(4, 4)), GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Regolith/main.png"), Resource::Regolith);
+            if (getBoxesTouching(0).size() == 0) {
+                auto box = new ResourceBoxPrototype(Rect2d::fromCenterAndDimensions(rect.p1 + getPort(0).rect.center(), Vector2d(4, 4)), GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Regolith/main.png"), Resource::Regolith);
                 box->addToGameWorld();
                 miningProcess.status = WaitingToStart;
                 miningProcess.progress = 0;
-            } else if (getBoxesTouching(output1).size() == 0) {
-                auto box = new ResourceBoxPrototype(Rect2d::fromCenterAndDimensions(rect.p1 + output1.rect.center(), Vector2d(4, 4)), GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Regolith/main.png"), Resource::Regolith);
+            } else if (getBoxesTouching(1).size() == 0) {
+                auto box = new ResourceBoxPrototype(Rect2d::fromCenterAndDimensions(rect.p1 + getPort(1).rect.center(), Vector2d(4, 4)), GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Regolith/main.png"), Resource::Regolith);
                 box->addToGameWorld();
                 miningProcess.status = WaitingToStart;
                 miningProcess.progress = 0;
@@ -360,250 +356,249 @@ public:
     }
 };
 
-class Electrolyzer : public Machinery {
-    ProductionArea input0;
-    ProductionArea output0;
-    ProductionArea output1;
-    ProductionArea output2;
-    ProductionProcess process;
+// class Electrolyzer : public Machinery {
+//     Port input0;
+//     Port output0;
+//     Port output1;
+//     Port output2;
+//     ProductionProcess process;
 
-public:
-    Electrolyzer(Vector2d aPos):
-        Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(10, 10))) {
-        process.duration = 500;
-        input0 = ProductionArea{Rect2d::fromCenterAndDimensions(Vector2d(2.5, 2.5), Vector2d(5, 5))};
-        areas.push_back(&input0);
-        output0 = ProductionArea{Rect2d::fromCenterAndDimensions(Vector2d(1.6, 8.3), Vector2d(3.33, 3.33))};
-        areas.push_back(&output0);
-        output1 = ProductionArea{Rect2d::fromCenterAndDimensions(Vector2d(5, 8.3), Vector2d(3.33, 3.33))};
-        areas.push_back(&output1);
-        output2 = ProductionArea{Rect2d::fromCenterAndDimensions(Vector2d(8.3, 8.3), Vector2d(3.33, 3.33))};
-        areas.push_back(&output2);
-    }
+// public:
+//     Electrolyzer(Vector2d aPos):
+//         Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(10, 10))) {
+//         process.duration = 500;
+//         input0 = Port{Rect2d::fromCenterAndDimensions(Vector2d(2.5, 2.5), Vector2d(5, 5))};
+//         ports.push_back(&input0);
+//         output0 = Port{Rect2d::fromCenterAndDimensions(Vector2d(1.6, 8.3), Vector2d(3.33, 3.33))};
+//         ports.push_back(&output0);
+//         output1 = Port{Rect2d::fromCenterAndDimensions(Vector2d(5, 8.3), Vector2d(3.33, 3.33))};
+//         ports.push_back(&output1);
+//         output2 = Port{Rect2d::fromCenterAndDimensions(Vector2d(8.3, 8.3), Vector2d(3.33, 3.33))};
+//         ports.push_back(&output2);
+//     }
 
-    void run() override {
-        if (process.status == WaitingToStart) {
-            if (getBoxesInside(input0).size()) {
-                auto box = getBoxesInside(input0).at(0);
-                if (box->isGrabbed())
-                    return;
-                if (dynamic_cast<ResourceBoxPrototype*>(box) == nullptr)
-                    return; // check if box is resource box
-                if (dynamic_cast<ResourceBoxPrototype*>(box)->getResource() != Regolith)
-                    return;
-                process.status = Running;
-                process.progress = 0;
-                destroyBox(box);
-            }
-        }
+//     void run() override {
+//         if (process.status == WaitingToStart) {
+//             if (getBoxesInside(input0).size()) {
+//                 auto box = getBoxesInside(input0).at(0);
+//                 if (box->isGrabbed())
+//                     return;
+//                 if (dynamic_cast<ResourceBoxPrototype*>(box) == nullptr)
+//                     return; // check if box is resource box
+//                 if (dynamic_cast<ResourceBoxPrototype*>(box)->getResource() != Regolith)
+//                     return;
+//                 process.status = Running;
+//                 process.progress = 0;
+//                 destroyBox(box);
+//             }
+//         }
 
-        if (process.status == Running) {
-            if (process.progress == process.duration) {
-                process.status = WaitingToFinish;
-            } else {
-                process.progress++;
-            }
-        }
+//         if (process.status == Running) {
+//             if (process.progress == process.duration) {
+//                 process.status = WaitingToFinish;
+//             } else {
+//                 process.progress++;
+//             }
+//         }
 
-        if (process.status == WaitingToFinish) {
-            if (getBoxesTouching(output0).size() == 0 && getBoxesTouching(output1).size() == 0 && getBoxesTouching(output2).size() == 0) {
-                auto box = new ResourceBoxPrototype(Rect2d::fromCenterAndDimensions(rect.p1 + output0.rect.center(), Vector2d(3, 3)), GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Oxygen/main.png"), Resource::Oxygen);
-                box->addToGameWorld();
-                box = new ResourceBoxPrototype(Rect2d::fromCenterAndDimensions(rect.p1 + output1.rect.center(), Vector2d(3, 3)), GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Alloy/main.png"), Resource::Alloy);
-                box->addToGameWorld();
-                box = new ResourceBoxPrototype(Rect2d::fromCenterAndDimensions(rect.p1 + output2.rect.center(), Vector2d(3, 3)), GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Silicon/main.png"), Resource::Silicon);
-                box->addToGameWorld();
-                process.status = WaitingToStart;
-                process.progress = 0;
-            }
-            // else continue waiting
-        }
-    }
+//         if (process.status == WaitingToFinish) {
+//             if (getBoxesTouching(output0).size() == 0 && getBoxesTouching(output1).size() == 0 && getBoxesTouching(output2).size() == 0) {
+//                 auto box = new ResourceBoxPrototype(Rect2d::fromCenterAndDimensions(rect.p1 + output0.rect.center(), Vector2d(3, 3)), GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Oxygen/main.png"), Resource::Oxygen);
+//                 box->addToGameWorld();
+//                 box = new ResourceBoxPrototype(Rect2d::fromCenterAndDimensions(rect.p1 + output1.rect.center(), Vector2d(3, 3)), GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Alloy/main.png"), Resource::Alloy);
+//                 box->addToGameWorld();
+//                 box = new ResourceBoxPrototype(Rect2d::fromCenterAndDimensions(rect.p1 + output2.rect.center(), Vector2d(3, 3)), GraphicsEngine::instance()->getBitmap("resources/assets/boxes/Silicon/main.png"), Resource::Silicon);
+//                 box->addToGameWorld();
+//                 process.status = WaitingToStart;
+//                 process.progress = 0;
+//             }
+//             // else continue waiting
+//         }
+//     }
 
-    void draw() override {
-        GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Electrolyzer/main.png"), 20, CommonValues::zMachinery);
-        GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Electrolyzer/background.png"), 20, CommonValues::zMachineryBack);
-        GraphicsEngine::instance()->drawArcProgressBar(rect.p1 + Vector2d(6.6, 4.4), static_cast<double>(process.progress) / process.duration, 0.7, CommonValues::zMachinery, al_map_rgb(255, 255, 255), 0.2);
-    }
-};
+//     void draw() override {
+//         GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Electrolyzer/main.png"), 20, CommonValues::zMachinery);
+//         GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Electrolyzer/background.png"), 20, CommonValues::zMachineryBack);
+//         GraphicsEngine::instance()->drawArcProgressBar(rect.p1 + Vector2d(6.6, 4.4), static_cast<double>(process.progress) / process.duration, 0.7, CommonValues::zMachinery, al_map_rgb(255, 255, 255), 0.2);
+//     }
+// };
 
-class Lab : public Machinery {
-    long tickCounter = 0;
-    bool lamps[16][32] = {0};
+// class Lab : public Machinery {
+//     long tickCounter = 0;
+//     bool lamps[16][32] = {0};
 
-    ProductionArea researchArea[6];
-    ProductionProcess researchProcess[6];
-    TapeBox* processedBox[6];
+//     ProductionProcess researchProcess[6];
+//     TapeBox* processedBox[6];
 
-    void updateLamps() {
-        for (int i = 0; i < 16; i++)
-            for (int j = 0; j < 32; j++) {
-                lamps[i][j] = (rand() % 3) == 0;
-            }
-    }
+//     void updateLamps() {
+//         for (int i = 0; i < 16; i++)
+//             for (int j = 0; j < 32; j++) {
+//                 lamps[i][j] = (rand() % 3) == 0;
+//             }
+//     }
 
-    void readPoints(TapeBox* box) {
-        for (int i = 0; i < TapeBox::dataPointsSize; i++) {
-            if (box->getDataPoint(TapeBox::dataPointsSize - 1 - i)) {
-                box->setDataPoint(TapeBox::dataPointsSize - 1 - i, NoData);
-                return;
-            }
-        }
-    }
+//     void readPoints(TapeBox* box) {
+//         for (int i = 0; i < TapeBox::dataPointsSize; i++) {
+//             if (box->getDataPoint(TapeBox::dataPointsSize - 1 - i)) {
+//                 box->setDataPoint(TapeBox::dataPointsSize - 1 - i, NoData);
+//                 return;
+//             }
+//         }
+//     }
 
-    void runResearch(int i) {
-        if (researchProcess[i].status == WaitingToStart) {
-            if (getBoxesInside(researchArea[i]).size()) {
-                auto box = getBoxesInside(researchArea[i]).at(0);
-                if (box->isGrabbed())
-                    return;
-                if (dynamic_cast<TapeBox*>(box) == nullptr)
-                    return; // check if box is resource box
-                if (dynamic_cast<TapeBox*>(box)->isDataPointsEmpty())
-                    return;
-                researchProcess[i].status = Running;
-                researchProcess[i].progress = 0;
-                processedBox[i] = dynamic_cast<TapeBox*>(box);
-            }
-        }
+//     void runResearch(int i) {
+//         if (researchProcess[i].status == WaitingToStart) {
+//             if (getBoxesInside(ports[i]).size()) {
+//                 auto box = getBoxesInside(ports[i]).at(0);
+//                 if (box->isGrabbed())
+//                     return;
+//                 if (dynamic_cast<TapeBox*>(box) == nullptr)
+//                     return; // check if box is resource box
+//                 if (dynamic_cast<TapeBox*>(box)->isDataPointsEmpty())
+//                     return;
+//                 researchProcess[i].status = Running;
+//                 researchProcess[i].progress = 0;
+//                 processedBox[i] = dynamic_cast<TapeBox*>(box);
+//             }
+//         }
 
-        if (researchProcess[i].status == Running) {
-            if (getBoxesInside(researchArea[i]).size() == 0 || getBoxesInside(researchArea[i]).at(0) != processedBox[i] || processedBox[i]->isGrabbed()) { // check if processed boxed was removed
-                processedBox[i] = nullptr;
-                researchProcess[i].status = WaitingToStart;
-                researchProcess[i].progress = 0;
-            }
+//         if (researchProcess[i].status == Running) {
+//             if (getBoxesInside(ports[i]).size() == 0 || getBoxesInside(ports[i]).at(0) != processedBox[i] || processedBox[i]->isGrabbed()) { // check if processed boxed was removed
+//                 processedBox[i] = nullptr;
+//                 researchProcess[i].status = WaitingToStart;
+//                 researchProcess[i].progress = 0;
+//             }
 
-            if (researchProcess[i].progress == researchProcess[i].duration) {
-                researchProcess[i].status = WaitingToFinish;
-            } else {
-                researchProcess[i].progress++;
-            }
-        }
+//             if (researchProcess[i].progress == researchProcess[i].duration) {
+//                 researchProcess[i].status = WaitingToFinish;
+//             } else {
+//                 researchProcess[i].progress++;
+//             }
+//         }
 
-        if (researchProcess[i].status == WaitingToFinish) {
-            readPoints(processedBox[i]);
-            processedBox[i] = nullptr;
-            researchProcess[i].status = WaitingToStart;
-            researchProcess[i].progress = 0;
-        }
-    }
+//         if (researchProcess[i].status == WaitingToFinish) {
+//             readPoints(processedBox[i]);
+//             processedBox[i] = nullptr;
+//             researchProcess[i].status = WaitingToStart;
+//             researchProcess[i].progress = 0;
+//         }
+//     }
 
-public:
-    Lab(Vector2d aPos):
-        Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(17, 17))) {
-        researchArea[0].rect = Rect2d::fromCenterAndDimensions(Vector2d(3, 2), Vector2d(5, 3));
-        areas.push_back(&researchArea[0]);
-        researchArea[1].rect = Rect2d::fromCenterAndDimensions(Vector2d(8.5, 2), Vector2d(5, 3));
-        areas.push_back(&researchArea[1]);
-        researchArea[2].rect = Rect2d::fromCenterAndDimensions(Vector2d(14, 2), Vector2d(5, 3));
-        areas.push_back(&researchArea[2]);
-        researchArea[3].rect = Rect2d::fromCenterAndDimensions(Vector2d(3, 15), Vector2d(5, 3));
-        areas.push_back(&researchArea[3]);
-        researchArea[4].rect = Rect2d::fromCenterAndDimensions(Vector2d(8.5, 15), Vector2d(5, 3));
-        areas.push_back(&researchArea[4]);
-        researchArea[5].rect = Rect2d::fromCenterAndDimensions(Vector2d(14, 15), Vector2d(5, 3));
-        areas.push_back(&researchArea[5]);
-    }
+// public:
+//     Lab(Vector2d aPos):
+//         Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(17, 17))) {
+//         ports[0].rect = Rect2d::fromCenterAndDimensions(Vector2d(3, 2), Vector2d(5, 3));
+//         ports.push_back(&ports[0]);
+//         ports[1].rect = Rect2d::fromCenterAndDimensions(Vector2d(8.5, 2), Vector2d(5, 3));
+//         ports.push_back(&ports[1]);
+//         ports[2].rect = Rect2d::fromCenterAndDimensions(Vector2d(14, 2), Vector2d(5, 3));
+//         ports.push_back(&ports[2]);
+//         ports[3].rect = Rect2d::fromCenterAndDimensions(Vector2d(3, 15), Vector2d(5, 3));
+//         ports.push_back(&ports[3]);
+//         ports[4].rect = Rect2d::fromCenterAndDimensions(Vector2d(8.5, 15), Vector2d(5, 3));
+//         ports.push_back(&ports[4]);
+//         ports[5].rect = Rect2d::fromCenterAndDimensions(Vector2d(14, 15), Vector2d(5, 3));
+//         ports.push_back(&ports[5]);
+//     }
 
-    void run() override {
-        tickCounter++;
-        if (tickCounter % 30 == 0)
-            updateLamps(); // update lamps every 0.5 seconds
-        for (int i = 0; i < 6; i++) runResearch(i);
-    }
+//     void run() override {
+//         tickCounter++;
+//         if (tickCounter % 30 == 0)
+//             updateLamps(); // update lamps every 0.5 seconds
+//         for (int i = 0; i < 6; i++) runResearch(i);
+//     }
 
-    void draw() override {
-        GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Lab/background.png"), 20, CommonValues::zMachineryBack);
-        GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Lab/main.png"), 20, CommonValues::zMachinery);
+//     void draw() override {
+//         GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Lab/background.png"), 20, CommonValues::zMachineryBack);
+//         GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Lab/main.png"), 20, CommonValues::zMachinery);
 
-        for (int i = 0; i < 16; i++)
-            for (int j = 0; j < 32; j++) {
-                if (lamps[i][j] && !(Rect2d(Vector2d(24, 9), Vector2d(31, 15)).isInside(Vector2d(j, i))))
-                    GraphicsEngine::instance()->drawCircle(Vector2d(j * 0.5, i * 0.5) + rect.p1 + Vector2d(0.75, 4.75), 0.1, CommonValues::zMachinery, al_map_rgba(255, 255, 100, 100));
-            }
-    }
-};
+//         for (int i = 0; i < 16; i++)
+//             for (int j = 0; j < 32; j++) {
+//                 if (lamps[i][j] && !(Rect2d(Vector2d(24, 9), Vector2d(31, 15)).isInside(Vector2d(j, i))))
+//                     GraphicsEngine::instance()->drawCircle(Vector2d(j * 0.5, i * 0.5) + rect.p1 + Vector2d(0.75, 4.75), 0.1, CommonValues::zMachinery, al_map_rgba(255, 255, 100, 100));
+//             }
+//     }
+// };
 
-class Analyzer : public Machinery {
-    ProductionArea tapeArea;
-    ProductionArea sampleArea;
-    ProductionProcess researchProcess;
-    std::vector<DataPointType> resultingDataPoints = {};
+// class Analyzer : public Machinery {
+//     Port tapePort;
+//     Port samplePort;
+//     ProductionProcess researchProcess;
+//     std::vector<DataPointType> resultingDataPoints = {};
 
-    std::vector<DataPointType> getDataPoints(Resource resource) {
-        if (resource == Regolith)
-            return {GeologyResearchData};
-        if (resource == Alloy)
-            return {MaterialResearchData, MaterialResearchData};
-        if (resource == Silicon)
-            return {MaterialResearchData};
-        return {};
-    }
+//     std::vector<DataPointType> getDataPoints(Resource resource) {
+//         if (resource == Regolith)
+//             return {GeologyResearchData};
+//         if (resource == Alloy)
+//             return {MaterialResearchData, MaterialResearchData};
+//         if (resource == Silicon)
+//             return {MaterialResearchData};
+//         return {};
+//     }
 
-    void writePointsToTapeBox(TapeBox* box) { // excesive data points are lost
-        for (auto point : resultingDataPoints) {
-            box->writePoint(point);
-        }
-        resultingDataPoints.clear();
-    }
+//     void writePointsToTapeBox(TapeBox* box) { // excesive data points are lost
+//         for (auto point : resultingDataPoints) {
+//             box->writePoint(point);
+//         }
+//         resultingDataPoints.clear();
+//     }
 
-public:
-    Analyzer(Vector2d aPos):
-        Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(7, 10))) {
-        tapeArea = ProductionArea(Rect2d::fromCenterAndDimensions(Vector2d(2.2, 1.5), Vector2d(5, 3)));
-        areas.push_back(&tapeArea);
-        sampleArea = ProductionArea(Rect2d::fromCenterAndDimensions(Vector2d(3.5, 7.5), Vector2d(5, 5)));
-        areas.push_back(&sampleArea);
-    }
+// public:
+//     Analyzer(Vector2d aPos):
+//         Machinery(Rect2d::fromCenterAndDimensions(aPos, Vector2d(7, 10))) {
+//         tapePort = Port(Rect2d::fromCenterAndDimensions(Vector2d(2.2, 1.5), Vector2d(5, 3)));
+//         ports.push_back(&tapePort);
+//         samplePort = Port(Rect2d::fromCenterAndDimensions(Vector2d(3.5, 7.5), Vector2d(5, 5)));
+//         ports.push_back(&samplePort);
+//     }
 
-    void run() override {
-        if (researchProcess.status == WaitingToStart) {
-            if (getBoxesInside(sampleArea).size()) {
-                auto box = getBoxesInside(sampleArea).at(0);
-                if (box->isGrabbed())
-                    return;
-                if (dynamic_cast<ResourceBoxPrototype*>(box) == nullptr)
-                    return; // check if box is resource box
-                researchProcess.status = Running;
-                researchProcess.progress = 0;
-                resultingDataPoints = getDataPoints(dynamic_cast<ResourceBoxPrototype*>(box)->getResource());
-                destroyBox(box);
-            }
-        }
+//     void run() override {
+//         if (researchProcess.status == WaitingToStart) {
+//             if (getBoxesInside(samplePort).size()) {
+//                 auto box = getBoxesInside(samplePort).at(0);
+//                 if (box->isGrabbed())
+//                     return;
+//                 if (dynamic_cast<ResourceBoxPrototype*>(box) == nullptr)
+//                     return; // check if box is resource box
+//                 researchProcess.status = Running;
+//                 researchProcess.progress = 0;
+//                 resultingDataPoints = getDataPoints(dynamic_cast<ResourceBoxPrototype*>(box)->getResource());
+//                 destroyBox(box);
+//             }
+//         }
 
-        if (researchProcess.status == Running) {
-            if (researchProcess.progress == researchProcess.duration) {
-                researchProcess.status = WaitingToFinish;
-            } else {
-                researchProcess.progress++;
-            }
-        }
+//         if (researchProcess.status == Running) {
+//             if (researchProcess.progress == researchProcess.duration) {
+//                 researchProcess.status = WaitingToFinish;
+//             } else {
+//                 researchProcess.progress++;
+//             }
+//         }
 
-        if (researchProcess.status == WaitingToFinish) {
-            if (getBoxesInside(tapeArea).size() == 0)
-                return;
-            auto box = getBoxesInside(tapeArea).at(0);
-            if (box->isGrabbed())
-                return;
-            if (dynamic_cast<TapeBox*>(box) == nullptr)
-                return; // check if box is resource box
-            researchProcess.status = WaitingToStart;
-            researchProcess.progress = 0;
-            writePointsToTapeBox(dynamic_cast<TapeBox*>(box));
-        }
-    }
+//         if (researchProcess.status == WaitingToFinish) {
+//             if (getBoxesInside(tapePort).size() == 0)
+//                 return;
+//             auto box = getBoxesInside(tapePort).at(0);
+//             if (box->isGrabbed())
+//                 return;
+//             if (dynamic_cast<TapeBox*>(box) == nullptr)
+//                 return; // check if box is resource box
+//             researchProcess.status = WaitingToStart;
+//             researchProcess.progress = 0;
+//             writePointsToTapeBox(dynamic_cast<TapeBox*>(box));
+//         }
+//     }
 
-    void draw() override {
-        GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Analyzer/main.png"), 20, CommonValues::zMachineryFront);
-        GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Analyzer/background.png"), 20, CommonValues::zMachineryBack);
-        GraphicsEngine::instance()->drawArcProgressBar(rect.p1 + Vector2d(5.4, 4.5), static_cast<double>(researchProcess.progress) / researchProcess.duration, 0.7, CommonValues::zMachineryFront, al_map_rgb(255, 255, 255), 0.2);
-    }
-};
+//     void draw() override {
+//         GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Analyzer/main.png"), 20, CommonValues::zMachineryFront);
+//         GraphicsEngine::instance()->drawBitmap(rect.p1, GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Analyzer/background.png"), 20, CommonValues::zMachineryBack);
+//         GraphicsEngine::instance()->drawArcProgressBar(rect.p1 + Vector2d(5.4, 4.5), static_cast<double>(researchProcess.progress) / researchProcess.duration, 0.7, CommonValues::zMachineryFront, al_map_rgb(255, 255, 255), 0.2);
+//     }
+// };
 
 class ParticleDetector : public Machinery {
     long tickCounter = 0;
-    ProductionArea destroyingArea;
+    Port destructionPort;
     int cooldown = 200;
     int blink = 0;
 
