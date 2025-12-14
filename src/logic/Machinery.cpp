@@ -6,8 +6,7 @@ void Machinery::destroyBox(Box* box) {
     GameWorld::instance()->removeBox(box->getId());
 }
 
-Box* Machinery::createBox(int portIndex)
-{
+Box* Machinery::createBox(int portIndex) {
     auto box = new Box(Rect2d::fromCenterAndDimensions(getPort(portIndex).rect.center() + rect.p1, Vector2d(2, 2)));
     box->addToGameWorld();
     return box;
@@ -82,12 +81,14 @@ Rect2d Machinery::getRect() {
 }
 
 void Machinery::onMemoryWrite(size_t address, MemoryWord value) {
-    if (address >= memory.size()) return;
+    if (address >= memory.size())
+        return;
     memory.at(address) = value;
 }
 
 MemoryWord Machinery::onMemoryRead(size_t address) {
-    if (address >= memory.size()) return 0;
+    if (address >= memory.size())
+        return 0;
     return memory.at(address);
 }
 
@@ -113,11 +114,41 @@ void AbstractAssembler::drawDebug() {
 
 void AbstractAssembler::draw() {
     Machinery::draw();
+
     if (drawable) {
-        drawable->setParameter("testParam", static_cast<float>(tick) / 10);
         drawable->setPos(getRect().center());
         drawable->draw();
+
+        GraphicsEngine::instance()->drawArcProgressBar(rect.p1 + progressBarPos, 0.7, 0.7, CommonValues::zMachinery, al_map_rgb(150, 150, 150), 0.2);
     }
+}
+
+void AbstractAssembler::onClick() {
+    createWindow();
+}
+
+void AbstractAssembler::createWindow() {
+    if (window)
+        return;
+    window = new Window(GuiEngine::instance()->getDisplayArea(), AligmentBuilder().dimensions({720, 300}).margin(-1, -1, -1, 30), true);
+    window->setOnCloseCallback([this]() { window = nullptr; });
+    window->setDrawPriority(2);
+
+    auto optionsArea = new NamedArea(window->getInternalArea(), AligmentBuilder().tableDimensions(3, 1).tableCell(1, 0).margin(10, 20, 10, 20), "Settings");
+    auto memoryArea = new NamedArea(window->getInternalArea(), AligmentBuilder().tableDimensions(3, 1).tableCell(2, 0).margin(10, 20, 20, 20), "Memory");
+
+    auto addressButtonAligment = Aligment::byMargin(5, 5, 5, 5);
+    addressButtonAligment.tableRows = 5;
+    addressButtonAligment.ownRow = 0;
+    auto addressButton = new Button(optionsArea->getInternalArea(), addressButtonAligment);
+    addressButton->setMouseCallback(Release, [this](auto pos) { new AddressSelectionWindow(getAddress(), [this](int address) { this->setAddress(address); }); });
+    addressLabel = new Label(addressButton, Aligment(), std::format("Addr: {}", getAddress()));
+
+    memoryConsole = new Console(memoryArea->getInternalArea(), AligmentBuilder().tableDimensions(2, 1).tableCell(1, 0).margin(5, 5, 5, 5));
+    memoryConsole->setEditable(false);
+    new Label(memoryArea->getInternalArea(), AligmentBuilder().tableDimensions(2, 14).tableCell(0, 1).margin(-1, -1, 5, 10).dimensions(Vector2d(al_get_text_width(GuiEngine::instance()->debugFont, "status->"), -1)), "status->");
+    new Label(memoryArea->getInternalArea(), AligmentBuilder().tableDimensions(2, 14).tableCell(0, 2).margin(-1, -1, 5, 10).dimensions(Vector2d(al_get_text_width(GuiEngine::instance()->debugFont, "progress->"), -1)), "progress->");
+    new Label(memoryArea->getInternalArea(), AligmentBuilder().tableDimensions(2, 14).tableCell(0, 3).margin(-1, -1, 5, 10).dimensions(Vector2d(al_get_text_width(GuiEngine::instance()->debugFont, "recipe id->"), -1)), "recipe id->");
 }
 
 void AbstractAssembler::run() {
@@ -130,7 +161,11 @@ AbstractAssembler* AbstractAssembler::initializeFromJson(nlohmann::json data) {
     result->dataId = data["id"].get<int>();
     auto drawable = SpriteCollectionDrawable::fromJson(data["drawable"]);
     result->setDrawable(drawable);
-    return nullptr;
+    for (auto portData : data["ports"]) {
+        result->addPort(Rect2d::fromJson(portData["rect"]));
+    }
+    result->progressBarPos = Vector2d::fromJson(data["progressBar"]["pos"]); // TODO it must be possible to disable progress bar
+    return result;
 }
 
 void AbstractAssembler::setDrawable(AbstractDrawable* aDrawable) {

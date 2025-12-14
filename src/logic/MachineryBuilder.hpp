@@ -48,10 +48,10 @@ class MachineryBuilder {
             //     prototype = new Analyzer(Vector2d());
             //     break;
             case Test: {
-                auto abstactAssembler = new AbstractAssembler(Rect2d::fromCenterAndDimensions(Vector2d(), Vector2d(5, 5)));
-                auto* drawable = new SpriteCollectionDrawable();
-                drawable->addSprite({GraphicsEngine::instance()->getBitmap("resources/assets/machinery/Controller/main.png"), CommonValues::zMachinery, {0, 0}, Rotation::fromDegrees(15), {30, 30}});
-                abstactAssembler->setDrawable(drawable);
+                std::ifstream f("resources/data/machinery.json");
+                nlohmann::json json = nlohmann::json::parse(f);
+                f.close();
+                auto abstactAssembler = AbstractAssembler::initializeFromJson(json[0]);
                 prototype = abstactAssembler;
             } break;
             default:

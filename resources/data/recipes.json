@@ -1,0 +1,39 @@
+[
+    {
+        "id": 10001,
+        "name": "Regolith electrolysis",
+        "duration": 1000,
+        "machineryIds": [ 100001 ],
+        "inputs": [
+            {
+                "boxId": 101,
+                "portNumber": 0
+            }
+        ],
+        "outputs": [
+            {
+                "boxId": 102,
+                "portNumber": 1
+            },
+            {
+                "boxId": 103,
+                "portNumber": 2
+            },
+            {
+                "boxId": 104,
+                "portNumber": 3
+            }
+        ]
+    },
+    {
+        "id": 10002,
+        "name": "Surface mining",
+        "duration": 500,
+        "machineryIds": [ 100002 ],
+        "outputs": [
+            {
+                "boxId": 101
+            }
+        ]
+    }
+]

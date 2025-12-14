@@ -1,0 +1,59 @@
+[
+    {
+        "id": 100002,
+        "name": "Drill",
+        "type": "Assembler",
+        "dimensions": [ 10, 10 ],
+        "ports": [
+            {
+                "rect": [ 5, 0, 10, 5 ]
+            },
+            {
+                "rect": [ 5, 5, 10, 10 ]
+            }
+        ],
+        "drawable": {
+            "type": "spriteCollection",
+            "sprites": [
+                {
+                    "filepath": "resources/assets/machinery/Drill/detail1.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0.005,
+                    "pivot": [ 100, 100 ],
+                    "rot": "right"
+                },
+                {
+                    "filepath": "resources/assets/machinery/Drill/detail2.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0.005,
+                    "pivot": [ 100, 100 ],
+                    "rot": "right"
+                },
+                {
+                    "filepath": "resources/assets/machinery/Drill/main.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0.005,
+                    "pivot": [ 100, 100 ],
+                    "rot": "right"
+                },
+                {
+                    "filepath": "resources/assets/machinery/Drill/drill.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0.25,
+                    "pivot": [ 100, 100 ],
+                    "rot": "right"
+                },
+                {
+                    "filepath": "resources/assets/machinery/Drill/background.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0.25,
+                    "pivot": [ 100, 100 ],
+                    "rot": "right"
+                }
+            ]
+        },
+        "progressBar": {
+            "pos": [ 1.8, 1.8]
+        }
+    }
+]

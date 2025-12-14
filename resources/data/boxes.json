@@ -1,0 +1,70 @@
+[
+    {
+        "id": 101,
+        "name": "Regolith",
+        "dimensions": [4, 4],
+        "drawable": {
+            "type": "spriteCollection",
+            "sprites": [
+                {
+                    "filepath": "resources/assets/boxes/Regolith/main.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0.3,
+                    "pivot": [ 40, 40 ],
+                    "rot": "right"
+                }
+            ]
+        }
+    },
+    {
+        "id": 102,
+        "name": "Alloy",
+        "dimensions": [3, 3],
+        "drawable": {
+            "type": "spriteCollection",
+            "sprites": [
+                {
+                    "filepath": "resources/assets/boxes/Alloy/main.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0.3,
+                    "pivot": [ 30, 30 ],
+                    "rot": "right"
+                }
+            ]
+        }
+    },
+    {
+        "id": 103,
+        "name": "Silicon",
+        "dimensions": [3, 3],
+        "drawable": {
+            "type": "spriteCollection",
+            "sprites": [
+                {
+                    "filepath": "resources/assets/boxes/Silicon/main.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0.3,
+                    "pivot": [ 30, 30 ],
+                    "rot": "right"
+                }
+            ]
+        }
+    },
+    {
+        "id": 104,
+        "name": "Oxygen",
+        "dimensions": [3, 3],
+        "drawable": {
+            "type": "spriteCollection",
+            "sprites": [
+                {
+                    "filepath": "resources/assets/boxes/Oxygen/main.png",
+                    "pos": [ 0, 0 ],
+                    "z": 0.3,
+                    "pivot": [ 30, 30 ],
+                    "rot": "right"
+                }
+            ]
+        }
+    }
+]

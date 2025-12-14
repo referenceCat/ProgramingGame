@@ -14,10 +14,10 @@
 typedef int32_t MemoryWord;
 
 struct Port {
-        // id? or just numbers?
-        Rect2d rect;
-        // flags
-    };
+    // id? or just numbers?
+    Rect2d rect;
+    // flags
+};
 
 class Machinery : public GameObject {
     int address = 0;
@@ -110,17 +110,48 @@ class AbstractAssembler : public Machinery {
     AbstractDrawable* drawable = nullptr;
     int tick = 0;
     DataId dataId = 0;
+    Vector2d progressBarPos = {};
+
+    Window* window = nullptr;
+    Label* addressLabel = nullptr;
+    Console* memoryConsole = nullptr;
+
+
 public:
     AbstractAssembler(Rect2d rect): Machinery(rect, 10) {};
-
-    void drawInfo() override {};
-    void drawDebug() override;
-    void draw() override;
-    void run() override;
-    // TODO make virtual and add to machinery as well?
+        // TODO make virtual and add to machinery as well?
     static AbstractAssembler* initializeFromJson(nlohmann::json);
 
     void setDrawable(AbstractDrawable* aDrawable);
+    void drawInfo() override {};
+    void drawDebug() override;
+    void draw() override;
+
+    void onClick() override;
+    void createWindow();
+    void updataWindow();
+
+    void run() override;
+
+    // void updateMemory() {
+    //     MemoryWord word0 = 0; // TODO should be uniformal across all machinery (e.g. 1 bit is working, 2 is power, 3 ...)
+    //     word0 |= (manualMode << 0);
+    //     word0 |= (arm->isActive() << 1);
+    //     word0 |= ((arm->getTakenBox() != nullptr) << 2);
+    //     word0 |= (((arm->getJointTargetPosition(2) - arm->getJointPosition(2)).lenght() < 0.01) << 3); // arm reached its target
+    //     setMemoryValue(0, word0);
+
+    //     if (manualMode)
+    //         return;
+    //     MemoryWord word1 = getMemoryValue(1);
+    //     if (word1)
+    //         arm->grab();
+    //     else
+    //         arm->release();
+
+    //     setRelativeTarget(Vector2d(getMemoryValue(2), getMemoryValue(3)));
+    // }
+
 };
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_LOGIC_MACHINERY_HPP_
