@@ -21,11 +21,6 @@ struct ModuleNode {
     Module* parentModule;
 };
 
-struct PolygonalArea {
-    std::vector<Vector2d> initialVerticies;
-    std::vector<Vector2d> transformedVerticies;
-};
-
 class Module : public GameObject {
 protected:
     std::vector<ModuleNode> nodes;
@@ -64,7 +59,7 @@ public:
 class BasicModule : public Module {
     int nodesNumber = 0;
     AbstractDrawable* drawable = nullptr;
-    uint32_t dataId = 0; // e.g. Corridor, Large Module, etc
+    DataId dataId = 0; // e.g. Corridor, Large Module, etc
 
     struct ModuleSprite {
         Vector2d pivot;
@@ -91,17 +86,17 @@ public:
 };
 
 class ModulesData {
-    std::map<uint32_t, nlohmann::json> data;
+    std::map<DataId, nlohmann::json> data;
 
 public:
-    std::vector<uint32_t> getAllModuleDataIds() {
-        std::vector<uint32_t> names;
+    std::vector<DataId> getAllModuleDataIds() {
+        std::vector<DataId> ids;
         for (auto const& module : data)
-            names.push_back(module.first);
-        return names;
+            ids.push_back(module.first);
+        return ids;
     }
 
-    nlohmann::json getModuleJsonData(uint32_t id) {
+    nlohmann::json getModuleJsonData(DataId id) {
         return data[id];
     }
 
@@ -115,8 +110,8 @@ public:
         nlohmann::json json = nlohmann::json::parse(f);
         f.close();
         for (auto moduleData: json) {
-            uint32_t id = moduleData["id"].get<int>();
-            data[id] = moduleData;
+            uint32_t DataId = moduleData["id"].get<int>();
+            data[DataId] = moduleData;
         }
     }
 };
@@ -139,7 +134,7 @@ public:
     static ModuleBuilder* instance();
     void setParentNode(ModuleNode* node);
     bool buildModule(bool initial = false); // returns true on success
-    bool createModulePrototype(uint32_t dataId);
+    bool createModulePrototype(DataId dataId);
     bool selectNewNodeNumber(int number);
     void createWindow();
     void createModuleSelectionButtons();

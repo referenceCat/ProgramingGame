@@ -4,6 +4,10 @@
 #include <math.h>
 #include <algorithm>
 #include <nlohmann/json.hpp>
+#include <stdint.h>
+
+typedef uint32_t DataId;
+typedef uint32_t ObjectId;
 
 struct Rotation {
     double radians = 0;
@@ -203,5 +207,11 @@ struct Rect2d {
         return p1 != other.p1 || p2 != other.p2;
     }
 };
+
+struct PolygonalArea {
+    std::vector<Vector2d> initialVerticies;
+    std::vector<Vector2d> transformedVerticies;
+};
+
 
 #endif // __PROJECTS_PROGRAMINGGAME_SRC_COMMON_HPP_

@@ -5,11 +5,11 @@ class GameWorld;
 
 class GameObject {
     friend class GameWorld;
-    inline static uint64_t next_id = 1;
-    uint64_t id;
+    inline static ObjectId next_id = 1;
+    ObjectId id;
 
 public:
-    GameObject(uint64_t aId) {
+    GameObject(ObjectId aId) {
         // assert(aId >= next_id); // TODO doesnt work like that then we are loading saves so it is removed for now
         id = aId;
         next_id = id + 1;
@@ -17,11 +17,11 @@ public:
 
     GameObject(): GameObject(next_id) {}
 
-    uint64_t getId() {
+    ObjectId getId() {
         return id;
     }
 
-    void setId(uint64_t aId) { // TODO could cause bugs if used somewhere outside of loading or loading invalid save
+    void setId(ObjectId aId) { // TODO could cause bugs if used somewhere outside of loading or loading invalid save
         id = aId;
         next_id = id + 1;
     }

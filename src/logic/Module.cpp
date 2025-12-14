@@ -35,7 +35,7 @@ bool ModuleBuilder::buildModule(bool initial) {
     return true;
 }
 
-bool ModuleBuilder::createModulePrototype(uint32_t dataId) {
+bool ModuleBuilder::createModulePrototype(DataId dataId) {
     delete modulePrototype;
     modulePrototype = BasicModule::initializeFromJson(ModulesData::instance().getModuleJsonData(dataId));
     selectNewNodeNumber(0);

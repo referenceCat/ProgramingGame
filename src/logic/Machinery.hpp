@@ -40,20 +40,21 @@ public:
         memory = std::vector<MemoryWord>(memorySize, 0);
     };
 
+    int addPort(Rect2d rect);
+    Rect2d getRect();
+    MemoryWord onMemoryRead(size_t address);
+    void addToGameWorld() override;
+    void setCenter(Vector2d pos);
+    int getAddress();
+    size_t getMemorySize();
+
     virtual void drawInfo() {};
     virtual void drawDebug();
     virtual void draw() {};
-    void addPort(Rect2d rect);
-    Rect2d getRect();
+    virtual void setAddress(int id);
+    virtual void onClick() {};
     virtual void run() {};
     virtual void onMemoryWrite(size_t address, MemoryWord value);
-    MemoryWord onMemoryRead(size_t address);
-    virtual void onClick() {};
-    void addToGameWorld() override;
-    void setCenter(Vector2d pos);
-    virtual void setAddress(int id);
-    int getAddress();
-    size_t getMemorySize();
 };
 
 class AddressSelectionWindow {
@@ -97,17 +98,18 @@ public:
 };
 
 struct Recipe {
-    uint32_t id;
+    DataId id;
     std::string name;
     unsigned int duration = 0;
-    std::vector<uint32_t> machineryIds;
-    std::vector<std::pair<uint32_t, int>> inputs; // box id, port number
-    std::vector<std::pair<uint32_t, int>> outputs; // box id, port number
+    std::vector<DataId> machineryIds;
+    std::vector<std::pair<DataId, int>> inputs; // box id, port number
+    std::vector<std::pair<DataId, int>> outputs; // box id, port number
 };
 
 class AbstractAssembler : public Machinery {
     AbstractDrawable* drawable = nullptr;
     int tick = 0;
+    DataId dataId = 0;
 public:
     AbstractAssembler(Rect2d rect): Machinery(rect, 10) {};
 
@@ -115,6 +117,8 @@ public:
     void drawDebug() override;
     void draw() override;
     void run() override;
+    // TODO make virtual and add to machinery as well?
+    static AbstractAssembler* initializeFromJson(nlohmann::json);
 
     void setDrawable(AbstractDrawable* aDrawable);
 };

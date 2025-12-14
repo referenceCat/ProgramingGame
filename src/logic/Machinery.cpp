@@ -72,8 +72,9 @@ void Machinery::drawDebug() {
     }
 }
 
-void Machinery::addPort(Rect2d rect) {
+int Machinery::addPort(Rect2d rect) {
     ports.emplace_back(rect);
+    return ports.size() - 1;
 }
 
 Rect2d Machinery::getRect() {
@@ -122,6 +123,14 @@ void AbstractAssembler::draw() {
 void AbstractAssembler::run() {
     Machinery::run();
     tick++;
+}
+
+AbstractAssembler* AbstractAssembler::initializeFromJson(nlohmann::json data) {
+    AbstractAssembler* result = new AbstractAssembler(Rect2d::fromCenterAndDimensions({}, Vector2d::fromJson(data["dimensions"])));
+    result->dataId = data["id"].get<int>();
+    auto drawable = SpriteCollectionDrawable::fromJson(data["drawable"]);
+    result->setDrawable(drawable);
+    return nullptr;
 }
 
 void AbstractAssembler::setDrawable(AbstractDrawable* aDrawable) {
